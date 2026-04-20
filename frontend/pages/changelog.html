@@ -1,0 +1,190 @@
+﻿<!doctype html>
+<html lang="id">
+<head>
+  <noscript><meta http-equiv="refresh" content="0;url=login.html"><style>body{display:none!important}</style></noscript>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Changelog — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" crossorigin="anonymous"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root { --font:'Inter',system-ui,sans-serif; --sidebar-w:220px; --bg:#f0f4ff; --surface:#fff; --surface-alt:#f1f5f9; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --primary:#1d4ed8; --primary-dark:#1e3a8a; --sidebar-bg:linear-gradient(180deg,#1e3a8a 0%,#1d4ed8 100%); --radius:14px; --shadow:0 4px 24px -8px rgba(15,23,42,.15); }
+    body { margin:0; font-family:var(--font); background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+    .sidebar { width:var(--sidebar-w); min-height:100vh; background:var(--sidebar-bg); display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; scrollbar-width:thin; }
+    .sidebar::-webkit-scrollbar { width:4px; } .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:4px; }
+    .sidebar-brand { padding:18px 16px 12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; border-bottom:1px solid rgba(255,255,255,.12); }
+    .brand-icon { width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; }
+    .brand-name { font-size:13px; font-weight:800; color:#fff; letter-spacing:.04em; text-transform:uppercase; }
+    .brand-sub { font-size:10px; color:rgba(255,255,255,.65); }
+    .brand-badge { font-size:9px; background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); border-radius:10px; padding:2px 8px; font-weight:600; }
+    .nav-section { padding:8px 10px 4px; }
+    .nav-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.4); padding:4px 6px 6px; }
+    .nav-item { display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:10px; font-size:12px; font-weight:600; color:rgba(255,255,255,.82); cursor:pointer; transition:all .15s; border:1px solid transparent; margin-bottom:1px; white-space:nowrap; overflow:hidden; }
+    .nav-item:hover { background:rgba(255,255,255,.12); color:#fff; } .nav-item.active { background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.35); }
+    .nav-item .ni { width:18px; text-align:center; font-size:14px; flex-shrink:0; }
+    .badge-new { margin-left:auto; background:#ef4444; color:#fff; font-size:8px; font-weight:700; padding:2px 5px; border-radius:6px; }
+    .sidebar-footer { margin-top:auto; padding:12px 10px; }
+    .btn-logout { width:100%; padding:9px; border-radius:12px; border:none; background:rgba(255,255,255,.15); color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .btn-logout:hover { background:rgba(239,68,68,.35); }
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-width:0; }
+    .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+    .topbar-left h1 { margin:0; font-size:17px; font-weight:700; } .topbar-left p { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .topbar-actions { display:flex; align-items:center; gap:8px; }
+    .tb-user { display:flex; flex-direction:column; align-items:flex-end; } .tb-user strong { font-size:12px; } .tb-user span { font-size:10px; color:var(--muted); }
+    .content { padding:20px 24px; display:flex; flex-direction:column; gap:16px; max-width:800px; }
+    .version-banner { border-radius:var(--radius); padding:20px 24px; background:linear-gradient(135deg,#1e3a8a,#1d4ed8); color:#fff; box-shadow:var(--shadow); display:flex; align-items:center; gap:16px; }
+    .ver-num { font-size:32px; font-weight:800; }
+    .ver-date { font-size:12px; opacity:.8; }
+    .ver-label { background:rgba(255,255,255,.2); padding:3px 10px; border-radius:12px; font-size:11px; font-weight:700; margin-left:8px; }
+    .timeline { position:relative; padding-left:32px; }
+    .timeline::before { content:''; position:absolute; left:12px; top:0; bottom:0; width:2px; background:var(--border); }
+    .timeline-entry { position:relative; margin-bottom:24px; }
+    .timeline-dot { position:absolute; left:-26px; top:8px; width:14px; height:14px; border-radius:50%; border:2px solid var(--surface); }
+    .dot-new { background:#1d4ed8; } .dot-fix { background:#16a34a; } .dot-imp { background:#d97706; }
+    .version-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 20px; box-shadow:var(--shadow); }
+    .version-card-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+    .v-tag { font-size:14px; font-weight:800; color:var(--primary); font-family:monospace; }
+    .v-date { font-size:11px; color:var(--muted); }
+    .v-type { font-size:9px; font-weight:700; padding:2px 7px; border-radius:8px; }
+    .vt-major { background:rgba(220,38,38,.12); color:#b91c1c; } .vt-minor { background:rgba(37,99,235,.12); color:#1d4ed8; } .vt-patch { background:rgba(22,163,74,.12); color:#15803d; }
+    .change-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
+    .change-list li { display:flex; align-items:flex-start; gap:8px; font-size:12px; }
+    .change-list li::before { content:''; width:6px; height:6px; border-radius:50%; margin-top:6px; flex-shrink:0; }
+    .cl-new li::before { background:#1d4ed8; } .cl-fix li::before { background:#16a34a; } .cl-break li::before { background:#dc2626; }
+    .feat-tag { font-size:9px; font-weight:700; padding:2px 6px; border-radius:6px; flex-shrink:0; }
+    .ft-new { background:rgba(37,99,235,.1); color:#1d4ed8; } .ft-fix { background:rgba(22,163,74,.1); color:#15803d; } .ft-break { background:rgba(220,38,38,.1); color:#b91c1c; }
+  </style>
+  <script src="../assets/js/api.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+    <div><div class="brand-name">RT/RW Billing</div><div class="brand-sub">Billing Management</div></div>
+    <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Utama</div>
+    <a class="nav-item" href="../pages/index.html"><span class="ni"><i class="bi bi-speedometer2"></i></span>Dashboard</a>
+    <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+    <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+    <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+    <a class="nav-item" href="laporan.html"><span class="ni"><i class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+    <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+    <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+    <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+    <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi <span class="badge-new">NEW</span></a>
+    <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Infrastruktur</div>
+    <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare Tunnel</a>
+    <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+    <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+    <a class="nav-item" href="bookkeeping.html"><span class="ni"><i class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Tools</div>
+    <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik Monitoring</a>
+    <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE Management</a>
+    <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+    <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+    <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen Agen</a>
+    <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+    <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur ODC/ODP</a>
+    <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+    <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat Settings</a>
+    <a class="nav-item" href="payment.html"><span class="ni"><i class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+    <a class="nav-item active" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+  </div>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-left"></i> Logout</button>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Changelog</h1><p>Riwayat pembaruan dan perubahan sistem.</p></div>
+    <div class="topbar-actions">
+      <div class="tb-user"><strong>RT/RW Billing</strong><span>Admin</span></div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="version-banner">
+      <div>
+        <div style="font-size:12px;opacity:.8;font-weight:600">VERSI SAAT INI</div>
+        <div class="ver-num">v2.0.0 <span class="ver-label">STABLE</span></div>
+        <div class="ver-date">Dirilis: 11 April 2026 — Total 19+ halaman aktif</div>
+      </div>
+      <div style="margin-left:auto;font-size:36px;opacity:.4"><i class="bi bi-git"></i></div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-entry">
+        <div class="timeline-dot dot-new"></div>
+        <div class="version-card">
+          <div class="version-card-header">
+            <span class="v-tag">v2.0.0</span>
+            <span class="v-date">11 April 2026</span>
+            <span class="v-type vt-major">MAJOR RELEASE</span>
+          </div>
+          <ul class="change-list cl-new">
+            <li><span class="feat-tag ft-new">NEW</span>Halaman Customer Map dengan Leaflet.js — peta sebaran pelanggan interaktif</li>
+            <li><span class="feat-tag ft-new">NEW</span>Halaman Infrastruktur ODC/ODP — manajemen fiber dengan progress bar port</li>
+            <li><span class="feat-tag ft-new">NEW</span>Halaman Hotspot Management — user aktif, voucher generator, profil</li>
+            <li><span class="feat-tag ft-new">NEW</span>Halaman Manajemen Reseller & Agen dengan sistem komisi</li>
+            <li><span class="feat-tag ft-new">NEW</span>CS Portal dengan sistem tiket support & pencarian pelanggan cepat</li>
+            <li><span class="feat-tag ft-new">NEW</span>Halaman Absensi dengan jam real-time & clock-in/clock-out</li>
+            <li><span class="feat-tag ft-new">NEW</span>WhatsApp Blast dengan template pesan & notifikasi otomatis</li>
+            <li><span class="feat-tag ft-new">NEW</span>Payment Gateway — QRIS, Transfer Bank, GoPay, Midtrans</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-dot dot-fix"></div>
+        <div class="version-card">
+          <div class="version-card-header">
+            <span class="v-tag">v1.5.0</span>
+            <span class="v-date">9 April 2026</span>
+            <span class="v-type vt-minor">Minor Update</span>
+          </div>
+          <ul class="change-list cl-fix">
+            <li><span class="feat-tag ft-new">NEW</span>Halaman Bookkeeping — jurnal kas & Chart.js visualisasi arus kas</li>
+            <li><span class="feat-tag ft-new">NEW</span>Halaman Setoran Kasir — workflow konfirmasi setoran harian</li>
+            <li><span class="feat-tag ft-new">NEW</span>Halaman Stok Barang — inventaris dengan alert stok menipis</li>
+            <li><span class="feat-tag ft-fix">FIX</span>Perbaikan performa loading halaman dashboard</li>
+            <li><span class="feat-tag ft-fix">FIX</span>Fix bug modal tidak menutup saat klik overlay</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-dot dot-imp"></div>
+        <div class="version-card">
+          <div class="version-card-header">
+            <span class="v-tag">v1.0.0</span>
+            <span class="v-date">25 Maret 2026</span>
+            <span class="v-type vt-minor">Initial Release</span>
+          </div>
+          <ul class="change-list cl-new">
+            <li><span class="feat-tag ft-new">NEW</span>Dashboard utama dengan Chart.js — statistik pelanggan, pendapatan</li>
+            <li><span class="feat-tag ft-new">NEW</span>Manajemen Pelanggan — CRUD, filter, ekspor</li>
+            <li><span class="feat-tag ft-new">NEW</span>PPPoE Management dengan integrasi MikroTik RouterOS API</li>
+            <li><span class="feat-tag ft-new">NEW</span>Kasir & Laporan Kasir — proses pembayaran dan cetak struk</li>
+            <li><span class="feat-tag ft-new">NEW</span>Users Management — peran admin/kasir/teknisi</li>
+            <li><span class="feat-tag ft-new">NEW</span>Settings — konfigurasi MikroTik, notifikasi, tema</li>
+            <li><span class="feat-tag ft-new">NEW</span>Backend Node.js + SQLite + JWT Authentication</li>
+            <li><span class="feat-tag ft-new">NEW</span>api.js — centralized API client helper</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

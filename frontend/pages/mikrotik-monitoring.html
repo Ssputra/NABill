@@ -1,0 +1,3321 @@
+﻿<!doctype html>
+<html>
+
+<head>
+  <noscript><meta http-equiv="refresh" content="0;url=login.html"><style>body{display:none!important}</style></noscript>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mikrotik Monitoring - RT/RW Billing</title>
+  <link rel="icon" id="appFavicon" href="/favicon.ico" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="/assets/mobile-theme.css" />
+  <link rel="stylesheet" href="/assets/desktop-theme.css" />
+  <style>
+    :root {
+      --app-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+      --color-bg: #f4f6fb;
+      --color-surface: #ffffff;
+      --color-surface-alt: #f1f5f9;
+      --color-text: #0f172a;
+      --color-muted: #475569;
+      --color-border: #d7dde8;
+      --color-border-strong: #c4cad7;
+      --color-primary: #2563eb;
+      --color-primary-dark: #1d4ed8;
+      --color-success: #16a34a;
+      --color-warning: #d97706;
+      --color-danger: #dc2626;
+      --color-info: #0ea5e9;
+      --chart-download-color: #34d399;
+      --chart-upload-color: #60a5fa;
+      --chart-grid-color: rgba(148, 163, 184, 0.18);
+      --chart-legend-text: #475569;
+      --chart-legend-ring: rgba(15, 23, 42, 0.32);
+      --chart-surface-bg: rgba(248, 250, 252, 0.95);
+      --chart-canvas-bg: rgba(37, 99, 235, 0.03);
+      --chart-border-color: rgba(148, 163, 184, 0.18);
+      --system-panel-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(241, 245, 249, 0.92));
+      --system-panel-border: rgba(148, 163, 184, 0.2);
+      --system-panel-card-bg: rgba(255, 255, 255, 0.88);
+      --system-panel-card-border: rgba(37, 99, 235, 0.18);
+      --system-panel-card-text: #0f172a;
+      --system-panel-caption: rgba(15, 23, 42, 0.55);
+      --system-panel-subtle: rgba(15, 23, 42, 0.72);
+      --resource-track-bg: rgba(15, 23, 42, 0.12);
+      --resource-fill-gradient: linear-gradient(90deg, #2563eb, #38bdf8);
+      --app-background: linear-gradient(160deg, #f8fafc, #ecf1ff 55%, #e2f4ff 100%);
+      color-scheme: light;
+      font-family: var(--app-font-family);
+    }
+
+    :root[data-theme='dark'] {
+      --color-bg: #0f172a;
+      --color-surface: #1f2937;
+      --color-surface-alt: #111827;
+      --color-text: #e2e8f0;
+      --color-muted: #94a3b8;
+      --color-border: rgba(71, 85, 105, 0.65);
+      --color-border-strong: rgba(71, 85, 105, 0.85);
+      --color-primary: #60a5fa;
+      --color-primary-dark: #3b82f6;
+      --color-success: #34d399;
+      --color-warning: #fbbf24;
+      --color-danger: #f87171;
+      --color-info: #38bdf8;
+      --chart-download-color: #4ade80;
+      --chart-upload-color: #93c5fd;
+      --chart-grid-color: rgba(148, 163, 184, 0.32);
+      --chart-legend-text: rgba(226, 232, 240, 0.78);
+      --chart-legend-ring: rgba(148, 163, 184, 0.38);
+      --chart-surface-bg: rgba(15, 23, 42, 0.88);
+      --chart-canvas-bg: rgba(15, 23, 42, 0.55);
+      --chart-border-color: rgba(96, 165, 250, 0.28);
+      --system-panel-bg: linear-gradient(145deg, rgba(30, 41, 59, 0.96), rgba(15, 23, 42, 0.9));
+      --system-panel-border: rgba(71, 85, 105, 0.55);
+      --system-panel-card-bg: rgba(15, 23, 42, 0.76);
+      --system-panel-card-border: rgba(96, 165, 250, 0.26);
+      --system-panel-card-text: rgba(226, 232, 240, 0.92);
+      --system-panel-caption: rgba(148, 163, 184, 0.78);
+      --system-panel-subtle: rgba(226, 232, 240, 0.82);
+      --resource-track-bg: rgba(15, 23, 42, 0.38);
+      --resource-fill-gradient: linear-gradient(90deg, #38bdf8, #6366f1);
+      --app-background: radial-gradient(circle at top, #0b1120 0%, #0f172a 55%, #020617 100%);
+      color-scheme: dark;
+    }
+
+    html { height: 100%; overflow: hidden; }
+    body {
+      margin: 0;
+      height: 100%;
+      font-family: var(--app-font-family);
+      background: var(--app-background);
+      color: var(--color-text);
+      display: flex;
+      overflow: hidden;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .app-shell {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, #1e3a8a, #1d4ed8);
+      padding: 12px 16px 0;
+      color: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 12px 0 32px -26px rgba(15, 23, 42, 0.45);
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+      flex-shrink: 0;
+      padding-bottom: 8px;
+    }
+
+    .sidebar-logo {
+      height: 48px;
+      width: 48px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.18);
+      object-fit: cover;
+    }
+
+    .sidebar-title {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-subtitle {
+      font-size: 10px;
+      opacity: 0.7;
+      font-weight: 500;
+    }
+
+    /* License Status Badge */
+    /* PREMIUM DARK THEME OVERRIDES */
+    body.premium-dark {
+      background: radial-gradient(circle at top, #0b1120 0%, #050914 60%, #000000 100%) !important;
+      color: #e2e8f0 !important;
+    }
+
+    body.premium-dark .sidebar {
+      background: rgba(10, 15, 28, 0.75) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      border-right: 1px solid rgba(0, 210, 255, 0.2) !important;
+      box-shadow: 15px 0 45px rgba(0, 0, 0, 0.6) !important;
+    }
+
+    body.premium-dark .app-topbar,
+    body.premium-dark .page-header,
+    body.premium-dark .panel-card,
+    body.premium-dark .summary-card,
+    body.premium-dark .device-card,
+    body.premium-dark .chart-wrapper {
+      background: rgba(15, 23, 42, 0.6) !important;
+      backdrop-filter: blur(15px) !important;
+      -webkit-backdrop-filter: blur(15px) !important;
+      border: 1px solid rgba(0, 210, 255, 0.25) !important;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 210, 255, 0.05) !important;
+    }
+
+    body.premium-dark .metric-card {
+      background: rgba(15, 23, 42, 0.4) !important;
+      border: 1px solid rgba(0, 210, 255, 0.3) !important;
+      backdrop-filter: blur(10px) !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 210, 255, 0.1) !important;
+    }
+
+    body.premium-dark .metric-card strong {
+      color: #00d2ff !important;
+      text-shadow: 0 0 12px rgba(0, 210, 255, 0.5) !important;
+    }
+
+    body.premium-dark .metric-card.metric-total { border-left: 4px solid #2563eb !important; }
+    body.premium-dark .metric-card.metric-active { border-left: 4px solid #10b981 !important; }
+    body.premium-dark .metric-card.metric-overdue { border-left: 4px solid #ef4444 !important; }
+    body.premium-dark .metric-card.metric-revenue { border-left: 4px solid #a855f7 !important; }
+    body.premium-dark .metric-card.metric-devices { border-left: 4px solid #06b6d4 !important; }
+
+    body.premium-dark .device-header {
+      background: rgba(0, 210, 255, 0.12) !important;
+      border: 1px solid rgba(0, 210, 255, 0.4) !important;
+      color: #00d2ff !important;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.15) !important;
+    }
+
+    body.premium-dark .device-header h2 {
+      color: #00d2ff !important;
+      text-shadow: 0 0 10px rgba(0, 210, 255, 0.3) !important;
+    }
+
+    body.premium-dark .summary-item,
+    body.premium-dark .system-summary-item,
+    body.premium-dark .session-item,
+    body.premium-dark .stat-box,
+    body.premium-dark .empty-state {
+      background: rgba(15, 23, 42, 0.8) !important;
+      border: 1px solid rgba(0, 210, 255, 0.2) !important;
+      color: #fff !important;
+    }
+
+    body.premium-dark footer {
+      color: rgba(0, 210, 255, 0.6) !important;
+    }
+
+    body.premium-dark .summary-item strong,
+    body.premium-dark .system-summary-item strong {
+      color: #00d2ff !important;
+      text-shadow: 0 0 8px rgba(0, 210, 255, 0.4) !important;
+    }
+
+    body.premium-dark .system-panel,
+    body.premium-dark .traffic-panel {
+      background: rgba(0, 0, 0, 0.2) !important;
+      border-color: rgba(0, 210, 255, 0.15) !important;
+    }
+
+    body.premium-dark .btn-header,
+    body.premium-dark .btn.primary,
+    body.premium-dark #applyFilters {
+      background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%) !important;
+      color: #050914 !important;
+      font-weight: 800 !important;
+      border: none !important;
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.4) !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+    }
+
+    body.premium-dark .site-nav a.active {
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.25) 0%, rgba(58, 123, 213, 0.25) 100%) !important;
+      border: 1px solid #00d2ff !important;
+      color: #fff !important;
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.3) !important;
+    }
+
+    body.premium-dark .interface-select select,
+    body.premium-dark .token-box {
+      background: rgba(10, 15, 28, 0.9) !important;
+      border: 1px solid rgba(0, 210, 255, 0.3) !important;
+      color: #00d2ff !important;
+    }
+
+    body.premium-dark .resource-track {
+      background: rgba(0, 0, 0, 0.4) !important;
+      border-color: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    body.premium-dark .resource-fill {
+      background: linear-gradient(90deg, #00d2ff, #3a7bd5) !important;
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.5) !important;
+    }
+
+    body.premium-dark th {
+      background: rgba(10, 15, 28, 0.9) !important;
+      color: #00d2ff !important;
+      border-bottom: 2px solid #00d2ff !important;
+    }
+
+    body.premium-dark tr:hover td {
+      background: rgba(0, 210, 255, 0.08) !important;
+      color: #fff !important;
+    }
+
+    body.premium-dark .sidebar-footer button {
+      background: #00d2ff !important;
+      color: #050914 !important;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.4) !important;
+    }
+
+    body.premium-dark .btn.secondary {
+      background: rgba(15, 23, 42, 0.6) !important;
+      color: #00d2ff !important;
+      border: 1px solid rgba(0, 210, 255, 0.3) !important;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.1) !important;
+    }
+
+    body.premium-dark .btn.whatsapp {
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.4) !important;
+      border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    }
+
+    body.premium-dark .status-badge.success,
+    body.premium-dark .status-chip.good {
+      background: rgba(34, 197, 94, 0.2) !important;
+      color: #4ade80 !important;
+      border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    }
+
+    body.premium-dark .status-badge.error,
+    body.premium-dark .status-chip.bad {
+      background: rgba(248, 113, 113, 0.2) !important;
+      color: #f87171 !important;
+      border: 1px solid rgba(248, 113, 113, 0.3) !important;
+    }
+
+    #licenseStatusBadge {
+      font-size: 9px !important;
+      color: #f59e0b !important;
+      text-decoration: none !important;
+      margin-top: 3px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.1) !important;
+      transition: all 0.2s ease;
+      display: inline-block;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+
+    #licenseStatusBadge:hover {
+      background: rgba(245, 158, 11, 0.2) !important;
+    }
+
+    .brand-icon {
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .site-nav {
+      flex: 1;
+      height: 0;            /* kunci: paksa flex untuk membatasi tinggi */
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 4px 0 8px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.3) transparent;
+    }
+    .site-nav::-webkit-scrollbar { width: 4px; }
+    .site-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.25); border-radius: 4px; }
+
+    .site-nav::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .site-nav::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.3);
+      border-radius: 4px;
+    }
+
+    .site-nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      font-weight: 600;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid transparent;
+      transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .site-nav a .nav-icon {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .site-nav a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.32);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 12px 24px -22px rgba(15, 23, 42, 0.55);
+    }
+
+    .site-nav a.active {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.45);
+      color: #ffffff;
+      box-shadow: 0 18px 36px -24px rgba(15, 23, 42, 0.65);
+    }
+
+    .btn-header {
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 13px;
+      border: 1px solid rgba(226, 232, 240, 0.6);
+      cursor: pointer;
+      color: #e2e8f0;
+      background: rgba(15, 23, 42, 0.2);
+      box-shadow: 0 18px 34px -24px rgba(15, 23, 42, 0.18);
+      transition: transform 0.12s ease, opacity 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+
+    .btn-header:hover {
+      opacity: 0.96;
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 20px 38px -26px rgba(15, 23, 42, 0.32);
+    }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      margin-top: auto;
+      padding: 10px 0 14px;
+    }
+
+    .sidebar-footer button {
+      width: 100%;
+      justify-content: center;
+      padding: 10px 16px;
+      border-radius: 14px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      color: #0f172a;
+      background: #e2e8f0;
+      transition: transform 0.12s ease, box-shadow 0.2s ease;
+    }
+
+    .sidebar-footer button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px -22px rgba(15, 23, 42, 0.55);
+    }
+
+    .app-main {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 20px;
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    /* Only apply max-width on very large screens */
+    @media (min-width: 2200px) {
+      .app-main {
+        max-width: 1800px;
+      }
+    }
+
+    .app-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      background: var(--color-surface);
+      border-radius: 16px;
+      padding: 14px 18px;
+      border: 1px solid var(--color-border);
+      box-shadow: 0 16px 32px -24px rgba(15, 23, 42, 0.18);
+    }
+
+    .topbar-heading {
+      display: grid;
+      gap: 4px;
+    }
+
+    .topbar-heading h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+
+    .topbar-heading p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--color-muted);
+    }
+
+    .topbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-info {
+      display: grid;
+      gap: 2px;
+      justify-items: end;
+    }
+
+    .user-info strong {
+      font-size: 13px;
+      color: var(--color-text);
+    }
+
+    .user-info span {
+      font-size: 11px;
+      color: var(--color-muted);
+    }
+
+    .page-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .topbar-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .shell {
+      width: 100%;
+      display: grid;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--color-surface);
+      color: var(--color-text);
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--color-border);
+      box-shadow: 0 12px 28px -20px rgba(15, 23, 42, 0.18);
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .page-header p {
+      margin: 3px 0 0;
+      font-size: 12px;
+      color: var(--color-muted);
+    }
+
+    .hero-metrics {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(5, 1fr);
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .metric-card {
+      min-width: 0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: none;
+      display: grid;
+      gap: 4px;
+      box-shadow: 0 10px 20px -16px rgba(15, 23, 42, 0.35);
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.08), transparent 55%);
+      pointer-events: none;
+    }
+
+    .metric-card span {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.82);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .metric-card strong {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .metric-card.metric-total {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    }
+
+    .metric-card.metric-active {
+      background: linear-gradient(135deg, #047857, #10b981);
+    }
+
+    .metric-card.metric-overdue {
+      background: linear-gradient(135deg, #b91c1c, #ef4444);
+    }
+
+    .metric-card.metric-revenue {
+      background: linear-gradient(135deg, #6d28d9, #a855f7);
+    }
+
+    .metric-card.metric-devices {
+      background: linear-gradient(135deg, #0e7490, #06b6d4);
+    }
+
+    @media (max-width: 1200px) {
+      .hero-metrics {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-metrics {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .metric-card {
+        padding: 8px 10px;
+      }
+
+      .metric-card strong {
+        font-size: 14px;
+      }
+    }
+
+    .panel-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 768px) {
+      .panel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-card {
+      background: var(--color-surface);
+      border-radius: 16px;
+      padding: 16px 18px;
+      border: 1px solid var(--color-border);
+      box-shadow: 0 18px 36px -26px rgba(15, 23, 42, 0.2);
+      display: grid;
+      gap: 14px;
+      color: var(--color-text);
+    }
+
+    .panel-card.summary-card,
+    .panel-card.activity-card,
+    .panel-card.finance-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.94));
+      border: 1px solid rgba(59, 130, 246, 0.24);
+    }
+
+    .panel-card.summary-card .panel-header h2,
+    .panel-card.activity-card .panel-header h2,
+    .panel-card.finance-card .panel-header h2 {
+      color: #0f172a;
+    }
+
+    .panel-card.summary-card .panel-header p,
+    .panel-card.activity-card .panel-header p,
+    .panel-card.finance-card .panel-header p {
+      color: var(--color-muted);
+    }
+
+    .panel-card.summary-card .chip,
+    .panel-card.activity-card .chip,
+    .panel-card.finance-card .chip {
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--color-primary-dark);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    .summary-item {
+      display: grid;
+      gap: 3px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-alt);
+      color: var(--color-text);
+    }
+
+    .summary-item span {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+
+    .summary-item strong {
+      font-size: 15px;
+      color: var(--color-primary-dark);
+    }
+
+    .summary-item.stat-total,
+    .summary-item.stat-active,
+    .summary-item.stat-suspended,
+    .summary-item.stat-terminated,
+    .summary-item.stat-new,
+    .summary-item.stat-services {
+      border: none;
+      color: #ffffff;
+      box-shadow: 0 16px 32px -24px rgba(15, 23, 42, 0.32);
+    }
+
+    .summary-item.stat-total span,
+    .summary-item.stat-active span,
+    .summary-item.stat-suspended span,
+    .summary-item.stat-terminated span,
+    .summary-item.stat-new span,
+    .summary-item.stat-services span,
+    .summary-item.stat-total strong,
+    .summary-item.stat-active strong,
+    .summary-item.stat-suspended strong,
+    .summary-item.stat-terminated strong,
+    .summary-item.stat-new strong,
+    .summary-item.stat-services strong {
+      color: #ffffff;
+    }
+
+    .summary-item.stat-total {
+      background: linear-gradient(140deg, #1d4ed8, #3b82f6);
+    }
+
+    .summary-item.stat-active {
+      background: linear-gradient(140deg, #047857, #22c55e);
+    }
+
+    .summary-item.stat-suspended {
+      background: linear-gradient(140deg, #b45309, #f59e0b);
+    }
+
+    .summary-item.stat-terminated {
+      background: linear-gradient(140deg, #b91c1c, #f87171);
+    }
+
+    .summary-item.stat-new {
+      background: linear-gradient(140deg, #6d28d9, #a855f7);
+    }
+
+    .summary-item.stat-services {
+      background: linear-gradient(140deg, #0f766e, #14b8a6);
+    }
+
+    .summary-item.warning {
+      border-color: rgba(234, 179, 8, 0.28);
+      background: rgba(255, 251, 235, 0.9);
+    }
+
+    .panel-card.finance-card .finance-list li {
+      background: var(--color-surface);
+      box-shadow: 0 16px 32px -26px rgba(15, 23, 42, 0.2);
+      color: var(--color-text);
+    }
+
+    .panel-card.finance-card .finance-list li span {
+      color: var(--color-muted);
+    }
+
+    .panel-card.activity-card .log-table {
+      background: var(--color-surface-alt);
+      box-shadow: inset 0 0 0 1px rgba(226, 232, 240, 0.6);
+    }
+
+    .panel-card.activity-card table {
+      color: var(--color-text);
+    }
+
+    .panel-card.activity-card th {
+      background: var(--color-surface-alt);
+      color: var(--color-muted);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .panel-card.activity-card td {
+      border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+    }
+
+    .panel-card.activity-card tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .finance-card {
+      background: linear-gradient(135deg, rgba(210, 245, 255, 0.96), rgba(191, 219, 254, 0.92));
+      border: 1px solid rgba(59, 130, 246, 0.26);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .panel-header p {
+      margin: 4px 0 0;
+      font-size: 11px;
+      color: rgba(15, 23, 42, 0.65);
+    }
+
+    .finance-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .finance-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      box-shadow: 0 10px 20px -18px rgba(15, 23, 42, 0.16);
+    }
+
+    .finance-list li span {
+      font-size: 11px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+
+    .finance-list li strong {
+      font-size: 14px;
+      color: var(--color-primary-dark);
+    }
+
+    .content {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media (max-width: 1200px) {
+      .content {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .device-card {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 12px 14px 14px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 16px 32px -22px rgba(15, 23, 42, 0.2);
+      color: #0f172a;
+      display: grid;
+      gap: 10px;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .device-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, 1fr);
+      overflow: hidden;
+    }
+
+    @media (max-width: 900px) {
+      .device-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .device-grid.single-device {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .device-card .meta-subtitle {
+      margin: 2px 0 0;
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    .device-card .chip {
+      align-self: center;
+    }
+
+    .device-controls {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 4px;
+    }
+
+    .device-controls .interface-select {
+      background: rgba(15, 23, 42, 0.32);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 4px 8px;
+      border-radius: 10px;
+      box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.12);
+    }
+
+    .device-body {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, 1fr);
+      align-items: stretch;
+      overflow: hidden;
+    }
+
+    @media (max-width: 640px) {
+      .device-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .device-column {
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.12);
+      display: grid;
+      gap: 10px;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .traffic-panel {
+      background: linear-gradient(160deg, rgba(14, 116, 144, 0.45), rgba(59, 130, 246, 0.32));
+    }
+
+    .system-panel {
+      background: var(--system-panel-bg);
+      color: var(--color-text);
+      border: 1px solid var(--system-panel-border);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: rgba(15, 23, 42, 0.45);
+      border-radius: 16px;
+      border: 1px dashed rgba(148, 163, 184, 0.4);
+      color: #e2e8f0;
+      font-size: 13px;
+    }
+
+    .stat-box.status.good {
+      background: rgba(16, 185, 129, 0.22);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .stat-box.status.warning {
+      background: rgba(251, 191, 36, 0.24);
+      border-color: rgba(251, 191, 36, 0.35);
+    }
+
+    .stat-box.status.error {
+      background: rgba(248, 113, 113, 0.24);
+      border-color: rgba(248, 113, 113, 0.4);
+    }
+
+    .device-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: linear-gradient(125deg, rgba(59, 130, 246, 0.25), rgba(14, 116, 144, 0.22));
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
+    }
+
+    .device-header h2 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .device-header h2::before {
+      content: '\1F4C8';
+      font-size: 14px;
+    }
+
+    .interface-select {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.25);
+      border-radius: 8px;
+      padding: 4px 8px;
+    }
+
+    .interface-select label {
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .interface-select select {
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 6px;
+      padding: 3px 8px;
+      color: #f8fafc;
+      font-size: 10px;
+      outline: none;
+    }
+
+    .traffic-stats {
+      display: none;
+    }
+
+    .stat-box {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.35));
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: grid;
+      gap: 4px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.2);
+      position: relative;
+      overflow: hidden;
+      min-height: 100%;
+    }
+
+    .stat-box h3 {
+      margin: 0;
+      font-size: 9px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(226, 232, 240, 0.7);
+    }
+
+    .stat-box strong {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .stat-box.status {
+      background: linear-gradient(160deg, rgba(59, 130, 246, 0.26), rgba(59, 130, 246, 0.12));
+      border: 1px solid rgba(59, 130, 246, 0.38);
+    }
+
+    .stat-box.status.good {
+      background: linear-gradient(160deg, rgba(16, 185, 129, 0.28), rgba(59, 130, 246, 0.18));
+      border-color: rgba(16, 185, 129, 0.45);
+    }
+
+    .stat-box.status.warning {
+      background: linear-gradient(160deg, rgba(251, 191, 36, 0.32), rgba(59, 130, 246, 0.15));
+      border-color: rgba(251, 191, 36, 0.45);
+    }
+
+    .stat-box.status.error {
+      background: linear-gradient(160deg, rgba(248, 113, 113, 0.35), rgba(59, 130, 246, 0.1));
+      border-color: rgba(248, 113, 113, 0.5);
+    }
+
+    .chart-wrapper {
+      background: var(--chart-surface-bg);
+      border-radius: 10px;
+      padding: 8px 10px 12px;
+      border: 1px solid var(--chart-border-color);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 10px 22px -18px rgba(15, 23, 42, 0.14);
+      display: grid;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .chart-wrapper header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      color: var(--color-text);
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 8px;
+      font-size: 9px;
+      color: var(--chart-legend-text);
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 0 1px var(--chart-legend-ring);
+    }
+
+    .legend-dot.legend-dot-download {
+      background: var(--chart-download-color);
+    }
+
+    .legend-dot.legend-dot-upload {
+      background: var(--chart-upload-color);
+    }
+
+    .chart-wrapper header h3 {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .chart-wrapper header h3::before {
+      content: '\1F4CA';
+      font-size: 12px;
+    }
+
+    .chart-canvas {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      overflow: hidden;
+      background: var(--chart-canvas-bg);
+      border-radius: 8px;
+      border: 1px solid var(--chart-border-color);
+    }
+
+    .chart-canvas .chart-surface {
+      width: 100%;
+      height: 100%;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-color-gradient));
+      color: #fff;
+      box-shadow: 0 12px 24px -18px rgba(37, 99, 235, 0.95);
+    }
+
+    .btn.whatsapp {
+      background: linear-gradient(135deg, #22c55e, #15803d);
+      color: #f8fafc;
+      box-shadow: 0 12px 24px -18px rgba(34, 197, 94, 0.95);
+    }
+
+    .btn.secondary {
+      background: rgba(226, 232, 240, 0.55);
+      color: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .status-chip {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.12);
+      color: #1d4ed8;
+      font-weight: 600;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-chip.good {
+      background: rgba(34, 197, 94, 0.14);
+      color: #0f766e;
+    }
+
+    .status-chip.bad {
+      background: rgba(248, 113, 113, 0.18);
+      color: #b91c1c;
+    }
+
+    .token-box {
+      background: #0b1120;
+      color: #e0f2fe;
+      padding: 12px;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      font-size: 11px;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.25);
+      max-height: 120px;
+      overflow: auto;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    /* Unified Mobile Header - Hidden on Desktop */
+    /* Standardized Mobile Menu Toggle */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      width: 50px;
+      height: 50px;
+      background: var(--color-primary);
+      color: white;
+      border-radius: 50%;
+      border: none;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .mobile-menu-toggle:active {
+      transform: scale(0.9);
+    }
+
+    @media (max-width: 1024px) {
+      .app-shell {
+        display: block !important;
+      }
+
+      .mobile-menu-toggle {
+        display: flex !important;
+      }
+
+      .sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0 !important;
+        width: 280px !important;
+        height: 100vh !important;
+        z-index: 2100;
+        transform: translateX(-101%) !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        display: flex !important;
+      }
+
+      .sidebar-open .sidebar {
+        transform: translateX(0) !important;
+        box-shadow: 12px 0 32px -16px rgba(15, 23, 42, 0.45) !important;
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(2px);
+        z-index: 2050;
+      }
+
+      .sidebar-open .sidebar-overlay {
+        display: block !important;
+      }
+
+      .app-main {
+        padding: 24px 12px 100px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+      }
+
+      .hero-metrics {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+      }
+
+      .metric-card {
+        padding: 12px !important;
+      }
+
+      .panel-grid,
+      .summary-grid,
+      .content,
+      .device-grid,
+      .device-body {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      .system-summary-grid {
+        grid-template-columns: 1fr 1fr !important;
+        display: grid !important;
+        gap: 10px !important;
+      }
+
+      .panel-card,
+      .device-card,
+      .summary-card {
+        padding: 12px !important;
+        border-radius: 12px !important;
+      }
+
+      /* Device Monitoring Specifics */
+      .device-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        text-align: center;
+      }
+
+      .device-header div {
+        margin-bottom: 8px;
+      }
+
+      .device-controls {
+        justify-content: center !important;
+        margin-bottom: 8px;
+      }
+
+      .interface-select {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .interface-select select {
+        flex: 1;
+        max-width: 200px;
+      }
+
+      .chart-canvas {
+        height: 180px !important;
+      }
+
+      .traffic-stats {
+        grid-template-columns: 1fr 1fr !important;
+        display: grid !important;
+        gap: 10px !important;
+      }
+
+      /* Fix nested grids */
+      .system-summary-item {
+        padding: 10px !important;
+      }
+
+      /* Touch targets */
+      .btn,
+      .btn-header,
+      .sidebar-footer button {
+        min-height: 44px;
+        width: 100%;
+      }
+
+      .site-nav a {
+        padding: 12px !important;
+        font-size: 14px !important;
+      }
+    }
+
+
+    .summary-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px 18px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 16px 36px -26px rgba(15, 23, 42, 0.2);
+      display: grid;
+      gap: 14px;
+      color: #0f172a;
+    }
+
+    .summary-card.dark {
+      background: linear-gradient(135deg, rgba(30, 64, 175, 0.88), rgba(14, 116, 144, 0.88));
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #e2e8f0;
+    }
+
+    .summary-card.dark .summary-item {
+      background: rgba(15, 23, 42, 0.18);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      color: inherit;
+    }
+
+    .summary-card.dark .summary-item span {
+      color: rgba(226, 232, 240, 0.78);
+    }
+
+    .summary-card.dark .summary-item strong {
+      color: #f8fafc;
+    }
+
+    .summary-card.dark .chip {
+      background: rgba(148, 163, 184, 0.26);
+      color: #f8fafc;
+    }
+
+    .summary-card.dark .chip.good {
+      background: rgba(52, 211, 153, 0.3);
+      color: #bbf7d0;
+    }
+
+    .summary-card.dark .chip.warning {
+      background: rgba(251, 191, 36, 0.35);
+      color: #facc15;
+    }
+
+    .summary-card.dark .chip.error {
+      background: rgba(248, 113, 113, 0.35);
+      color: #fecaca;
+    }
+
+    .summary-card header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 0;
+      background: none;
+      box-shadow: none;
+      color: #0f172a;
+    }
+
+    .summary-card header h2 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      background: rgba(37, 99, 235, 0.1);
+      color: #1d4ed8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      box-shadow: none;
+    }
+
+    .chip.good {
+      background: rgba(34, 197, 94, 0.14);
+      color: #0f766e;
+    }
+
+    .chip.warning {
+      background: rgba(250, 204, 21, 0.18);
+      color: #b45309;
+    }
+
+    .chip.error {
+      background: rgba(248, 113, 113, 0.18);
+      color: #b91c1c;
+    }
+
+    .summary-stats {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      background: rgba(15, 23, 42, 0.08);
+      border-radius: 10px;
+      padding: 8px 10px;
+      border: 1px solid rgba(15, 23, 42, 0.12);
+    }
+
+    .summary-item span {
+      font-size: 10px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #475569;
+    }
+
+    .summary-item strong {
+      font-size: 14px;
+      color: #0f172a;
+    }
+
+    .meta-subtitle {
+      margin: 3px 0 0;
+      font-size: 10px;
+      color: rgba(15, 23, 42, 0.6);
+    }
+
+    .summary-card.dark .meta-subtitle {
+      color: rgba(226, 232, 240, 0.72);
+    }
+
+    .system-summary-grid {
+      display: grid;
+      gap: 6px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+
+    .resource-bars {
+      display: none;
+    }
+
+    .resource-bar {
+      display: grid;
+      gap: 3px;
+    }
+
+    .resource-bar header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #0f172a;
+    }
+
+    .resource-track {
+      position: relative;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.08);
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .resource-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+      transition: width 0.35s ease;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 6px 14px -6px rgba(37, 99, 235, 0.32);
+    }
+
+    .resource-fill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), transparent 60%);
+      opacity: 0.6;
+    }
+
+    .system-summary-item {
+      display: grid;
+      gap: 2px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: var(--system-panel-card-bg);
+      border: 1px solid var(--system-panel-card-border);
+      color: var(--system-panel-card-text);
+      box-shadow: 0 10px 20px -18px rgba(15, 23, 42, 0.14);
+    }
+
+    .system-summary-item span {
+      font-size: 9px;
+    }
+
+    .system-summary-item strong {
+      font-size: 12px;
+    }
+
+    .summary-card.dark .system-summary-item span,
+    :root[data-theme='dark'] .system-panel .system-summary-item span {
+      color: rgba(226, 232, 240, 0.78);
+    }
+
+    .system-updated,
+    .resource-caption {
+      margin: 3px 0 0;
+      font-size: 9px;
+      color: var(--system-panel-caption);
+      letter-spacing: 0.02em;
+    }
+
+    .resource-caption {
+      margin-top: 2px;
+    }
+
+    .summary-card.dark .system-updated,
+    :root[data-theme='dark'] .system-panel .system-updated,
+    :root[data-theme='dark'] .system-panel .resource-caption {
+      color: var(--system-panel-caption);
+    }
+
+    .resource-bars {
+      display: grid;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .resource-bar {
+      display: grid;
+      gap: 3px;
+    }
+
+    .resource-bar header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--system-panel-subtle);
+    }
+
+    .resource-track {
+      height: 6px;
+      border-radius: 999px;
+      background: var(--resource-track-bg);
+      overflow: hidden;
+    }
+
+    .resource-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--resource-fill-gradient);
+      width: 0;
+      transition: width 0.4s ease;
+    }
+
+    .system-meta {
+      display: grid;
+      gap: 12px;
+    }
+
+    .service-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .service-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      font-size: 10px;
+      color: #0f172a;
+    }
+
+    .summary-card.dark .service-badge {
+      background: rgba(15, 23, 42, 0.3);
+      color: #f8fafc;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    .service-badge strong {
+      font-size: 11px;
+    }
+
+    .session-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .session-item {
+      display: grid;
+      gap: 4px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      font-size: 11px;
+      color: #0f172a;
+    }
+
+    .summary-card.dark .session-item {
+      background: rgba(15, 23, 42, 0.26);
+      border-color: rgba(148, 163, 184, 0.28);
+      color: #f8fafc;
+    }
+
+    .session-item header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-weight: 600;
+    }
+
+    .session-item span {
+      color: rgba(15, 23, 42, 0.65);
+    }
+
+    .summary-card.dark .session-item span {
+      color: rgba(226, 232, 240, 0.75);
+    }
+
+    .session-empty {
+      text-align: center;
+      font-size: 11px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.08);
+      color: rgba(15, 23, 42, 0.6);
+    }
+
+    .summary-card.dark .session-empty {
+      background: rgba(15, 23, 42, 0.28);
+      color: rgba(226, 232, 240, 0.75);
+    }
+
+    .interface-breakdown {
+      display: grid;
+      gap: 6px;
+    }
+
+    .interface-breakdown span {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed rgba(15, 23, 42, 0.12);
+      padding-bottom: 3px;
+      font-size: 11px;
+      color: #0f172a;
+    }
+
+    .summary-card.dark .interface-breakdown span {
+      border-color: rgba(148, 163, 184, 0.28);
+      color: #f8fafc;
+    }
+
+    .log-table {
+      max-height: 220px;
+      overflow: auto;
+      border-radius: 10px;
+      box-shadow: inset 0 0 0 1px rgba(226, 232, 240, 0.4);
+    }
+
+    .summary-card.logs table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.96);
+      table-layout: fixed;
+      border: 1px solid rgba(226, 232, 240, 0.6);
+    }
+
+    .summary-card.logs th,
+    .summary-card.logs td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+      text-align: left;
+      font-size: 11px;
+      color: #0f172a;
+      word-break: break-word;
+    }
+
+    .summary-card.logs tbody td:last-child,
+    .summary-card.logs thead th:last-child {
+      text-align: center;
+    }
+
+    .summary-card.logs th {
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 10px;
+    }
+
+    .summary-card.logs tbody tr:hover {
+      background: rgba(37, 99, 235, 0.08);
+    }
+
+    .status-badge.success {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+    }
+
+    .status-badge.error {
+      background: rgba(248, 113, 113, 0.15);
+      color: #b91c1c;
+    }
+
+    .summary-card.revenue {
+      background: linear-gradient(135deg, rgba(217, 249, 157, 0.9), rgba(165, 243, 252, 0.9));
+      border: 1px solid rgba(32, 211, 238, 0.3);
+      color: #0f172a;
+    }
+
+    .summary-card.revenue .summary-item {
+      background: rgba(15, 23, 42, 0.08);
+      border-color: rgba(15, 23, 42, 0.12);
+    }
+
+    .summary-card.revenue .summary-item span {
+      color: rgba(15, 23, 42, 0.7);
+    }
+
+    .summary-card.revenue .summary-item strong {
+      color: #0f172a;
+    }
+
+    /* ===== SIDEBAR OVERRIDE: Sama persis dengan stok.html ===== */
+    html { height: auto; overflow: auto; }
+    body { margin:0; font-family:var(--app-font-family); background:var(--app-background); color:var(--color-text); display:flex; min-height:100vh; overflow:auto; height:auto; }
+    .app-shell { width:100%; min-height:100vh; display:block; height:auto; overflow:auto; }
+    .sidebar {
+      width: 220px !important;
+      min-height: 100vh !important;
+      height: auto !important;
+      background: linear-gradient(180deg,#1e3a8a 0%,#1d4ed8 100%) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      position: fixed !important;
+      left: 0 !important; top: 0 !important; bottom: 0 !important;
+      z-index: 100 !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      scrollbar-width: thin !important;
+      padding: 0 !important;
+    }
+    .sidebar::-webkit-scrollbar { width:4px; }
+    .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:4px; }
+    .sidebar-brand { padding:18px 16px 12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; border-bottom:1px solid rgba(255,255,255,.12); flex-shrink:0; }
+    .brand-icon-box { width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; }
+    .brand-name { font-size:13px; font-weight:800; color:#fff; letter-spacing:.04em; text-transform:uppercase; }
+    .brand-sub  { font-size:10px; color:rgba(255,255,255,.65); font-weight:500; }
+    .brand-badge { font-size:9px; background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); border-radius:10px; padding:2px 8px; font-weight:600; margin-top:2px; }
+    .nav-section { padding:8px 10px 4px; }
+    .nav-label   { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.4); padding:4px 6px 6px; }
+    .nav-item {
+      display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:10px;
+      font-size:12px; font-weight:600; color:rgba(255,255,255,.82); cursor:pointer;
+      transition:all .15s; border:1px solid transparent; margin-bottom:1px;
+      text-decoration:none;
+    }
+    .nav-item:hover  { background:rgba(255,255,255,.12); color:#fff; }
+    .nav-item.active { background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.35); }
+    .nav-item .ni { width:18px; text-align:center; font-size:14px; flex-shrink:0; }
+    .badge-new { margin-left:auto; background:#ef4444; color:#fff; font-size:8px; font-weight:700; padding:2px 5px; border-radius:6px; }
+    .sidebar-footer-wrap { margin-top:auto; padding:12px 10px; flex-shrink:0; }
+    .btn-logout { width:100%; padding:9px; border-radius:12px; border:none; background:rgba(255,255,255,.15); color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .15s; }
+    .btn-logout:hover { background:rgba(239,68,68,.35); }
+    /* Main content offset dari fixed sidebar */
+    .app-main { margin-left: 220px; flex:1; display:flex; flex-direction:column; min-width:0; }
+    /* Hide old sidebar elements */
+    .sidebar-header, .site-nav, .sidebar-footer { display:none !important; }
+    /* ===== END SIDEBAR OVERRIDE ===== */
+
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon-box"><i class="bi bi-router-fill"></i></div>
+        <div>
+          <div class="brand-name">RT/RW Billing</div>
+          <div class="brand-sub">Billing Management</div>
+        </div>
+        <div class="brand-badge" id="licenseStatusBadge">✦ v2.0 — Admin</div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Utama</div>
+        <a class="nav-item" href="../pages/index.html"><span class="ni"><i class="bi bi-speedometer2"></i></span>Dashboard</a>
+        <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+        <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+        <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+        <a class="nav-item" href="laporan.html"><span class="ni"><i class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+        <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+        <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+        <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+        <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi <span class="badge-new">NEW</span></a>
+        <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Infrastruktur</div>
+        <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare Tunnel</a>
+        <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+        <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+        <a class="nav-item" href="bookkeeping.html"><span class="ni"><i class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Tools</div>
+        <a class="nav-item active" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik Monitoring</a>
+        <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE Management</a>
+        <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+        <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+        <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen Agen</a>
+        <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+        <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur ODC/ODP</a>
+        <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+        <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat Settings</a>
+        <a class="nav-item" href="payment.html"><span class="ni"><i class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+        <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+      </div>
+
+      <div class="sidebar-footer-wrap">
+        <button class="btn-logout" id="logout"><i class="bi bi-box-arrow-left"></i> Logout</button>
+      </div>
+    </aside>
+
+    <div class="app-main">
+
+      <header class="app-topbar">
+        <div class="topbar-heading">
+          <h1 id="topbarTitle">Mikrotik Monitoring</h1>
+          <p id="topbarSubtitle">Pantau trafik, resource, dan status perangkat Mikrotik secara realtime.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-left:auto;">
+          <div data-theme-toggle-container></div>
+          <div class="user-info" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+            <strong id="topbarUserName">-</strong>
+            <span id="topbarUserRole">-</span>
+          </div>
+        </div>
+      </header>
+      <div class="page-shell">
+        <div class="topbar-actions">
+          <button id="refreshDevices" class="btn-header hidden">Refresh Devices</button>
+        </div>
+        <main class="shell">
+          <header class="page-header">
+            <div>
+              <h1>📊 Mikrotik Monitoring</h1>
+              <p id="subtitle">Monitoring realtime traffic dan resource perangkat Mikrotik.</p>
+            </div>
+          </header>
+
+          <section class="device-grid" id="devicesContainer">
+            <div class="empty-state">Memuat perangkat Mikrotik...</div>
+          </section>
+
+          <footer>
+            &copy;
+            <script>document.write(new Date().getFullYear());</script> <span id="brandNameFooter">RT/RW Billing</span> ·
+            <span id="footerTextDisplay">Dibangun untuk mempermudah pengelolaan pelanggan.</span>
+          </footer>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="/assets/mobile-theme.js"></script>
+  <script src="/assets/desktop-theme-init.js"></script>
+  <script>
+    window.toggleSidebar = () => {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.sidebar-overlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+    };
+
+    window.closeSidebar = () => {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.sidebar-overlay');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+    };
+
+    const subtitle = document.getElementById('subtitle');
+    const devicesContainer = document.getElementById('devicesContainer');
+
+    subtitle.textContent = 'Memuat perangkat Mikrotik...';
+
+    // Load license status badge (same format as dashboard)
+    (async function loadLicenseStatus() {
+      try {
+        const res = await fetch('/api/license/status');
+        const data = await res.json();
+        const badge = document.getElementById('licenseStatusBadge');
+        if (!badge) return;
+
+        // Format expiry date
+        let expiryText = '';
+        if (data.expiresAt) {
+          const expiryDate = new Date(data.expiresAt);
+          const formattedDate = expiryDate.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          expiryText = ` (s/d ${formattedDate})`;
+        }
+
+        // Color rules:
+        // - Enterprise/activated key (licensed and NOT TRIAL) => green
+        // - Trial or not activated (TRIAL or unlicensed) => yellow
+        const isEnterpriseActive = !!data.licensed && String(data.type || '').toUpperCase() !== 'TRIAL';
+        const color = isEnterpriseActive ? '#22c55e' : '#f59e0b';
+        const bg = isEnterpriseActive ? 'rgba(34, 197, 94, 0.12)' : 'rgba(245, 158, 11, 0.12)';
+        const border = isEnterpriseActive ? '1px solid rgba(34, 197, 94, 0.35)' : '1px solid rgba(245, 158, 11, 0.35)';
+
+        badge.style.setProperty('color', color, 'important');
+        badge.style.setProperty('background', bg, 'important');
+        badge.style.setProperty('border', border, 'important');
+
+        if (data.licensed) {
+          badge.textContent = '🔑 ' + data.type + expiryText;
+          badge.title = data.daysRemaining !== null ? `${data.daysRemaining} hari lagi` : 'Unlimited';
+        } else {
+          badge.textContent = '🔑 TRIAL';
+          badge.title = 'Belum aktivasi';
+        }
+      } catch (e) {
+        const badge = document.getElementById('licenseStatusBadge');
+        if (badge) badge.textContent = '🔑 -';
+      }
+    })();
+
+    // Gunakan cookie auth_session (sudah di-set server saat login)
+    // Juga support Bearer token dari localStorage sebagai fallback
+    const token = localStorage.getItem('billing_token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    // Cookie auth_session akan dikirim otomatis oleh browser
+
+    const root = document.documentElement;
+    const brandNameHeader = document.getElementById('brandNameHeader');
+    const brandNameFooter = document.getElementById('brandNameFooter');
+    const footerTextDisplay = document.getElementById('footerTextDisplay');
+    const faviconEl = document.getElementById('appFavicon');
+    const brandLogo = document.getElementById('brandLogo');
+    const brandEmoji = document.getElementById('brandEmoji');
+    const topbarTitle = document.getElementById('topbarTitle');
+    const topbarSubtitle = document.getElementById('topbarSubtitle');
+    const topbarUserName = document.getElementById('topbarUserName');
+    const topbarUserRole = document.getElementById('topbarUserRole');
+    const tenantsMenuLink = document.getElementById('tenantsMenuLink');
+
+    const normalizeHex = (value) => {
+      if (!value) return null;
+      const trimmed = String(value).trim();
+      if (!trimmed) return null;
+      return trimmed.startsWith('#') ? trimmed : `#${trimmed}`;
+    };
+
+    const normalizeAssetUrl = (value) => {
+      if (!value) return null;
+      const trimmed = String(value).trim();
+      if (!trimmed) return null;
+      if (/^https?:\/\//i.test(trimmed)) {
+        return trimmed;
+      }
+      const withoutLeading = trimmed.replace(/^\.?(\/)?/, '').replace(/^uploads\//i, 'uploads/');
+      const ensured = withoutLeading.startsWith('uploads/') ? withoutLeading : `uploads/${withoutLeading}`;
+      return `/${ensured.replace(/\/+/g, '/')}`;
+    };
+
+    const adjustColorLuminance = (hex, lum) => {
+      let color = hex.replace(/[^0-9a-f]/gi, '');
+      if (color.length < 6) {
+        color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+      }
+      let result = '#';
+      for (let i = 0; i < 3; i += 1) {
+        const component = parseInt(color.substr(i * 2, 2), 16);
+        const adjusted = Math.min(255, Math.max(0, component + component * lum));
+        result += (`00${Math.round(adjusted).toString(16)}`).slice(-2);
+      }
+      return result;
+    };
+
+    const updateFavicon = (href) => {
+      if (!href) return;
+      if (faviconEl) {
+        faviconEl.href = href;
+        return;
+      }
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = href;
+      document.head.appendChild(link);
+    };
+
+    const applyBranding = (settings = {}) => {
+      const brandName = settings.brandName?.trim() || 'RT/RW Billing';
+      if (brandNameHeader) brandNameHeader.textContent = brandName;
+      if (brandNameFooter) brandNameFooter.textContent = brandName;
+      document.title = `${brandName} - Mikrotik Monitoring`;
+
+      const footerText = settings.footerText?.trim();
+      if (footerTextDisplay) {
+        footerTextDisplay.textContent = footerText || 'Dibangun untuk mempermudah pengelolaan pelanggan.';
+      }
+      if (topbarSubtitle) {
+        topbarSubtitle.textContent = footerText || 'Pantau trafik, resource, dan status perangkat Mikrotik secara realtime.';
+      }
+      if (topbarTitle) {
+        topbarTitle.textContent = 'Mikrotik Monitoring';
+      }
+
+      const primary = normalizeHex(settings.primaryColor);
+      if (primary) {
+        root.style.setProperty('--primary-color', primary);
+        root.style.setProperty('--primary-color-gradient', adjustColorLuminance(primary, -0.2));
+      }
+
+      if (settings.fontFamily) {
+        root.style.setProperty('--app-font-family', settings.fontFamily);
+        document.body.style.fontFamily = settings.fontFamily;
+      }
+
+      const faviconUrl = normalizeAssetUrl(settings.faviconUrl) ?? settings.faviconUrl;
+      if (faviconUrl) {
+        updateFavicon(faviconUrl);
+      }
+
+      const logoUrl = normalizeAssetUrl(settings.logoUrl);
+      if (logoUrl && brandLogo && brandEmoji) {
+        brandLogo.src = logoUrl;
+        brandLogo.classList.remove('hidden');
+        brandEmoji.classList.add('hidden');
+      } else if (brandLogo && brandEmoji) {
+        brandLogo.src = '';
+        brandLogo.classList.add('hidden');
+        brandEmoji.classList.remove('hidden');
+      }
+    };
+
+    const loadBranding = async () => {
+      try {
+        const res = await fetch('/api/settings', { headers });
+        if (!res.ok) {
+          applyBranding();
+          return;
+        }
+        const data = await res.json();
+        applyBranding(data);
+      } catch (error) {
+        applyBranding();
+      }
+    };
+
+    const checkUserRole = async () => {
+      try {
+        const response = await fetch('/auth/me', { headers });
+        if (!response.ok) return;
+        const user = await response.json();
+        if (topbarUserName) {
+          topbarUserName.textContent = user?.fullName || user?.username || 'User';
+        }
+        if (topbarUserRole) {
+          topbarUserRole.textContent = user?.role || '-';
+        }
+        if (tenantsMenuLink) {
+          if (user?.role === 'SUPER_ADMIN') {
+            tenantsMenuLink.classList.remove('hidden');
+          } else {
+            tenantsMenuLink.classList.add('hidden');
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+      }
+    };
+
+    const logoutButton = document.getElementById('logout');
+    if (logoutButton) {
+      logoutButton.onclick = () => {
+        localStorage.removeItem('token');
+        window.location.href = getLoginUrl();
+      };
+    }
+
+    // Backup Database
+    const btnBackup = document.getElementById('btnBackup');
+    if (btnBackup) {
+      btnBackup.onclick = async () => {
+        let success = false;
+        try {
+          btnBackup.disabled = true;
+          btnBackup.textContent = 'Downloading...';
+
+          const token = localStorage.getItem('token');
+          const response = await fetch('/api/system-settings/database/backup/download', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Gagal mendownload backup');
+          }
+
+          const blob = await response.blob();
+          const contentDisposition = response.headers.get('Content-Disposition');
+          let filename = 'backup.db';
+          if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+            if (filenameMatch) {
+              filename = filenameMatch[1];
+            }
+          }
+
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+
+          // Cleanup after small delay
+          setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+            if (a.parentNode) a.parentNode.removeChild(a);
+          }, 100);
+
+          success = true;
+        } catch (error) {
+          console.error('Backup error:', error);
+        } finally {
+          btnBackup.disabled = false;
+          btnBackup.innerHTML = '<span style="font-size: 16px;">💾</span> Backup Database';
+
+          // Show alert only once
+          if (success) {
+            alert('Backup database berhasil didownload!');
+          } else {
+            alert('Gagal mendownload backup database.');
+          }
+        }
+      };
+    }
+
+    // Restore Database
+    const btnRestore = document.getElementById('btnRestore');
+    const restoreFileInput = document.getElementById('restoreFileInput');
+
+    if (btnRestore && restoreFileInput) {
+      btnRestore.onclick = () => {
+        restoreFileInput.click();
+      };
+
+      restoreFileInput.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!confirm('PERINGATAN: Restore database akan mengganti database saat ini. Database lama akan di-backup otomatis. Lanjutkan?')) {
+          restoreFileInput.value = '';
+          return;
+        }
+
+        try {
+          btnRestore.disabled = true;
+          btnRestore.textContent = 'Restoring...';
+
+          const formData = new FormData();
+          formData.append('file', file);
+
+          const token = localStorage.getItem('token');
+          const response = await fetch('/api/system-settings/database/restore', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.message || 'Gagal restore database');
+          }
+
+          alert(result.message || 'Database berhasil di-restore! Silakan restart aplikasi.');
+          restoreFileInput.value = '';
+        } catch (error) {
+          console.error('Restore error:', error);
+          alert('Gagal restore database: ' + error.message);
+          restoreFileInput.value = '';
+        } finally {
+          btnRestore.disabled = false;
+          btnRestore.innerHTML = '<span style="font-size: 16px;">📥</span> Restore Database';
+        }
+      };
+    }
+
+    const toggleSidebar = () => {
+      document.body.classList.toggle('sidebar-open');
+    };
+
+    const closeSidebar = () => {
+      document.body.classList.remove('sidebar-open');
+    };
+
+    window.toggleSidebar = toggleSidebar;
+    window.closeSidebar = closeSidebar;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const overlay = document.querySelector('.sidebar-overlay');
+      if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+      }
+      
+      // Close sidebar when clicking any link in site-nav on mobile
+      document.querySelectorAll('.site-nav a').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 1024) {
+            closeSidebar();
+          }
+        });
+      });
+    });
+    const initMobileTheme = () => {
+      const mobileThemeContainer = document.querySelector('[data-theme-toggle-container-mobile]');
+      if (mobileThemeContainer && !mobileThemeContainer.hasChildNodes()) {
+        const desktopToggle = document.querySelector('[data-theme-toggle-container] button') || document.querySelector('.theme-toggle');
+        if (desktopToggle) {
+          const mobileToggle = desktopToggle.cloneNode(true);
+          mobileToggle.addEventListener('click', () => desktopToggle.click());
+          mobileThemeContainer.appendChild(mobileToggle);
+        }
+      }
+    };
+
+    loadBranding();
+    checkUserRole();
+    initMobileTheme();
+
+    const highlightActiveNav = () => {
+      const navLinks = document.querySelectorAll('.site-nav a[data-nav]');
+      const path = window.location.pathname.replace(/\/$/, '') || '/';
+      navLinks.forEach((link) => {
+        const target = link.getAttribute('href');
+        if (!target) return;
+        const normalizedTarget = target.replace(/\/$/, '');
+        if (normalizedTarget === '#' || normalizedTarget.startsWith('#')) {
+          link.classList.remove('active');
+          return;
+        }
+        if (normalizedTarget === path) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    };
+
+    highlightActiveNav();
+
+    const state = {
+      devices: new Map(),
+      deviceListInterval: null,
+      devicesCount: 0
+    };
+
+    const quickSyncButton = document.getElementById('quickSync');
+    if (quickSyncButton) {
+      quickSyncButton.addEventListener('click', async () => {
+        quickSyncButton.disabled = true;
+        quickSyncButton.textContent = 'Sinkron...';
+        try {
+          await loadDevices();
+        } finally {
+          quickSyncButton.disabled = false;
+          quickSyncButton.textContent = 'Sinkron Mikrotik';
+        }
+      });
+    }
+
+    const heroTotalCustomersEl = document.getElementById('heroTotalCustomers');
+    const heroActiveCustomersEl = document.getElementById('heroActiveCustomers');
+    const heroOverdueInvoicesEl = document.getElementById('heroOverdueInvoices');
+    const heroRevenueMonthEl = document.getElementById('heroRevenueMonth');
+    const heroDevicesConnectedEl = document.getElementById('heroDevicesConnected');
+
+    const getDeviceKey = (instance) => {
+      if (instance?.id) return instance.id;
+      if (instance?.host) {
+        const portPart = instance.port ? `:${instance.port}` : '';
+        return `${instance.host}${portPart}`;
+      }
+      return `instance-${Math.random().toString(36).slice(2)}`;
+    };
+
+    const formatMbps = (value) => `${Number(value || 0).toFixed(2)} Mbps`;
+    const formatPercent = (value) => `${Math.min(100, Math.max(0, Number(value) || 0)).toFixed(0)}%`;
+
+    const chartStates = new Set();
+
+    const buildChartOptions = () => {
+      const computedStyle = getComputedStyle(document.documentElement);
+      const downloadColor = computedStyle.getPropertyValue('--chart-download-color').trim() || '#34d399';
+      const uploadColor = computedStyle.getPropertyValue('--chart-upload-color').trim() || '#60a5fa';
+      const gridColor = computedStyle.getPropertyValue('--chart-grid-color').trim() || 'rgba(148, 163, 184, 0.2)';
+      const legendColor = computedStyle.getPropertyValue('--chart-legend-text').trim() || '#475569';
+      const tooltipTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+
+      return {
+        chart: {
+          type: 'area',
+          height: 130,
+          parentHeightOffset: 0,
+          toolbar: { show: false },
+          foreColor: legendColor,
+          fontFamily: 'inherit',
+          animations: { enabled: true, easing: 'easeinout', speed: 650 }
+        },
+        stroke: { curve: 'smooth', width: 3 },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 0.45,
+            opacityFrom: 0.6,
+            opacityTo: 0.05,
+            stops: [0, 60, 100]
+          }
+        },
+        colors: [downloadColor, uploadColor],
+        series: [
+          { name: 'Download (RX)', data: [] },
+          { name: 'Upload (TX)', data: [] }
+        ],
+        legend: {
+          show: true,
+          position: 'top',
+          horizontalAlign: 'left',
+          fontSize: '12px',
+          markers: { width: 10, height: 10, radius: 12 }
+        },
+        dataLabels: { enabled: false },
+        grid: {
+          borderColor: gridColor,
+          strokeDashArray: 6,
+          padding: { left: 12, right: 12 }
+        },
+        yaxis: {
+          min: 0,
+          labels: {
+            formatter: (value) => `${Number(value || 0).toFixed(2)} Mbps`
+          }
+        },
+        xaxis: {
+          type: 'datetime',
+          labels: {
+            datetimeUTC: false,
+            format: 'HH:mm'
+          }
+        },
+        tooltip: {
+          theme: tooltipTheme,
+          x: { format: 'HH:mm:ss' },
+          y: {
+            formatter: (value) => `${Number(value || 0).toFixed(2)} Mbps`
+          }
+        },
+        noData: { text: 'Belum ada data trafik' }
+      };
+    };
+
+    const createTrafficChart = (container) => {
+      if (!container || !window.ApexCharts) return null;
+
+      const options = buildChartOptions();
+
+      const chart = new ApexCharts(container, options);
+      chart.render();
+      chartStates.add(chart);
+      return chart;
+    };
+
+    const resetTraffic = (deviceState) => {
+      deviceState.elements.downloadRate.textContent = '0.00 Mbps';
+      deviceState.elements.uploadRate.textContent = '0.00 Mbps';
+      deviceState.elements.totalRate.textContent = '0.00 Mbps';
+      deviceState.elements.trafficStatus.textContent = 'Idle';
+      deviceState.elements.trafficStatusBox.classList.remove('good', 'warning', 'error');
+      deviceState.chartData = [];
+      if (deviceState.chart) {
+        deviceState.chart.updateSeries([
+          { name: 'Download (RX)', data: [] },
+          { name: 'Upload (TX)', data: [] }
+        ], true);
+        deviceState.chart.updateOptions({ yaxis: { max: undefined } });
+      }
+    };
+
+    const appendTrafficData = (deviceState, downloadValue, uploadValue, timestampValue) => {
+      if (!deviceState.chart) return;
+      if (!deviceState.chartData) {
+        deviceState.chartData = [];
+      }
+
+      const numericDownload = typeof downloadValue === 'number' ? downloadValue : Number(downloadValue) || 0;
+      const numericUpload = typeof uploadValue === 'number' ? uploadValue : Number(uploadValue) || 0;
+      const timestamp = (() => {
+        if (!timestampValue) return Date.now();
+        const parsed = new Date(timestampValue);
+        return Number.isNaN(parsed.getTime()) ? Date.now() : parsed.getTime();
+      })();
+
+      deviceState.chartData.push({ timestamp, download: numericDownload, upload: numericUpload });
+      if (deviceState.chartData.length > 36) {
+        deviceState.chartData.shift();
+      }
+
+      const downloadSeries = deviceState.chartData.map((item) => [item.timestamp, item.download]);
+      const uploadSeries = deviceState.chartData.map((item) => [item.timestamp, item.upload]);
+      deviceState.chart.updateSeries([
+        { name: 'Download (RX)', data: downloadSeries },
+        { name: 'Upload (TX)', data: uploadSeries }
+      ], true);
+
+      const peakValue = deviceState.chartData.reduce((max, item) => Math.max(max, item.download, item.upload), 0);
+      const suggestedMax = Math.max(5, Math.ceil(peakValue * 1.2));
+      deviceState.chart.updateOptions({ yaxis: { max: suggestedMax } });
+    };
+
+    const updateTrafficStats = (deviceState, down, up, statusText) => {
+      deviceState.elements.downloadRate.textContent = formatMbps(down);
+      deviceState.elements.uploadRate.textContent = formatMbps(up);
+      const total = down + up;
+      deviceState.elements.totalRate.textContent = formatMbps(total);
+      const computed = statusText || (total < 2 ? 'Idle' : total < 20 ? 'Normal' : 'Busy');
+      const normalized = computed.toLowerCase();
+      const statusBox = deviceState.elements.trafficStatusBox;
+      deviceState.elements.trafficStatus.textContent = computed;
+      statusBox.classList.remove('good', 'warning', 'error');
+      if (normalized === 'normal' || normalized === 'aktif') {
+        statusBox.classList.add('good');
+      } else if (normalized === 'busy' || normalized.includes('sibuk')) {
+        statusBox.classList.add('warning');
+      } else if (normalized.includes('gagal') || normalized.includes('error') || normalized.includes('down')) {
+        statusBox.classList.add('error');
+      }
+    };
+
+    const stopTrafficPolling = (deviceState) => {
+      if (deviceState.trafficInterval) {
+        clearInterval(deviceState.trafficInterval);
+        deviceState.trafficInterval = null;
+      }
+    };
+
+    const stopSummaryPolling = (deviceState) => {
+      if (deviceState.summaryInterval) {
+        clearInterval(deviceState.summaryInterval);
+        deviceState.summaryInterval = null;
+      }
+    };
+
+    const applySystemError = (deviceState, message) => {
+      deviceState.elements.statusBadge.textContent = 'Gagal';
+      deviceState.elements.statusBadge.classList.remove('good', 'warning');
+      deviceState.elements.statusBadge.classList.add('error');
+      deviceState.elements.identity.textContent = message;
+    };
+
+    const fetchSystemSummary = async (deviceState) => {
+      const params = new URLSearchParams();
+      if (deviceState.instance.id) {
+        params.set('instanceId', deviceState.instance.id);
+      }
+      const query = params.toString() ? `?${params}` : '';
+      try {
+        const res = await fetch(`/api/mikrotik/summary`, { headers, credentials: 'include' });
+        if (!res.ok) {
+          throw new Error('Gagal memuat ringkasan Mikrotik');
+        }
+        const summary = await res.json();
+
+        const name = summary.identity?.name || deviceState.instance.name || 'Perangkat';
+        const version = summary.identity?.version ? `RouterOS ${summary.identity.version}` : 'Versi tidak diketahui';
+        const board = summary.identity?.board || 'Board unknown';
+        deviceState.elements.identity.textContent = `${name} · ${version} · ${board}`;
+
+        const uptimeText = summary.time?.uptime?.human || '-';
+        deviceState.elements.systemUptime.textContent = uptimeText;
+
+        if (summary.time?.clock && summary.time?.date) {
+          deviceState.elements.systemStartTime.textContent = `${summary.time.date} ${summary.time.clock}`;
+        } else {
+          deviceState.elements.systemStartTime.textContent = '-';
+        }
+
+        const cpuLoad = Number(summary.resources?.cpu?.load ?? 0);
+        deviceState.elements.systemCpu.textContent = `${cpuLoad.toFixed(0)}%`;
+        deviceState.elements.systemCpuDetail.textContent = `${cpuLoad.toFixed(1)}%`;
+        if (summary.resources?.cpu?.cores) {
+          deviceState.elements.systemCpuCores.textContent = summary.resources.cpu.cores;
+        } else {
+          deviceState.elements.systemCpuCores.textContent = 'n/a';
+        }
+        deviceState.elements.systemCpuBar.style.width = formatPercent(cpuLoad);
+
+        const memoryUsed = summary.resources?.memory?.usedFormatted || '-';
+        const memoryTotal = summary.resources?.memory?.totalFormatted || '-';
+        deviceState.elements.systemMemory.textContent = memoryUsed;
+        deviceState.elements.systemMemoryTotal.textContent = memoryTotal;
+        deviceState.elements.systemMemoryDetail.textContent = `${memoryUsed} / ${memoryTotal}`;
+        const memoryPercent = Number(summary.resources?.memory?.usagePercent ?? 0);
+        deviceState.elements.systemMemoryBar.style.width = formatPercent(memoryPercent);
+
+        const storageUsed = summary.resources?.storage?.usedFormatted || '-';
+        const storageTotal = summary.resources?.storage?.totalFormatted || '-';
+        deviceState.elements.systemStorage.textContent = storageUsed;
+        deviceState.elements.systemStorageTotal.textContent = storageTotal;
+        deviceState.elements.systemStorageDetail.textContent = `${storageUsed} / ${storageTotal}`;
+        const storagePercent = Number(summary.resources?.storage?.usagePercent ?? 0);
+        deviceState.elements.systemStorageBar.style.width = formatPercent(storagePercent);
+
+        const updatedAt = summary.timestamp ? new Date(summary.timestamp) : null;
+        deviceState.elements.systemUpdated.textContent = updatedAt ? `Terakhir update: ${updatedAt.toLocaleString('id-ID')}` : 'Terakhir update: -';
+
+        deviceState.elements.statusBadge.textContent = 'Terhubung';
+        deviceState.elements.statusBadge.classList.remove('error', 'warning');
+        deviceState.elements.statusBadge.classList.add('good');
+      } catch (error) {
+        applySystemError(deviceState, error?.message || 'Gagal memuat data Mikrotik');
+      }
+    };
+
+    const startSummaryPolling = (deviceState) => {
+      stopSummaryPolling(deviceState);
+      deviceState.summaryInterval = setInterval(() => fetchSystemSummary(deviceState), 15000);
+    };
+
+    const fetchTraffic = async (deviceState) => {
+      if (!deviceState.selectedInterface) return;
+      const params = new URLSearchParams();
+      if (deviceState.instance.id) {
+        params.set('instanceId', deviceState.instance.id);
+      }
+      const query = params.toString() ? `?${params}` : '';
+      try {
+        const ifaceEncoded = encodeURIComponent(deviceState.selectedInterface);
+        const res = await fetch(`/api/mikrotik/interfaces/${ifaceEncoded}/traffic`, { headers, credentials: 'include' });
+        if (!res.ok) {
+          throw new Error('Tidak dapat membaca traffic');
+        }
+        const data = await res.json();
+        appendTrafficData(deviceState, data.downloadMbps ?? 0, data.uploadMbps ?? 0, data.timestamp);
+        updateTrafficStats(deviceState, data.downloadMbps ?? 0, data.uploadMbps ?? 0, data.status);
+      } catch (error) {
+        updateTrafficStats(deviceState, 0, 0, error?.message || 'Gagal membaca traffic');
+        deviceState.elements.trafficStatusBox.classList.add('error');
+      }
+    };
+
+    const startTrafficPolling = (deviceState) => {
+      stopTrafficPolling(deviceState);
+      deviceState.trafficInterval = setInterval(() => fetchTraffic(deviceState), 5000);
+    };
+
+    const fetchInterfacesForDevice = async (deviceState) => {
+      const select = deviceState.elements.interfaceSelect;
+      select.innerHTML = '<option value="">Memuat interface...</option>';
+      select.disabled = true;
+      deviceState.selectedInterface = null;
+      try {
+        const params = new URLSearchParams();
+        if (deviceState.instance.id) {
+          params.set('instanceId', deviceState.instance.id);
+        }
+        const query = params.toString() ? `?${params}` : '';
+        const res = await fetch(`/api/mikrotik/interfaces-list`, { headers, credentials: 'include' });
+        if (!res.ok) {
+          throw new Error('Gagal memuat interface');
+        }
+        const payload = await res.json();
+        const interfaces = Array.isArray(payload) ? payload : [];
+        if (!interfaces.length) {
+          select.innerHTML = '<option value="">Tidak ada interface aktif</option>';
+          resetTraffic(deviceState);
+          return;
+        }
+
+        select.innerHTML = '';
+        let defaultInterface = null;
+        interfaces.forEach((iface, index) => {
+          const option = document.createElement('option');
+          option.value = iface.name;
+          option.textContent = iface.label || iface.name;
+          option.disabled = !!iface.disabled;
+          select.appendChild(option);
+
+          if (!defaultInterface && !iface.disabled && iface.running) {
+            defaultInterface = iface;
+          }
+          if (index === 0 && !defaultInterface) {
+            defaultInterface = iface;
+          }
+        });
+
+        if (defaultInterface) {
+          select.value = defaultInterface.name;
+          deviceState.selectedInterface = defaultInterface.name;
+        }
+
+        select.disabled = false;
+      } catch (error) {
+        select.innerHTML = `<option value="">${error?.message || 'Gagal memuat interface'}</option>`;
+        resetTraffic(deviceState);
+      }
+    };
+
+    const createDeviceCard = (instance) => {
+      const card = document.createElement('article');
+      card.className = 'device-card';
+      card.dataset.instanceId = instance.id || '';
+      card.innerHTML = `
+          <header class="device-header">
+            <div>
+              <h2>${instance.name || 'Perangkat Mikrotik'}</h2>
+              <p class="meta-subtitle" data-role="identity">Memuat informasi perangkat...</p>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button class="btn btn-sm secondary" style="font-size: 12px; padding: 4px 8px; display: flex; gap: 4px; align-items: center;" onclick="openIsolirModal('${instance.id || ''}')" title="Setup Aturan Isolir Otomatis">
+                <i class="bi bi-shield-lock"></i> Setup Isolir
+              </button>
+              <span class="chip" data-role="status">Memuat...</span>
+            </div>
+          </header>
+          <div class="device-controls">
+            <div class="interface-select">
+              <label>Interface:</label>
+              <select data-role="interfaceSelect" disabled>
+                <option value="">Memuat interface...</option>
+              </select>
+            </div>
+          </div>
+          <div class="device-body">
+            <div class="device-column traffic-panel">
+              <div class="traffic-stats">
+                <div class="stat-box">
+                  <h3>Download</h3>
+                  <strong data-role="downloadRate">0.00 Mbps</strong>
+                </div>
+                <div class="stat-box">
+                  <h3>Upload</h3>
+                  <strong data-role="uploadRate">0.00 Mbps</strong>
+                </div>
+                <div class="stat-box">
+                  <h3>Total</h3>
+                  <strong data-role="totalRate">0.00 Mbps</strong>
+                </div>
+                <div class="stat-box status" data-role="trafficStatusBox">
+                  <h3>Status</h3>
+                  <strong data-role="trafficStatus">Idle</strong>
+                </div>
+              </div>
+              <div class="chart-wrapper">
+                <header>
+                  <h3>Traffic Report (RX/TX)</h3>
+                  <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-dot legend-dot-download"></span> Download (RX)</span>
+                    <span class="legend-item"><span class="legend-dot legend-dot-upload"></span> Upload (TX)</span>
+                  </div>
+                </header>
+                <div class="chart-canvas">
+                  <div class="chart-surface" data-role="trafficChart"></div>
+                </div>
+              </div>
+            </div>
+            <div class="device-column system-panel">
+              <div class="system-summary-grid">
+                <div class="system-summary-item">
+                  <span>Uptime</span>
+                  <strong data-role="systemUptime">-</strong>
+                  <span class="system-updated">Sejak <strong data-role="systemStartTime">-</strong></span>
+                </div>
+                <div class="system-summary-item">
+                  <span>CPU Load</span>
+                  <strong data-role="systemCpu">-</strong>
+                  <span class="system-updated">Core: <strong data-role="systemCpuCores">-</strong></span>
+                </div>
+                <div class="system-summary-item">
+                  <span>Memori</span>
+                  <strong data-role="systemMemory">-</strong>
+                  <span class="system-updated">Total <strong data-role="systemMemoryTotal">-</strong></span>
+                </div>
+                <div class="system-summary-item">
+                  <span>Storage</span>
+                  <strong data-role="systemStorage">-</strong>
+                  <span class="system-updated">Total <strong data-role="systemStorageTotal">-</strong></span>
+                </div>
+              </div>
+              <div class="resource-bars">
+                <div class="resource-bar">
+                  <header>
+                    <span>Penggunaan CPU</span>
+                    <strong data-role="systemCpuDetail">-</strong>
+                  </header>
+                  <div class="resource-track">
+                    <div class="resource-fill" data-role="systemCpuBar"></div>
+                  </div>
+                </div>
+                <div class="resource-bar">
+                  <header>
+                    <span>Memori Terpakai</span>
+                    <strong data-role="systemMemoryDetail">-</strong>
+                  </header>
+                  <div class="resource-track">
+                    <div class="resource-fill" data-role="systemMemoryBar"></div>
+                  </div>
+                </div>
+                <div class="resource-bar">
+                  <header>
+                    <span>Storage Terpakai</span>
+                    <strong data-role="systemStorageDetail">-</strong>
+                  </header>
+                  <div class="resource-track">
+                    <div class="resource-fill" data-role="systemStorageBar"></div>
+                  </div>
+                </div>
+              </div>
+              <p class="system-updated" data-role="systemUpdated">Terakhir update: -</p>
+            </div>
+          </div>
+        `;
+
+      devicesContainer.appendChild(card);
+
+      const elements = {
+        identity: card.querySelector('[data-role="identity"]'),
+        statusBadge: card.querySelector('[data-role="status"]'),
+        interfaceSelect: card.querySelector('[data-role="interfaceSelect"]'),
+        downloadRate: card.querySelector('[data-role="downloadRate"]'),
+        uploadRate: card.querySelector('[data-role="uploadRate"]'),
+        totalRate: card.querySelector('[data-role="totalRate"]'),
+        trafficStatus: card.querySelector('[data-role="trafficStatus"]'),
+        trafficStatusBox: card.querySelector('[data-role="trafficStatusBox"]'),
+        trafficChart: card.querySelector('[data-role="trafficChart"]'),
+        systemUptime: card.querySelector('[data-role="systemUptime"]'),
+        systemStartTime: card.querySelector('[data-role="systemStartTime"]'),
+        systemCpu: card.querySelector('[data-role="systemCpu"]'),
+        systemCpuCores: card.querySelector('[data-role="systemCpuCores"]'),
+        systemCpuDetail: card.querySelector('[data-role="systemCpuDetail"]'),
+        systemCpuBar: card.querySelector('[data-role="systemCpuBar"]'),
+        systemMemory: card.querySelector('[data-role="systemMemory"]'),
+        systemMemoryTotal: card.querySelector('[data-role="systemMemoryTotal"]'),
+        systemMemoryDetail: card.querySelector('[data-role="systemMemoryDetail"]'),
+        systemMemoryBar: card.querySelector('[data-role="systemMemoryBar"]'),
+        systemStorage: card.querySelector('[data-role="systemStorage"]'),
+        systemStorageTotal: card.querySelector('[data-role="systemStorageTotal"]'),
+        systemStorageDetail: card.querySelector('[data-role="systemStorageDetail"]'),
+        systemStorageBar: card.querySelector('[data-role="systemStorageBar"]'),
+        systemUpdated: card.querySelector('[data-role="systemUpdated"]')
+      };
+
+      const deviceState = {
+        instance,
+        card,
+        elements,
+        chart: createTrafficChart(elements.trafficChart),
+        chartData: [],
+        selectedInterface: null,
+        trafficInterval: null,
+        summaryInterval: null
+      };
+
+      elements.interfaceSelect.addEventListener('change', () => {
+        const selectedOption = elements.interfaceSelect.options[elements.interfaceSelect.selectedIndex];
+        deviceState.selectedInterface = selectedOption?.value || null;
+        resetTraffic(deviceState);
+        stopTrafficPolling(deviceState);
+        if (deviceState.selectedInterface) {
+          fetchTraffic(deviceState);
+          startTrafficPolling(deviceState);
+        }
+        fetchSystemSummary(deviceState);
+      });
+
+      const key = getDeviceKey(instance);
+      state.devices.set(key, deviceState);
+      return deviceState;
+    };
+
+    const destroyAllDevices = () => {
+      for (const deviceState of state.devices.values()) {
+        stopTrafficPolling(deviceState);
+        stopSummaryPolling(deviceState);
+        if (deviceState.chart) {
+          chartStates.delete(deviceState.chart);
+          deviceState.chart.destroy();
+        }
+      }
+      state.devices.clear();
+    };
+
+    const cleanupDevices = () => {
+      destroyAllDevices();
+    };
+
+    const loadDeviceData = async (deviceState) => {
+      await fetchInterfacesForDevice(deviceState);
+      await fetchSystemSummary(deviceState);
+      startSummaryPolling(deviceState);
+      if (deviceState.selectedInterface) {
+        await fetchTraffic(deviceState);
+        startTrafficPolling(deviceState);
+      } else {
+        resetTraffic(deviceState);
+      }
+    };
+
+    const formatCurrency = (value) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(Number(value || 0));
+
+    const updateHeroDeviceCount = (value) => {
+      if (heroDevicesConnectedEl) {
+        heroDevicesConnectedEl.textContent = value;
+      }
+    };
+
+    const loadDevices = async () => {
+      devicesContainer.innerHTML = '<div class="empty-state">Memuat perangkat Mikrotik...</div>';
+      destroyAllDevices();
+      state.devicesCount = 0;
+
+      try {
+        const res = await fetch('/api/mikrotik/instances', { headers, credentials: 'include' });
+        if (!res.ok) {
+          throw new Error('Gagal memuat daftar perangkat Mikrotik');
+        }
+        const payload = await res.json();
+        const instances = Array.isArray(payload) ? payload : [];
+        updateHeroDeviceCount(instances.length);
+        if (!instances.length) {
+          devicesContainer.classList.remove('single-device');
+          devicesContainer.innerHTML = '<div class="empty-state">Belum ada perangkat Mikrotik terhubung.</div>';
+          subtitle.textContent = 'Belum ada perangkat Mikrotik yang terhubung ke billing.';
+          return;
+        }
+        devicesContainer.innerHTML = '';
+        if (instances.length === 1) {
+          devicesContainer.classList.add('single-device');
+          const instanceName = instances[0]?.name || 'Perangkat Mikrotik';
+          subtitle.textContent = `Monitoring ${instanceName} yang terhubung ke billing.`;
+        } else {
+          devicesContainer.classList.remove('single-device');
+          subtitle.textContent = `Monitoring ${instances.length} perangkat Mikrotik terhubung.`;
+        }
+
+        // Reset device count
+        state.devicesCount = 0;
+
+        // Step 1: Create all device cards first (charts appear immediately)
+        const deviceStates = [];
+        for (const instance of instances) {
+          deviceStates.push(createDeviceCard(instance));
+        }
+
+        // Step 2: Load data for all devices asynchronously
+        for (const deviceState of deviceStates) {
+          loadDeviceData(deviceState)
+            .then(() => {
+              state.devicesCount += 1;
+              updateHeroDeviceCount(state.devicesCount);
+            })
+            .catch((error) => {
+              console.error('Error loading device:', deviceState.instance.name || deviceState.instance.id, error);
+              if (deviceState.elements.statusBadge) {
+                deviceState.elements.statusBadge.textContent = 'Error';
+                deviceState.elements.statusBadge.classList.add('error');
+              }
+            });
+        }
+
+        // Update count immediately with all devices (they will update as they load)
+        updateHeroDeviceCount(instances.length);
+      } catch (error) {
+        console.error('Error in loadDevices:', error);
+        devicesContainer.classList.remove('single-device');
+        devicesContainer.innerHTML = `<div class="empty-state">${error?.message || 'Gagal memuat perangkat Mikrotik.'}</div>`;
+        subtitle.textContent = 'Gagal memuat perangkat Mikrotik.';
+        updateHeroDeviceCount(0);
+      }
+    };
+
+    const customerStatusEl = document.getElementById('customerStatus');
+    const totalCustomersEl = document.getElementById('totalCustomers');
+    const activeCustomersEl = document.getElementById('activeCustomers');
+    const suspendedCustomersEl = document.getElementById('suspendedCustomers');
+    const terminatedCustomersEl = document.getElementById('terminatedCustomers');
+    const newCustomersEl = document.getElementById('newCustomers');
+    const totalServicesEl = document.getElementById('totalServices');
+    const expiredCustomersEl = document.getElementById('expiredCustomers');
+    const expiredCustomersItem = document.getElementById('expiredCustomersItem');
+    const revenueMonthEl = document.getElementById('revenueMonth');
+    const revenueTodayEl = document.getElementById('revenueToday');
+    const overdueInvoicesEl = document.getElementById('overdueInvoices');
+    const dueSoonInvoicesEl = document.getElementById('dueSoonInvoices');
+    const logRowsEl = document.getElementById('logRows');
+
+    const setChipState = (stateName) => {
+      customerStatusEl.classList.remove('good', 'warning', 'error');
+      if (stateName === 'good') customerStatusEl.classList.add('good');
+      if (stateName === 'warning') customerStatusEl.classList.add('warning');
+      if (stateName === 'error') customerStatusEl.classList.add('error');
+    };
+
+    const setSummaryError = (message) => {
+      customerStatusEl.textContent = message;
+      setChipState('error');
+      logRowsEl.innerHTML = '<tr><td colspan="4">Tidak dapat memuat log.</td></tr>';
+    };
+
+    const fetchSummary = async () => {
+      // console.log('fetchSummary called');
+      try {
+        const res = await fetch('/dashboard/summary', { headers });
+        if (!res.ok) {
+          throw new Error('Gagal memuat ringkasan dashboard');
+        }
+        const summary = await res.json();
+
+        totalCustomersEl.textContent = summary.totals.customers;
+        activeCustomersEl.textContent = summary.totals.activeCustomers;
+        suspendedCustomersEl.textContent = summary.totals.suspendedCustomers;
+        terminatedCustomersEl.textContent = summary.totals.terminatedCustomers;
+        newCustomersEl.textContent = summary.totals.newCustomersThisMonth;
+        totalServicesEl.textContent = summary.totals.services;
+
+        if (heroTotalCustomersEl) heroTotalCustomersEl.textContent = summary.totals.customers;
+        if (heroActiveCustomersEl) heroActiveCustomersEl.textContent = summary.totals.activeCustomers;
+        if (heroOverdueInvoicesEl) heroOverdueInvoicesEl.textContent = summary.invoices.overdue;
+        if (heroRevenueMonthEl) heroRevenueMonthEl.textContent = formatCurrency(summary.revenue.thisMonth);
+
+        revenueMonthEl.textContent = formatCurrency(summary.revenue.thisMonth);
+        revenueTodayEl.textContent = formatCurrency(summary.revenue.today);
+        overdueInvoicesEl.textContent = summary.invoices.overdue;
+        dueSoonInvoicesEl.textContent = summary.invoices.dueSoon;
+
+        if (summary.actionsNeeded?.expiredCustomers != null) {
+          expiredCustomersEl.textContent = summary.actionsNeeded.expiredCustomers;
+          if (summary.actionsNeeded.expiredCustomers > 0) {
+            expiredCustomersItem.classList.add('warning');
+            expiredCustomersItem.style.display = 'flex';
+          } else {
+            expiredCustomersItem.classList.remove('warning');
+            expiredCustomersItem.style.display = 'none';
+          }
+        } else {
+          expiredCustomersItem.style.display = 'none';
+        }
+
+        const statusLevel = (() => {
+          if (summary.invoices.overdue > 0) return 'warning';
+          if (summary.actionsNeeded?.expiredCustomers > 0) return 'warning';
+          if (summary.totals.activeCustomers === 0) return 'empty';
+          return 'good';
+        })();
+
+        if (statusLevel === 'good') {
+          customerStatusEl.textContent = 'Stabil';
+          setChipState('good');
+        } else if (statusLevel === 'warning') {
+          customerStatusEl.textContent = 'Perlu perhatian';
+          setChipState('warning');
+        } else {
+          customerStatusEl.textContent = 'Belum ada data';
+          setChipState('error');
+        }
+
+        logRowsEl.innerHTML = '';
+        if (!summary.recentLogs.length) {
+          const tr = document.createElement('tr');
+          const td = document.createElement('td');
+          td.colSpan = 4;
+          td.textContent = 'Belum ada aktivitas isolasi.';
+          tr.appendChild(td);
+          logRowsEl.appendChild(tr);
+        } else {
+          summary.recentLogs.forEach((log) => {
+            const tr = document.createElement('tr');
+            const performedAt = new Date(log.performedAt);
+            tr.innerHTML = `
+                <td>${performedAt.toLocaleString('id-ID')}</td>
+                <td>${log.customerName}</td>
+                <td>${log.action === 'ISOLATE' ? 'Isolir' : log.action === 'RESTORE' ? 'Restore' : log.action}</td>
+                <td><span class="status-badge ${log.success ? 'success' : 'error'}">${log.success ? 'Sukses' : 'Gagal'}</span></td>
+              `;
+            logRowsEl.appendChild(tr);
+          });
+        }
+      } catch (error) {
+        console.error('Error in fetchSummary:', error);
+        setSummaryError(error?.message || 'Gagal memuat data');
+      }
+    };
+    window.addEventListener('beforeunload', () => {
+      cleanupDevices();
+      if (state.deviceListInterval) {
+        clearInterval(state.deviceListInterval);
+        state.deviceListInterval = null;
+      }
+    });
+
+    // Initialize Theme
+    if (window.mobileTheme) {
+      window.mobileTheme.init({
+        toggleSelector: '[data-theme-toggle-container]',
+        toggleSelectorMobile: '[data-theme-toggle-container-mobile]'
+      });
+    }
+
+    // Load Mikrotik devices
+    loadDevices();
+    const startDeviceListPolling = () => {
+      // Placeholder: Add polling logic if needed
+      // console.log('Device list polling started');
+    };
+    startDeviceListPolling();
+  </script>
+
+  <!-- Isolir Setup Modal -->
+  <div id="isolirModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="bi bi-shield-lock"></i> Setup Isolir Otomatis</h3>
+        <button class="close-modal" onclick="closeIsolirModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info" style="padding: 12px 16px; border-radius: 8px; font-size: 13px; display: flex; gap: 10px; margin-bottom: 15px; background: rgba(14, 165, 233, 0.1); color: #0284c7; border: 1px solid rgba(14, 165, 233, 0.2);">
+          <i class="bi bi-info-circle"></i> Fitur ini akan otomatis melakukan pengaturan Web Proxy port 7777, Proxy Access Redirect, NAT, dan Firewall Filter di Router MikroTik Anda.
+        </div>
+        <div class="form-group mt-3" style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="isolirDomain">Domain/IP Billing Server</label>
+          <input type="text" id="isolirDomain" class="form-control" style="padding: 10px 12px; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); font-family: inherit;" placeholder="Contoh: webportal.alkomnet.com" value="webportal.alkomnet.com">
+          <small class="text-muted" style="font-size: 11px; opacity: 0.7;">Domain/IP Public tempat aplikasi billing ini berjalan agar bisa diakses oleh pelanggan yang diisolir (lokal dan remote).</small>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 16px 20px; border-top: 1px solid var(--color-border); display: flex; justify-content: flex-end; gap: 12px;">
+        <button class="btn secondary" style="background: rgba(15, 23, 42, 0.1); border:none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="closeIsolirModal()">Batal</button>
+        <button class="btn primary" id="btnPushIsolir" style="background: linear-gradient(135deg, #1e3a8a, #2563eb); color:#fff; border:none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; gap: 6px; align-items: center;" onclick="pushIsolirRules()"><i class="bi bi-cloud-arrow-up"></i> Push ke MikroTik</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-content {
+      background: var(--color-surface);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      border: 1px solid var(--color-border);
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+      transform: scale(0.95) translateY(10px);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-overlay.active .modal-content {
+      transform: scale(1) translateY(0);
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .close-modal {
+      background: transparent;
+      border: none;
+      color: var(--color-muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      border-radius: 4px;
+    }
+    .modal-body { padding: 20px; }
+  </style>
+
+  <script>
+    let activeRouterIdForIsolir = null;
+
+    function openIsolirModal(routerId) {
+      activeRouterIdForIsolir = routerId;
+      document.getElementById('isolirModal').classList.add('active');
+    }
+
+    function closeIsolirModal() {
+      document.getElementById('isolirModal').classList.remove('active');
+      activeRouterIdForIsolir = null;
+    }
+
+    async function pushIsolirRules() {
+      if (!activeRouterIdForIsolir) {
+        alert("Router ID tidak valid");
+        return;
+      }
+
+      const domainInput = document.getElementById('isolirDomain').value.trim();
+      if (!domainInput) {
+        alert("Domain Billing Server harus diisi!");
+        return;
+      }
+
+      const btn = document.getElementById('btnPushIsolir');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Memproses...';
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/mikrotik/instances/${activeRouterIdForIsolir}/setup-isolir`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            domainBilling: domainInput
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          alert(`Sukses! ${result.message}`);
+          closeIsolirModal();
+        } else {
+          alert('Gagal PUSH konfigurasi: ' + (result.error || result.message || 'Unknown Error'));
+        }
+      } catch (e) {
+        console.error("Error push isolir:", e);
+        alert("Terjadi kesalahan sistem saat mencoba push.");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> Push ke MikroTik';
+      }
+    }
+  </script>
+
+  <!-- Web Chat Notification System -->
+  <script src="/js/web-chat-notification.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"3124e01bc3314be5a8a9bf406790d2a0","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+</html>

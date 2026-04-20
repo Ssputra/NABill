@@ -1,0 +1,27 @@
+# ============================================================
+# RT/RW NET Billing — .gitignore
+# ============================================================
+
+# Node.js dependencies
+node_modules/
+
+# Environment secrets — JANGAN di-commit!
+.env
+backend/.env
+
+# SQLite database (auto-generated saat runtime)
+*.db
+*.db-journal
+backend/data/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+*.log
+
+# Temporary
+_reorganize.ps1

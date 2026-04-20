@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=login.html">
+    <style>
+      body {
+        display: none !important
+      }
+    </style>
+  </noscript>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS Portal — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    crossorigin="anonymous" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --font: 'Inter', system-ui, sans-serif;
+      --sidebar-w: 220px;
+      --bg: #f0f4ff;
+      --surface: #fff;
+      --surface-alt: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --sidebar-bg: linear-gradient(180deg, #1e3a8a 0%, #1d4ed8 100%);
+      --radius: 14px;
+      --shadow: 0 4px 24px -8px rgba(15, 23, 42, .15);
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .2);
+      border-radius: 4px;
+    }
+
+    .sidebar-brand {
+      padding: 18px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #fff;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .65);
+    }
+
+    .brand-badge {
+      font-size: 9px;
+      background: rgba(245, 158, 11, .15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, .3);
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-weight: 600;
+    }
+
+    .nav-section {
+      padding: 8px 10px 4px;
+    }
+
+    .nav-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255, 255, 255, .4);
+      padding: 4px 6px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .82);
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid transparent;
+      margin-bottom: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, .35);
+    }
+
+    .nav-item .ni {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .badge-new {
+      margin-left: auto;
+      background: #ef4444;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px 10px;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 9px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, .35);
+    }
+
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, .06);
+    }
+
+    .topbar-left h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .topbar-left p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tb-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+
+    .tb-btn-add {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .tb-btn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .18);
+    }
+
+    .tb-user {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .tb-user strong {
+      font-size: 12px;
+    }
+
+    .tb-user span {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .content {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stats-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media(max-width:1000px) {
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(255, 255, 255, .1), transparent 60%);
+      pointer-events: none;
+    }
+
+    .stat-card .stat-icon {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      font-size: 28px;
+      opacity: .25;
+    }
+
+    .stat-card .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      opacity: .85;
+    }
+
+    .stat-card .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .stat-card .stat-sub {
+      font-size: 10px;
+      opacity: .75;
+    }
+
+    .sc-blue {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    }
+
+    .sc-green {
+      background: linear-gradient(135deg, #064e3b, #10b981);
+    }
+
+    .sc-orange {
+      background: linear-gradient(135deg, #78350f, #f59e0b);
+    }
+
+    .sc-purple {
+      background: linear-gradient(135deg, #4c1d95, #8b5cf6);
+    }
+
+    .two-col {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media(max-width:900px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .card-header p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .chip {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .chip-blue {
+      background: rgba(37, 99, 235, .12);
+      color: #1d4ed8;
+    }
+
+    .ticket-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ticket-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .ticket-item:hover {
+      background: var(--surface-alt);
+    }
+
+    .ticket-item:last-child {
+      border-bottom: none;
+    }
+
+    .ticket-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ticket-id {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      background: var(--surface-alt);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .ticket-priobadge {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .prio-high {
+      background: rgba(220, 38, 38, .12);
+      color: #b91c1c;
+    }
+
+    .prio-med {
+      background: rgba(245, 158, 11, .12);
+      color: #b45309;
+    }
+
+    .prio-low {
+      background: rgba(22, 163, 74, .12);
+      color: #15803d;
+    }
+
+    .ticket-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .ticket-meta {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+    }
+
+    .t-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .ts-open {
+      background: rgba(220, 38, 38, .12);
+      color: #b91c1c;
+    }
+
+    .ts-progress {
+      background: rgba(245, 158, 11, .12);
+      color: #b45309;
+    }
+
+    .ts-done {
+      background: rgba(22, 163, 74, .12);
+      color: #15803d;
+    }
+
+    .cust-lookup {
+      padding: 14px 18px;
+    }
+
+    .cust-lookup input {
+      width: 100%;
+      padding: 9px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: var(--font);
+      outline: none;
+    }
+
+    .cust-lookup input:focus {
+      border-color: var(--primary);
+    }
+
+    .cust-result {
+      margin-top: 12px;
+      padding: 12px;
+      background: var(--surface-alt);
+      border-radius: 10px;
+      font-size: 12px;
+      display: none;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .55);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 28px;
+      min-width: 420px;
+      max-width: 90vw;
+      box-shadow: 0 24px 48px rgba(15, 23, 42, .25);
+      animation: modalIn .2s ease;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal h3 {
+      margin: 0 0 20px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: var(--font);
+      outline: none;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .btn-modal {
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-modal.primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-modal.cancel {
+      background: var(--surface-alt);
+      color: var(--muted);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .3s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success {
+      background: #15803d;
+    }
+  </style>
+  <script src="../assets/js/darkmode.js"></script>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+      <div>
+        <div class="brand-name">RT/RW Billing</div>
+        <div class="brand-sub">Billing Management</div>
+      </div>
+      <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Utama</div>
+      <a class="nav-item" href="../pages/index.html"><span class="ni"><i
+            class="bi bi-speedometer2"></i></span>Dashboard</a>
+      <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+      <a class="nav-item active" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS
+        Portal</a>
+      <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+      <a class="nav-item" href="laporan.html"><span class="ni"><i
+            class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+      <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+      <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+      <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+      <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi
+        <span class="badge-new">NEW</span></a>
+      <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Infrastruktur</div>
+      <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare
+        Tunnel</a>
+      <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+      <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+      <a class="nav-item" href="bookkeeping.html"><span class="ni"><i
+            class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik
+        Monitoring</a>
+      <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE
+        Management</a>
+      <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+      <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+      <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen
+        Agen</a>
+      <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+      <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur
+        ODC/ODP</a>
+      <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+      <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat
+        Settings</a>
+      <a class="nav-item" href="payment.html"><span class="ni"><i
+            class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+      <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-left"></i>
+        Logout</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>CS Portal</h1>
+        <p>Pusat layanan pelanggan — tiket & pencarian cepat.</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="tb-icon-btn darkmode-btn" id="darkModeBtn" title="Mode Gelap"><i
+            class="bi bi-moon-stars-fill"></i></button>
+        <button class="tb-btn tb-btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i><span>Buat
+            Tiket</span></button>
+        <div class="tb-user"><strong>RT/RW Billing</strong><span>CS Agent</span></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="stats-row">
+        <div class="stat-card sc-orange"><i class="bi bi-ticket-perforated-fill stat-icon"></i>
+          <div class="stat-label">Tiket Terbuka</div>
+          <div class="stat-value" id="statOpen">0</div>
+          <div class="stat-sub">Belum diselesaikan</div>
+        </div>
+        <div class="stat-card"><i class="bi bi-hourglass-split stat-icon"></i>
+          <div class="stat-label">Dalam Proses</div>
+          <div class="stat-value" id="statProgress">0</div>
+          <div class="stat-sub">Sedang ditangani</div>
+        </div>
+        <div class="stat-card"><i class="bi bi-check-circle-fill stat-icon"></i>
+          <div class="stat-label">Selesai</div>
+          <div class="stat-value" id="statDone">0</div>
+          <div class="stat-sub">Hari ini</div>
+        </div>
+        <div class="stat-card"><i class="bi bi-clock-history stat-icon"></i>
+          <div class="stat-label">Avg. Waktu</div>
+          <div class="stat-value" id="statAvgTime">—</div>
+          <div class="stat-sub">Rata-rata respons</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- TIKET -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Tiket Support</h2>
+              <p>Keluhan & permintaan pelanggan</p>
+            </div>
+            <span class="chip chip-blue">TIKET</span>
+          </div>
+          <div class="ticket-list" id="ticketList"></div>
+        </div>
+
+        <!-- CUSTOMER LOOKUP -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Pencarian Pelanggan</h2>
+              <p>Cek status & riwayat pelanggan</p>
+            </div>
+          </div>
+          <div class="cust-lookup">
+            <input type="text" id="custSearch" placeholder="🔍 Cari nama, nomor HP, atau username PPPoE..."
+              oninput="lookupCustomer(this.value)">
+            <div class="cust-result" id="custResult"></div>
+          </div>
+
+          <div style="padding:0 16px 16px;">
+            <div
+              style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">
+              Aksi Cepat</div>
+            <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr">
+              <a href="customers.html"
+                style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);border-radius:10px;font-size:12px;font-weight:600;color:#1d4ed8;"><i
+                  class="bi bi-people-fill"></i> Data Pelanggan</a>
+              <a href="kasir.html"
+                style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.15);border-radius:10px;font-size:12px;font-weight:600;color:#15803d;"><i
+                  class="bi bi-cash-coin"></i> Proses Bayar</a>
+              <a href="pppoe.html"
+                style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);border-radius:10px;font-size:12px;font-weight:600;color:#6d28d9;"><i
+                  class="bi bi-bar-chart-fill"></i> PPPoE</a>
+              <a href="whatsapp.html"
+                style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(37,211,102,.06);border:1px solid rgba(37,211,102,.15);border-radius:10px;font-size:12px;font-weight:600;color:#128c7e;"><i
+                  class="bi bi-whatsapp"></i> WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3><i class="bi bi-ticket-perforated-fill" style="color:var(--primary);margin-right:8px;"></i>Buat Tiket Support
+      </h3>
+      <div class="form-row">
+        <div class="form-group"><label>Nama Pelanggan *</label><input type="text" id="tCust"
+            placeholder="Nama / ID pelanggan"></div>
+        <div class="form-group"><label>Prioritas</label>
+          <select id="tPrio">
+            <option value="low">Rendah</option>
+            <option value="med" selected>Sedang</option>
+            <option value="high">Tinggi</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Judul Masalah *</label><input type="text" id="tTitle"
+          placeholder="Singkat & jelas"></div>
+      <div class="form-group"><label>Deskripsi</label><textarea id="tDesc"
+          placeholder="Detail keluhan/permintaan..."></textarea></div>
+      <div class="modal-actions">
+        <button class="btn-modal cancel" onclick="closeModal()">Batal</button>
+        <button class="btn-modal primary" onclick="createTicket()"><i class="bi bi-save-fill"
+            style="margin-right:6px;"></i>Buat Tiket</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="../assets/js/api.js"></script>
+  <script>
+    let tickets = [];
+    let customers = [];
+
+    async function loadData() {
+      try {
+        const [tRes, cRes, avgRes] = await Promise.all([
+          apiFetch('/api/tickets'),
+          apiFetch('/api/customers'),
+          apiFetch('/api/tickets/avg-response-time').catch(() => ({ avg_hours: 0 }))
+        ]);
+        tickets = tRes || [];
+        customers = cRes || [];
+        renderTickets();
+
+        // Terapkan Avg Time
+        const hours = avgRes?.avg_hours || 0;
+        const elAvg = document.getElementById('statAvgTime');
+        if (hours === 0) {
+          elAvg.textContent = '0 Menit';
+        } else if (hours < 1) {
+          const mins = Math.round(hours * 60);
+          elAvg.textContent = `${mins} Menit`;
+        } else {
+          elAvg.textContent = `${hours} Jam`;
+        }
+
+      } catch (err) {
+        showToast('Gagal memuat data portal', 'error');
+      }
+    }
+
+    function renderTickets() {
+      document.getElementById('statOpen').textContent = tickets.filter(t => t.status === 'Open').length + tickets.filter(t => t.status === 'open').length;
+      document.getElementById('statProgress').textContent = tickets.filter(t => t.status === 'In Progress' || t.status === 'progress').length;
+      document.getElementById('statDone').textContent = tickets.filter(t => t.status === 'Done' || t.status === 'done').length;
+
+      const prioLabel = { High: 'TINGGI', Medium: 'SEDANG', Low: 'RENDAH', high: 'TINGGI', med: 'SEDANG', low: 'RENDAH', undefined: 'SEDANG' };
+      const prioClass = { High: 'prio-high', Medium: 'prio-med', Low: 'prio-low', high: 'prio-high', med: 'prio-med', low: 'prio-low', undefined: 'prio-med' };
+
+      const statusLabel = { Open: 'Terbuka', 'In Progress': 'Proses', Done: 'Selesai', open: 'Terbuka', progress: 'Proses', done: 'Selesai', undefined: 'Terbuka' };
+      const statusClass = { Open: 'ts-open', 'In Progress': 'ts-progress', Done: 'ts-done', open: 'ts-open', progress: 'ts-progress', done: 'ts-done', undefined: 'ts-open' };
+
+      document.getElementById('ticketList').innerHTML = tickets.map(t => {
+        const prioLbl = prioLabel[t.priority] || 'SEDANG';
+        const prioCls = prioClass[t.priority] || 'prio-med';
+        const statusLbl = statusLabel[t.status] || 'Terbuka';
+        const statusCls = statusClass[t.status] || 'ts-open';
+        const timeStr = `${(t.date || '').slice(0, 10)} ${t.created_at ? t.created_at.slice(11, 16) : ''}`;
+
+        // Tombol aksi kondisional berdasarkan status
+        let actionBtn = '';
+        if (t.status === 'Open' || t.status === 'open') {
+          // Terbuka: tampilkan tombol "Tandai Proses"
+          actionBtn = `<button onclick="processTicket(${t.id})" style="border:none;background:none;color:#b45309;font-size:11px;font-weight:600;cursor:pointer;padding:0;"><i class="bi bi-arrow-right-circle-fill"></i> Tandai Proses</button>`;
+        } else if (t.status === 'In Progress' || t.status === 'progress') {
+          // Dalam Proses: tampilkan tombol "Selesaikan" saja
+          actionBtn = `<button onclick="closeTicket(${t.id})" style="border:none;background:none;color:#15803d;font-size:11px;font-weight:600;cursor:pointer;padding:0;"><i class="bi bi-check-circle-fill"></i> Selesaikan</button>`;
+        }
+        // Status Done: tidak ada tombol
+
+        return `
+    <div class="ticket-item" id="ticket-item-${t.id}">
+      <div class="ticket-top">
+        <span class="ticket-id">#${t.id}</span>
+        <span class="ticket-priobadge ${prioCls}">${prioLbl}</span>
+        <span class="t-status ${statusCls}" id="ticket-status-${t.id}">${statusLbl}</span>
+        <span style="margin-left:auto;font-size:10px;color:var(--muted)">${timeStr}</span>
+      </div>
+      <div class="ticket-title">${t.issue}</div>
+      <div class="ticket-meta">
+        <span><i class="bi bi-person-fill"></i> ${t.customer}</span>
+        <span id="ticket-action-${t.id}">${actionBtn}</span>
+      </div>
+    </div>`;
+      }).join('');
+    }
+
+    // Fungsi helper: update status tiket di array lokal & re-render UI secara instan
+    function updateTicketStatusLocally(id, newStatus) {
+      const t = tickets.find(x => x.id === id);
+      if (t) t.status = newStatus;
+      renderTickets();
+    }
+
+    // Tandai tiket sebagai "Dalam Proses" (Open → In Progress)
+    async function processTicket(id) {
+      try {
+        const result = await apiFetch('/api/tickets/process/' + id, {
+          method: 'POST',
+          body: JSON.stringify({})
+        });
+        updateTicketStatusLocally(id, result.newStatus || 'In Progress');
+        showToast('🔄 Tiket ditandai Dalam Proses', 'success');
+      } catch (e) {
+        console.error('processTicket error:', e);
+        showToast('Gagal mengubah status: ' + (e.message || 'Error'), 'error');
+      }
+    }
+
+    // Selesaikan tiket (In Progress → Done)
+    async function closeTicket(id) {
+      const t = tickets.find(x => x.id === id);
+      if (!t || t.status === 'Done' || t.status === 'done') return;
+
+      try {
+        const result = await apiFetch('/api/tickets/resolve/' + id, {
+          method: 'POST',
+          body: JSON.stringify({})
+        });
+        updateTicketStatusLocally(id, result.newStatus || 'Done');
+        showToast('✅ Tiket diselesaikan!', 'success');
+      } catch (e) {
+        console.error('closeTicket error:', e);
+        showToast('Gagal merubah status: ' + (e.message || 'Error'), 'error');
+      }
+    }
+
+    function lookupCustomer(q) {
+      const r = document.getElementById('custResult');
+      if (!q || q.length < 2) { r.style.display = 'none'; return; }
+      const found = customers.find(c => c.name.toLowerCase().includes(q.toLowerCase()) || (c.pppoe_user || '').includes(q) || (c.phone || '').includes(q));
+      if (found) {
+        r.style.display = 'block';
+        r.innerHTML = `<div style="font-weight:700;font-size:13px">${found.name}</div>
+      <div style="margin-top:4px;display:grid;gap:4px;grid-template-columns:1fr 1fr;font-size:11px">
+        <span>📞 ${found.phone}</span>
+        <span>🔑 ${found.pppoe_user || 'Belum ada'}</span>
+        <span>🟢 ${found.status || 'N/A'}</span>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:6px">
+        <button onclick="window.location='customers.html'" style="padding:5px 12px;border-radius:8px;border:none;background:#1d4ed8;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Detail</button>
+        <button onclick="window.location='kasir.html'" style="padding:5px 12px;border-radius:8px;border:none;background:#16a34a;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Bayar</button>
+      </div>`;
+      } else {
+        r.style.display = 'block';
+        r.innerHTML = '<span style="color:var(--muted)">Pelanggan tidak ditemukan</span>';
+      }
+    }
+
+    async function createTicket() {
+      const cust = document.getElementById('tCust').value.trim();
+      const issue = document.getElementById('tTitle').value.trim();
+      if (!cust || !issue) { showToast('Nama & judul wajib!', 'error'); return; }
+
+      const prioRaw = document.getElementById('tPrio').value;
+      const prioMap = { low: 'Low', med: 'Medium', high: 'High' };
+
+      const payload = {
+        customer: cust,
+        issue: issue + (document.getElementById('tDesc').value ? ' - ' + document.getElementById('tDesc').value : ''),
+        priority: prioMap[prioRaw] || 'Medium',
+        status: 'Open',
+        date: new Date().toISOString().slice(0, 10)
+      };
+
+      try {
+        await apiFetch('/api/tickets', { method: 'POST', body: JSON.stringify(payload) });
+        closeModal();
+        showToast('Tiket berhasil dibuat!', 'success');
+        loadData();
+      } catch (e) {
+        showToast('Gagal membuat tiket', 'error');
+      }
+    }
+
+    function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+    document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+    function showToast(msg, type) { const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast ' + (type === 'success' ? 'success' : '') + ' show'; setTimeout(() => t.classList.remove('show'), 3000); }
+
+    loadData();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,494 @@
+﻿<!doctype html>
+<html lang="id">
+<head>
+  <noscript><meta http-equiv="refresh" content="0;url=login.html"><style>body{display:none!important}</style></noscript>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Customer Map — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" crossorigin="anonymous"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <meta name="referrer" content="no-referrer">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --font: 'Inter', system-ui, sans-serif; --sidebar-w: 220px;
+      --bg: #f0f4ff; --surface: #ffffff; --surface-alt: #f1f5f9;
+      --text: #0f172a; --muted: #64748b; --border: #e2e8f0;
+      --primary: #1d4ed8; --primary-dark: #1e3a8a;
+      --sidebar-bg: linear-gradient(180deg,#1e3a8a 0%,#1d4ed8 100%);
+      --radius: 14px; --shadow: 0 4px 24px -8px rgba(15,23,42,.15);
+    }
+    body { margin:0; font-family:var(--font); background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+    .sidebar { width:var(--sidebar-w); min-height:100vh; background:var(--sidebar-bg); display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; scrollbar-width:thin; }
+    .sidebar::-webkit-scrollbar { width:4px; } .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:4px; }
+    .sidebar-brand { padding:18px 16px 12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; border-bottom:1px solid rgba(255,255,255,.12); }
+    .brand-icon { width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; }
+    .brand-name { font-size:13px; font-weight:800; color:#fff; letter-spacing:.04em; text-transform:uppercase; }
+    .brand-sub { font-size:10px; color:rgba(255,255,255,.65); font-weight:500; }
+    .brand-badge { font-size:9px; background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); border-radius:10px; padding:2px 8px; font-weight:600; margin-top:2px; }
+    .nav-section { padding:8px 10px 4px; }
+    .nav-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.4); padding:4px 6px 6px; }
+    .nav-item { display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:10px; font-size:12px; font-weight:600; color:rgba(255,255,255,.82); cursor:pointer; transition:all .15s; border:1px solid transparent; margin-bottom:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .nav-item:hover { background:rgba(255,255,255,.12); color:#fff; } .nav-item.active { background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.35); }
+    .nav-item .ni { width:18px; text-align:center; font-size:14px; flex-shrink:0; }
+    .badge-new { margin-left:auto; background:#ef4444; color:#fff; font-size:8px; font-weight:700; padding:2px 5px; border-radius:6px; }
+    .sidebar-footer { margin-top:auto; padding:12px 10px; }
+    .btn-logout { width:100%; padding:9px; border-radius:12px; border:none; background:rgba(255,255,255,.15); color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .15s; }
+    .btn-logout:hover { background:rgba(239,68,68,.35); }
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-width:0; }
+    .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+    .topbar-left h1 { margin:0; font-size:17px; font-weight:700; } .topbar-left p { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .topbar-actions { display:flex; align-items:center; gap:8px; }
+    .tb-user { display:flex; flex-direction:column; align-items:flex-end; } .tb-user strong { font-size:12px; } .tb-user span { font-size:10px; color:var(--muted); }
+    .content { padding:20px 24px; flex:1; display:flex; flex-direction:column; gap:16px; }
+    .map-layout { display:grid; gap:16px; grid-template-columns:320px 1fr; flex:1; }
+    @media(max-width:900px){ .map-layout { grid-template-columns:1fr; } }
+    .card { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; }
+    .card-header { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .card-header h2 { margin:0; font-size:14px; font-weight:700; } .card-header p { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .chip { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; } .chip-blue { background:rgba(37,99,235,.12); color:#1d4ed8; }
+    .cust-list { overflow-y:auto; max-height:500px; }
+    .cust-item { display:flex; align-items:center; gap:10px; padding:10px 16px; border-bottom:1px solid var(--border); cursor:pointer; transition:background .15s; }
+    .cust-item:hover { background:var(--surface-alt); }
+    .cust-item:last-child { border-bottom:none; }
+    .cust-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .dot-aktif { background:#22c55e; } .dot-suspend { background:#f59e0b; } .dot-jatuh { background:#ef4444; }
+    .cust-info strong { font-size:12px; display:block; } .cust-info small { font-size:10px; color:var(--muted); }
+    #mapContainer { min-height:500px; border-radius:0 0 var(--radius) var(--radius); }
+    .search-box { padding:10px 16px; border-bottom:1px solid var(--border); }
+    .search-box input { width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:8px; font-size:12px; font-family:var(--font); outline:none; }
+    .legend { display:flex; gap:12px; flex-wrap:wrap; padding:10px 18px; border-top:1px solid var(--border); background:var(--surface-alt); font-size:11px; color:var(--muted); align-items:center; justify-content:space-between; }
+    .legend-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:4px; }
+    .legend-left { display:flex; gap:12px; flex-wrap:wrap; }
+    .tile-switcher { display:flex; gap:4px; }
+    .tile-btn { font-size:10px; font-weight:700; padding:3px 9px; border-radius:6px; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--muted); transition:all .15s; }
+    .tile-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+    .cust-item-selected { background:rgba(29,78,216,.08) !important; border-left:3px solid var(--primary); }
+    .map-instruction-banner { display:none; position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:500; background:#1d4ed8; color:#fff; padding:10px 18px; border-radius:10px; font-size:12px; font-weight:600; box-shadow:0 4px 16px rgba(29,78,216,.4); white-space:nowrap; align-items:center; gap:8px; }
+    .confirm-modal-overlay { display:none; position:fixed; inset:0; background:rgba(15,23,42,.5); backdrop-filter:blur(4px); z-index:9000; align-items:center; justify-content:center; }
+    .confirm-modal { background:#fff; border-radius:16px; padding:28px; min-width:340px; max-width:90vw; box-shadow:0 24px 48px rgba(15,23,42,.25); text-align:center; }
+    .confirm-modal h3 { margin:0 0 8px; font-size:16px; } .confirm-modal p { margin:0 0 20px; font-size:13px; color:var(--muted); white-space:pre-line; }
+    .confirm-modal-btns { display:flex; gap:10px; justify-content:center; }
+    .btn-confirm { padding:10px 24px; border-radius:10px; border:none; font-size:13px; font-weight:700; cursor:pointer; }
+    .btn-yes { background:var(--primary); color:#fff; } .btn-no { background:var(--surface-alt); color:var(--muted); }
+    .filter-tabs { display:flex; gap:4px; padding:10px 16px; border-bottom:1px solid var(--border); }
+    .ftab { font-size:11px; font-weight:600; padding:4px 10px; border-radius:8px; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--muted); }
+    .ftab.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+    <div><div class="brand-name">RT/RW Billing</div><div class="brand-sub">Billing Management</div></div>
+    <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Utama</div>
+    <a class="nav-item" href="../pages/index.html"><span class="ni"><i class="bi bi-speedometer2"></i></span>Dashboard</a>
+    <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+    <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+    <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+    <a class="nav-item" href="laporan.html"><span class="ni"><i class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+    <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+    <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+    <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+    <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi <span class="badge-new">NEW</span></a>
+    <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Infrastruktur</div>
+    <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare Tunnel</a>
+    <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+    <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+    <a class="nav-item" href="bookkeeping.html"><span class="ni"><i class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Tools</div>
+    <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik Monitoring</a>
+    <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE Management</a>
+    <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+    <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+    <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen Agen</a>
+    <a class="nav-item active" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+    <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur ODC/ODP</a>
+    <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+    <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat Settings</a>
+    <a class="nav-item" href="payment.html"><span class="ni"><i class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+    <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+  </div>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="Auth.logout()"><i class="bi bi-box-arrow-left"></i> Logout</button>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Customer Map</h1><p>Peta sebaran pelanggan berdasarkan lokasi geografis.</p></div>
+    <div class="topbar-actions">
+      <div class="tb-user"><strong>RT/RW Billing</strong><span>Admin</span></div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="map-layout">
+      <!-- KIRI: DAFTAR CUSTOMER -->
+      <div class="card" style="display:flex;flex-direction:column">
+        <div class="card-header">
+          <div><h2>Daftar Pelanggan</h2><p id="listCount">0 pelanggan</p><p id="listSubCount" style="font-size:10px;color:#22c55e"></p></div>
+        </div>
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="🔍 Cari nama pelanggan...">
+        </div>
+        <div class="filter-tabs">
+          <button class="ftab active" onclick="filterList('')">Semua</button>
+          <button class="ftab" onclick="filterList('Aktif')">Aktif</button>
+          <button class="ftab" onclick="filterList('Suspend')">Suspend</button>
+          <button class="ftab" onclick="filterList('Jatuh Tempo')">Jatuh</button>
+        </div>
+        <div class="cust-list" id="custList"></div>
+      </div>
+
+      <!-- KANAN: MAP -->
+      <div class="card" style="display:flex;flex-direction:column;">
+        <div class="card-header">
+          <div><h2>Peta Sebaran</h2><p>Klik pelanggan di kiri untuk zoom ke lokasi</p></div>
+          <span class="chip chip-blue">LEAFLET.JS</span>
+        </div>
+        <div id="mapContainer" style="flex:1;min-height:500px;position:relative;">
+          <div class="map-instruction-banner" id="mapInstructionBanner">📍 Pilih lokasi di peta</div>
+        </div>
+        <div class="legend">
+          <div class="legend-left">
+            <span><span class="legend-dot" style="background:#22c55e;"></span>Aktif</span>
+            <span><span class="legend-dot" style="background:#ef4444;"></span>Jatuh Tempo</span>
+            <span><span class="legend-dot" style="background:#f59e0b;"></span>Suspend</span>
+          </div>
+          <div class="tile-switcher">
+            <button class="tile-btn active" onclick="switchTile('light',this)">☀️ Light</button>
+            <button class="tile-btn" onclick="switchTile('dark',this)">🌙 Dark</button>
+            <button class="tile-btn" onclick="switchTile('satellite',this)">🛰️ Satelit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Konfirmasi Simpan Lokasi -->
+<div class="confirm-modal-overlay" id="confirmModal">
+  <div class="confirm-modal">
+    <h3>📍 Konfirmasi Lokasi</h3>
+    <p id="confirmModalText"></p>
+    <div class="confirm-modal-btns">
+      <button class="btn-confirm btn-no" id="confirmNoBtn">Batal</button>
+      <button class="btn-confirm btn-yes" id="confirmYesBtn">✓ Simpan Lokasi</button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/api.js"></script>
+<script>
+// ============================================================
+// State Global
+// ============================================================
+let allCustomers = [];   // data dari API
+let markers = {};        // {id: L.marker} — untuk lookup cepat
+let map, currentTileLayer;
+let activeFilter = '';
+let selectedCustomer = null;  // pelanggan yang dipilih untuk set lokasi
+let tempMarker = null;        // marker sementara saat mode pilih lokasi
+
+const markerColors = {
+  'Aktif':      '#22c55e',
+  'Jatuh Tempo':'#ef4444',
+  'Suspend':    '#f59e0b',
+  'Terminated': '#94a3b8'
+};
+
+// ============================================================
+// Toast Notification
+// ============================================================
+function showToast(msg, type = 'success') {
+  let t = document.getElementById('mapToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'mapToast';
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;color:#fff;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = type === 'error' ? '#b91c1c' : '#15803d';
+  t.style.opacity = '1'; t.style.transform = 'translateY(0)';
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(10px)'; }, 3000);
+}
+
+// ============================================================
+// Ikon Marker Leaflet berdasarkan status
+// ============================================================
+function getIcon(status, selected = false) {
+  const color = markerColors[status] || '#94a3b8';
+  const size  = selected ? 24 : 18;
+  const border = selected ? '4px solid #1d4ed8' : '3px solid #fff';
+  return L.divIcon({
+    html: `<div style="width:${size}px;height:${size}px;background:${color};border:${border};border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:all .2s"></div>`,
+    className: '', iconSize: [size, size], iconAnchor: [size/2, size/2], popupAnchor: [0, -14]
+  });
+}
+
+function getNoLocIcon() {
+  return L.divIcon({
+    html: `<div style="width:16px;height:16px;background:#cbd5e1;border:2px dashed #94a3b8;border-radius:50%;"></div>`,
+    className: '', iconSize: [16, 16], iconAnchor: [8, 8]
+  });
+}
+
+// ============================================================
+// Tile Switcher
+// ============================================================
+const TILES = {
+  light:     { url:'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', attr:'© OpenStreetMap © CARTO' },
+  dark:      { url:'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',  attr:'© OpenStreetMap © CARTO' },
+  satellite: { url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr:'© Esri' }
+};
+
+function switchTile(type, btn) {
+  document.querySelectorAll('.tile-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (currentTileLayer) map.removeLayer(currentTileLayer);
+  const t = TILES[type];
+  currentTileLayer = L.tileLayer(t.url, { attribution: t.attr, subdomains: 'abcd', maxZoom: 19 });
+  currentTileLayer.addTo(map);
+}
+
+// ============================================================
+// Render Marker di Peta
+// ============================================================
+function buildPopupHtml(c) {
+  const hasLoc = c.latitude && c.longitude;
+  return `<div style="font-family:Inter,sans-serif;font-size:12px;min-width:190px">
+    <strong style="font-size:13px">${c.name}</strong><br>
+    <span style="color:#64748b">${c.address || '-'}</span><br>
+    <span style="background:${markerColors[c.status]||'#94a3b8'};color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;display:inline-block;margin:4px 0">${c.status}</span>
+    <span style="margin-left:6px;font-size:11px;color:#64748b">${c.paket || '-'}</span>
+    ${hasLoc ? `<br><span style="font-size:10px;color:#94a3b8">📍 ${parseFloat(c.latitude).toFixed(5)}, ${parseFloat(c.longitude).toFixed(5)}</span>` : ''}
+    <br><button onclick="startSetLocation(${c.id})" style="margin-top:8px;padding:4px 10px;border-radius:8px;border:none;background:#1d4ed8;color:#fff;font-size:11px;font-weight:600;cursor:pointer">📍 ${hasLoc ? 'Ubah Lokasi' : 'Set Lokasi'}</button>
+  </div>`;
+}
+
+function renderMarkers(list) {
+  // Hapus semua marker lama
+  Object.values(markers).forEach(m => map.removeLayer(m));
+  markers = {};
+
+  list.forEach(c => {
+    if (!c.latitude || !c.longitude) return; // skip yang belum punya koordinat
+    const m = L.marker([c.latitude, c.longitude], { icon: getIcon(c.status) })
+      .addTo(map)
+      .bindPopup(buildPopupHtml(c));
+    markers[c.id] = m;
+  });
+}
+
+// ============================================================
+// Render Daftar Pelanggan (Sidebar Kiri)
+// ============================================================
+function getFilteredList() {
+  const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  return allCustomers.filter(c =>
+    c.name.toLowerCase().includes(q) &&
+    (!activeFilter || c.status === activeFilter)
+  );
+}
+
+function renderList(list) {
+  document.getElementById('listCount').textContent = `${list.length} pelanggan`;
+  const withLoc = list.filter(c => c.latitude && c.longitude).length;
+  document.getElementById('listSubCount').textContent = `${withLoc} sudah punya lokasi`;
+
+  document.getElementById('custList').innerHTML = list.map(c => {
+    const hasLoc = c.latitude && c.longitude;
+    const dotClass = c.status === 'Aktif' ? 'aktif' : c.status === 'Suspend' ? 'suspend' : 'jatuh';
+    const isSelected = selectedCustomer && selectedCustomer.id === c.id;
+    return `
+    <div class="cust-item ${isSelected ? 'cust-item-selected' : ''}" id="cust-item-${c.id}" onclick="onCustomerClick(${c.id})">
+      <div class="cust-dot dot-${dotClass}"></div>
+      <div class="cust-info" style="flex:1;min-width:0">
+        <strong>${c.name}</strong>
+        <small>${c.paket || '-'} — ${c.status}</small>
+      </div>
+      <div style="font-size:10px;color:${hasLoc ? '#22c55e' : '#cbd5e1'};flex-shrink:0" title="${hasLoc ? 'Sudah ada lokasi' : 'Belum ada lokasi'}">
+        <i class="bi bi-geo-alt-fill"></i>
+      </div>
+    </div>`;
+  }).join('') || '<div style="padding:20px;text-align:center;color:var(--muted);font-size:12px">Tidak ada pelanggan</div>';
+}
+
+// ============================================================
+// Klik pada item pelanggan di daftar kiri
+// ============================================================
+function onCustomerClick(id) {
+  const c = allCustomers.find(x => x.id === id);
+  if (!c) return;
+
+  // Jika pelanggan punya koordinat → flyTo
+  if (c.latitude && c.longitude) {
+    map.flyTo([c.latitude, c.longitude], 17, { duration: 1 });
+    setTimeout(() => markers[c.id] && markers[c.id].openPopup(), 1100);
+  } else {
+    // Belum punya koordinat → masuk mode set lokasi
+    startSetLocation(id);
+  }
+}
+
+// ============================================================
+// Mode Set/Edit Lokasi: klik peta untuk simpan koordinat
+// ============================================================
+function startSetLocation(id) {
+  const c = allCustomers.find(x => x.id === id);
+  if (!c) return;
+
+  selectedCustomer = c;
+  renderList(getFilteredList()); // highlight item
+
+  // Tutup semua popup marker
+  Object.values(markers).forEach(m => m.closePopup());
+  if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
+
+  // Banner instruksi di peta
+  document.getElementById('mapInstructionBanner').style.display = 'flex';
+  document.getElementById('mapInstructionBanner').textContent =
+    `📍 Klik di peta untuk menentukan lokasi: ${c.name} | Tekan ESC untuk batal`;
+
+  map.getContainer().style.cursor = 'crosshair';
+}
+
+function cancelSetLocation() {
+  selectedCustomer = null;
+  if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
+  document.getElementById('mapInstructionBanner').style.display = 'none';
+  map.getContainer().style.cursor = '';
+  renderList(getFilteredList());
+}
+
+// ============================================================
+// Klik pada peta (handler utama untuk set lokasi)
+// ============================================================
+function onMapClick(e) {
+  if (!selectedCustomer) return;
+
+  const { lat, lng } = e.latlng;
+  const c = selectedCustomer;
+
+  // Tampilkan marker sementara
+  if (tempMarker) map.removeLayer(tempMarker);
+  tempMarker = L.marker([lat, lng], { icon: getIcon(c.status, true) }).addTo(map);
+
+  // Modal konfirmasi
+  document.getElementById('confirmModal').style.display = 'flex';
+  document.getElementById('confirmModalText').textContent =
+    `Simpan lokasi ini untuk pelanggan "${c.name}"?\n(${lat.toFixed(6)}, ${lng.toFixed(6)})`;
+
+  document.getElementById('confirmYesBtn').onclick = () => saveLocation(c.id, lat, lng);
+  document.getElementById('confirmNoBtn').onclick  = () => {
+    document.getElementById('confirmModal').style.display = 'none';
+    if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
+  };
+}
+
+async function saveLocation(id, lat, lng) {
+  document.getElementById('confirmModal').style.display = 'none';
+  try {
+    await apiFetch(`/api/customers/${id}/location`, {
+      method: 'PUT',
+      body: JSON.stringify({ latitude: lat, longitude: lng })
+    });
+
+    // Update data lokal
+    const c = allCustomers.find(x => x.id === id);
+    if (c) { c.latitude = lat; c.longitude = lng; }
+
+    // Hapus marker lama, tambah yang baru
+    if (markers[id]) map.removeLayer(markers[id]);
+    if (tempMarker)  { map.removeLayer(tempMarker); tempMarker = null; }
+
+    const newMarker = L.marker([lat, lng], { icon: getIcon(c.status) })
+      .addTo(map)
+      .bindPopup(buildPopupHtml(c));
+    markers[id] = newMarker;
+    newMarker.openPopup();
+
+    cancelSetLocation();
+    showToast(`✅ Lokasi ${c.name} berhasil disimpan!`);
+    renderList(getFilteredList());
+  } catch (err) {
+    showToast('❌ Gagal menyimpan lokasi: ' + err.message, 'error');
+    if (tempMarker) { map.removeLayer(tempMarker); tempMarker = null; }
+  }
+}
+
+// ============================================================
+// Filter & Search
+// ============================================================
+function filterList(status, btn) {
+  activeFilter = status;
+  document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter() {
+  const filtered = getFilteredList();
+  renderMarkers(filtered);
+  renderList(filtered);
+}
+
+// ============================================================
+// Init Peta & Load Data dari API
+// ============================================================
+function initMap() {
+  map = L.map('mapContainer').setView([-6.208, 106.847], 14);
+  switchTile('light', null);
+
+  // Event: klik peta untuk set lokasi
+  map.on('click', onMapClick);
+
+  // ESC untuk cancel mode set lokasi
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') cancelSetLocation(); });
+}
+
+async function loadCustomers() {
+  try {
+    document.getElementById('custList').innerHTML =
+      '<div style="padding:20px;text-align:center;color:var(--muted);font-size:12px"><i class="bi bi-arrow-repeat"></i> Memuat data...</div>';
+
+    const data = await apiFetch('/api/customers/map');
+    allCustomers = Array.isArray(data) ? data : (data.data || []);
+
+    applyFilter();
+
+    // Auto-center ke pelanggan yang punya koordinat
+    const withLoc = allCustomers.filter(c => c.latitude && c.longitude);
+    if (withLoc.length > 0) {
+      const avgLat = withLoc.reduce((s, c) => s + c.latitude, 0) / withLoc.length;
+      const avgLng = withLoc.reduce((s, c) => s + c.longitude, 0) / withLoc.length;
+      map.setView([avgLat, avgLng], 15);
+    }
+  } catch (err) {
+    console.error('Gagal load customers:', err);
+    document.getElementById('custList').innerHTML =
+      '<div style="padding:20px;text-align:center;color:#b91c1c;font-size:12px">❌ Gagal memuat data pelanggan</div>';
+  }
+}
+
+document.getElementById('searchInput').addEventListener('input', applyFilter);
+initMap();
+loadCustomers();
+</script>
+</body>
+</html>
+

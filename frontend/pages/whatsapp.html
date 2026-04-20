@@ -1,0 +1,601 @@
+﻿<!doctype html>
+<html lang="id">
+<head>
+  <noscript><meta http-equiv="refresh" content="0;url=login.html"><style>body{display:none!important}</style></noscript>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>WhatsApp Notifikasi — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" crossorigin="anonymous"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --font:'Inter',system-ui,sans-serif; --sidebar-w:220px;
+      --bg:#f0f4ff; --surface:#fff; --surface-alt:#f1f5f9;
+      --text:#0f172a; --muted:#64748b; --border:#e2e8f0;
+      --primary:#1d4ed8; --primary-dark:#1e3a8a;
+      --sidebar-bg:linear-gradient(180deg,#1e3a8a 0%,#1d4ed8 100%);
+      --radius:14px; --shadow:0 4px 24px -8px rgba(15,23,42,.15);
+      --wa:#25D366; --evo:#7c3aed;
+    }
+    body { margin:0; font-family:var(--font); background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+
+    /* Sidebar */
+    .sidebar { width:var(--sidebar-w); min-height:100vh; background:var(--sidebar-bg); display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; scrollbar-width:thin; }
+    .sidebar::-webkit-scrollbar { width:4px; } .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:4px; }
+    .sidebar-brand { padding:18px 16px 12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; border-bottom:1px solid rgba(255,255,255,.12); }
+    .brand-icon { width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; }
+    .brand-name { font-size:13px; font-weight:800; color:#fff; letter-spacing:.04em; text-transform:uppercase; }
+    .brand-sub  { font-size:10px; color:rgba(255,255,255,.65); }
+    .brand-badge { font-size:9px; background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); border-radius:10px; padding:2px 8px; font-weight:600; }
+    .nav-section { padding:8px 10px 4px; }
+    .nav-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.4); padding:4px 6px 6px; }
+    .nav-item { display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:10px; font-size:12px; font-weight:600; color:rgba(255,255,255,.82); cursor:pointer; transition:all .15s; border:1px solid transparent; margin-bottom:1px; white-space:nowrap; overflow:hidden; }
+    .nav-item:hover { background:rgba(255,255,255,.12); color:#fff; }
+    .nav-item.active { background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.35); }
+    .nav-item .ni { width:18px; text-align:center; font-size:14px; flex-shrink:0; }
+    .badge-new { margin-left:auto; background:#ef4444; color:#fff; font-size:8px; font-weight:700; padding:2px 5px; border-radius:6px; }
+    .sidebar-footer { margin-top:auto; padding:12px 10px; }
+    .btn-logout { width:100%; padding:9px; border-radius:12px; border:none; background:rgba(255,255,255,.15); color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .btn-logout:hover { background:rgba(239,68,68,.35); }
+
+    /* Layout */
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-width:0; }
+    .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+    .topbar-left h1 { margin:0; font-size:17px; font-weight:700; }
+    .topbar-left p  { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .topbar-actions { display:flex; align-items:center; gap:8px; }
+    .tb-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+    .tb-btn-wa  { background:var(--wa);  color:#fff; }
+    .tb-btn-evo { background:var(--evo); color:#fff; }
+    .tb-btn:hover { opacity:.88; transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.18); }
+    .tb-user { display:flex; flex-direction:column; align-items:flex-end; }
+    .tb-user strong { font-size:12px; } .tb-user span { font-size:10px; color:var(--muted); }
+    .content { padding:20px 24px; display:flex; flex-direction:column; gap:16px; }
+    .two-col { display:grid; gap:16px; grid-template-columns:1fr 1fr; }
+    @media(max-width:900px){ .two-col { grid-template-columns:1fr; } }
+
+    /* Cards */
+    .card { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; }
+    .card-header { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .card-header h2 { margin:0; font-size:14px; font-weight:700; }
+    .card-header p  { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .card-body { padding:16px 18px; }
+    .chip { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; }
+    .chip-wa  { background:rgba(37,211,102,.12); color:#128c7e; }
+    .chip-evo { background:rgba(124,58,237,.12);  color:#7c3aed; }
+
+    /* Forms */
+    .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    .form-group label { font-size:12px; font-weight:600; color:var(--muted); }
+    .form-group input,
+    .form-group select,
+    .form-group textarea { padding:9px 12px; border:1.5px solid var(--border); border-radius:10px; font-size:13px; font-family:var(--font); outline:none; transition:border-color .2s; background:var(--surface); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--evo); }
+    .form-group textarea { resize:vertical; min-height:110px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+    .form-row .form-group { margin:0; }
+
+    /* Buttons */
+    .btn-send { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:none; background:var(--wa); color:#fff; width:100%; justify-content:center; transition:all .15s; }
+    .btn-send:hover { background:#20ba5a; } .btn-send:disabled { opacity:.55; cursor:not-allowed; }
+    .btn-save { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:none; background:var(--evo); color:#fff; width:100%; justify-content:center; transition:all .15s; }
+    .btn-save:hover { background:#6d28d9; } .btn-save:disabled { opacity:.55; cursor:not-allowed; }
+    .btn-test { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:none; background:#0f766e; color:#fff; width:100%; justify-content:center; transition:all .15s; }
+    .btn-test:hover { background:#0d6059; } .btn-test:disabled { opacity:.55; cursor:not-allowed; }
+    .btn-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+    /* Preview */
+    .preview-box { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:12px; margin-bottom:14px; }
+    .preview-label { font-size:11px; font-weight:700; color:#15803d; margin-bottom:6px; }
+    .preview-bubble { background:#dcf8c6; border-radius:12px 12px 0 12px; padding:12px 14px; font-size:13px; line-height:1.6; position:relative; }
+    .preview-bubble::after { content:''; position:absolute; right:-8px; bottom:0; border:8px solid transparent; border-left-color:#dcf8c6; border-right:0; }
+    .preview-time { font-size:10px; color:#667781; text-align:right; margin-top:4px; }
+
+    /* History */
+    .blast-item { display:flex; align-items:flex-start; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); gap:8px; }
+    .blast-item:last-child { border-bottom:none; }
+    .blast-info strong { font-size:12px; display:block; }
+    .blast-info span   { font-size:11px; color:var(--muted); }
+    .t-status { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+    .ts-sent    { background:rgba(22,163,74,.12);  color:#15803d; }
+    .ts-fail    { background:rgba(239,68,68,.12);   color:#b91c1c; }
+    .ts-partial { background:rgba(245,158,11,.12);  color:#b45309; }
+
+    /* Toggles */
+    .toggle { position:relative; width:40px; height:22px; cursor:pointer; display:inline-block; flex-shrink:0; }
+    .toggle input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; inset:0; background:#cbd5e1; border-radius:24px; transition:.2s; }
+    .toggle-slider::before { content:''; position:absolute; height:16px; width:16px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 4px rgba(0,0,0,.2); }
+    .toggle input:checked + .toggle-slider { background:var(--wa); }
+    .toggle input:checked + .toggle-slider::before { transform:translateX(18px); }
+    .auto-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); gap:12px; }
+    .auto-row:last-child { border-bottom:none; }
+
+    /* Token field */
+    .token-wrap { position:relative; }
+    .token-wrap input { padding-right:40px; }
+    .token-toggle { position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer; color:var(--muted); background:none; border:none; font-size:15px; padding:0; }
+
+    /* Conn status */
+    .conn-ok   { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px; }
+    .conn-fail { background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px; }
+
+    /* Misc */
+    .history-empty { text-align:center; padding:24px; color:var(--muted); font-size:12px; }
+    .toast { position:fixed; bottom:24px; right:24px; padding:12px 20px; border-radius:12px; font-size:13px; font-weight:600; z-index:999; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; color:#fff; max-width:340px; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .toast.success { background:#25D366; }
+    .toast.error   { background:#ef4444; }
+    .toast.info    { background:#1d4ed8; }
+    .spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+    <div><div class="brand-name">RT/RW Billing</div><div class="brand-sub">Billing Management</div></div>
+    <div class="brand-badge" id="brandBadge" style="display:none">✦ v2.0 — Admin</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Utama</div>
+    <a class="nav-item" href="../pages/index.html"><span class="ni"><i class="bi bi-speedometer2"></i></span>Dashboard</a>
+    <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+    <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+    <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+    <a class="nav-item" href="laporan.html"><span class="ni"><i class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+    <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+    <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+    <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+    <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi <span class="badge-new">NEW</span></a>
+    <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Infrastruktur</div>
+    <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare Tunnel</a>
+    <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+    <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+    <a class="nav-item" href="bookkeeping.html"><span class="ni"><i class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Tools</div>
+    <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik Monitoring</a>
+    <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE Management</a>
+    <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+    <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+    <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen Agen</a>
+    <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+    <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur ODC/ODP</a>
+    <a class="nav-item active" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+    <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat Settings</a>
+    <a class="nav-item" href="payment.html"><span class="ni"><i class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+    <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+  </div>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-left"></i> Logout</button>
+  </div>
+</aside>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>WhatsApp Notifikasi</h1>
+      <p>Kirim blast &amp; notifikasi otomatis via <strong>Evolution API</strong> (Self-hosted).</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="tb-btn tb-btn-evo" onclick="document.getElementById('blastMsg').focus()">
+        <i class="bi bi-send-fill"></i><span>Buat Blast</span>
+      </button>
+      <div class="tb-user"><strong>RT/RW Billing</strong><span>Admin</span></div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="two-col">
+
+      <!-- ────────── KIRIM BLAST ────────── -->
+      <div class="card">
+        <div class="card-header">
+          <div><h2>Kirim Pesan Blast</h2><p>Kirim ke pelanggan via Evolution API</p></div>
+          <span class="chip chip-evo"><i class="bi bi-send-fill"></i> EVO API</span>
+        </div>
+        <div class="card-body">
+
+          <div class="form-group">
+            <label>Penerima</label>
+            <select id="blastTarget" onchange="onTargetChange()">
+              <option value="all">Semua Pelanggan (Aktif)</option>
+              <option value="due">Pelanggan Jatuh Tempo</option>
+              <option value="suspend">Pelanggan Suspend</option>
+              <option value="custom">Nomor Tertentu</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="customNumberWrap" style="display:none">
+            <label>Nomor WA (pisahkan koma)</label>
+            <input type="text" id="customNumbers" placeholder="08123456789, 08198765432">
+          </div>
+
+          <div class="form-group">
+            <label>Template Pesan</label>
+            <select id="blastTemplate" onchange="applyTemplate()">
+              <option value="">— Pilih Template —</option>
+              <option value="tagihan">Tagihan Jatuh Tempo</option>
+              <option value="suspend">Notif Suspend</option>
+              <option value="aktif">Akun Aktif Kembali</option>
+              <option value="promo">Promo / Info</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Isi Pesan * <small style="color:var(--muted);font-weight:400">(gunakan {nama} {tagihan} {tgl})</small></label>
+            <textarea id="blastMsg" placeholder="Tulis pesan WhatsApp Anda di sini..." oninput="updatePreview()"></textarea>
+          </div>
+
+          <div class="preview-box">
+            <div class="preview-label"><i class="bi bi-eye-fill"></i> Preview Pesan</div>
+            <div class="preview-bubble" id="msgPreview">Pesan akan muncul di sini...</div>
+            <div class="preview-time" id="previewTime">--:-- ✓✓</div>
+          </div>
+
+          <button class="btn-send" id="btnSend" onclick="sendBlast()">
+            <i class="bi bi-whatsapp"></i> Kirim via Evolution API
+          </button>
+        </div>
+      </div>
+
+      <!-- ────────── KOLOM KANAN ────────── -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- NOTIFIKASI OTOMATIS -->
+        <div class="card">
+          <div class="card-header"><div><h2>Notifikasi Otomatis</h2><p>Aktifkan event-triggered WA</p></div></div>
+          <div class="card-body">
+            <div class="auto-row">
+              <div><strong style="font-size:12px">H-3 Jatuh Tempo</strong><div style="font-size:11px;color:var(--muted)">Kirim 3 hari sebelum jatuh tempo</div></div>
+              <label class="toggle"><input type="checkbox" id="auto_h3" onchange="saveToggles()"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="auto-row">
+              <div><strong style="font-size:12px">Tagihan Lunas</strong><div style="font-size:11px;color:var(--muted)">Konfirmasi pembayaran diterima</div></div>
+              <label class="toggle"><input type="checkbox" id="auto_lunas" onchange="saveToggles()"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="auto-row">
+              <div><strong style="font-size:12px">Suspend Otomatis</strong><div style="font-size:11px;color:var(--muted)">Notif saat akun di-suspend</div></div>
+              <label class="toggle"><input type="checkbox" id="auto_suspend" onchange="saveToggles()"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="auto-row">
+              <div><strong style="font-size:12px">Pelanggan Baru</strong><div style="font-size:11px;color:var(--muted)">Selamat datang pelanggan baru</div></div>
+              <label class="toggle"><input type="checkbox" id="auto_baru" onchange="saveToggles()"><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIWAYAT BLAST -->
+        <div class="card">
+          <div class="card-header">
+            <div><h2>Riwayat Blast</h2><p>10 blast terakhir</p></div>
+            <button onclick="loadHistory()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px" title="Refresh"><i class="bi bi-arrow-clockwise"></i></button>
+          </div>
+          <div class="card-body" id="historyList">
+            <div class="history-empty"><i class="bi bi-clock-history" style="font-size:24px;display:block;margin-bottom:6px"></i>Memuat riwayat...</div>
+          </div>
+        </div>
+
+        <!-- KONFIGURASI EVOLUTION API -->
+        <div class="card">
+          <div class="card-header">
+            <div><h2>Konfigurasi Evolution API</h2><p>Self-hosted WhatsApp Gateway</p></div>
+            <span class="chip chip-evo"><i class="bi bi-server"></i> Self-hosted</span>
+          </div>
+          <div class="card-body">
+
+            <div class="form-group">
+              <label>Instance URL <span style="color:#ef4444">*</span></label>
+              <input type="text" id="evoBaseUrl" placeholder="https://evo.yourdomain.com" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+              <label>Instance Name <span style="color:#ef4444">*</span></label>
+              <input type="text" id="evoInstanceName" placeholder="nama-instance-anda" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+              <label>Global Apikey <span style="color:#ef4444">*</span></label>
+              <div class="token-wrap">
+                <input type="password" id="evoApiKey" placeholder="Apikey dari Evolution API dashboard" autocomplete="off">
+                <button class="token-toggle" onclick="toggleKey()" title="Tampilkan/Sembunyikan">
+                  <i class="bi bi-eye" id="keyEyeIcon"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Delay Min (ms)</label>
+                <input type="number" id="evoDelayMin" value="2000" min="500" max="30000" step="500">
+              </div>
+              <div class="form-group">
+                <label>Delay Max (ms)</label>
+                <input type="number" id="evoDelayMax" value="5000" min="500" max="30000" step="500">
+              </div>
+            </div>
+
+            <div class="auto-row" style="padding:8px 0;margin-bottom:14px;border:none">
+              <div>
+                <strong style="font-size:12px">Typing Effect (Anti-Banned)</strong>
+                <div style="font-size:11px;color:var(--muted)">Simulasi "sedang mengetik" sebelum kirim</div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="evoUseTyping" checked><span class="toggle-slider"></span></label>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn-save" id="btnSaveApi" onclick="saveApi()">
+                <i class="bi bi-save-fill"></i> Simpan
+              </button>
+              <button class="btn-test" id="btnTest" onclick="testConnection()">
+                <i class="bi bi-plug-fill"></i> Test Koneksi
+              </button>
+            </div>
+
+            <div id="connStatus" style="margin-top:10px;display:none"></div>
+
+          </div>
+        </div>
+
+      </div><!-- /kolom kanan -->
+    </div><!-- /two-col -->
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script src="../assets/js/api.js"></script>
+<script>
+// ════════════════════════════════════════════════════════════════════
+// TEMPLATES
+// ════════════════════════════════════════════════════════════════════
+const TEMPLATES = {
+  tagihan: '🔔 Halo *{nama}*,\n\nTagihan internet Anda bulan ini *Rp {tagihan}* jatuh tempo pada *{tgl}*.\n\nMohon segera lakukan pembayaran agar layanan tetap aktif.\nTerima kasih 🙏\n\n_RT/RW NET Billing_',
+  suspend: '⚠️ Halo *{nama}*,\n\nAkun internet Anda telah *disuspend* karena tagihan *Rp {tagihan}* belum dibayar.\n\nSilakan hubungi admin untuk melakukan pembayaran.\n📞 _RT/RW NET Billing_',
+  aktif:   '✅ Halo *{nama}*,\n\nAkun internet Anda telah *aktif kembali*. Selamat menikmati!\n\nTerima kasih sudah membayar tepat waktu 😊\n_RT/RW NET Billing_',
+  promo:   '🎉 Halo Pelanggan setia!\n\nAda info penting dari *RT/RW NET Billing*:\n\n{isi_promo}\n\nSalam,\nAdmin RT/RW NET',
+};
+
+// ════════════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════════════
+async function init() {
+  await Promise.all([loadSettings(), loadHistory()]);
+}
+
+// ════════════════════════════════════════════════════════════════════
+// LOAD SETTINGS
+// ════════════════════════════════════════════════════════════════════
+async function loadSettings() {
+  try {
+    const s = await apiFetch('/api/whatsapp/settings');
+    // Toggles
+    document.getElementById('auto_h3').checked      = s.auto_h3 === '1';
+    document.getElementById('auto_lunas').checked   = s.auto_lunas === '1';
+    document.getElementById('auto_suspend').checked = s.auto_suspend === '1';
+    document.getElementById('auto_baru').checked    = s.auto_baru === '1';
+    // Evolution API
+    document.getElementById('evoBaseUrl').value     = s.evo_base_url      || '';
+    document.getElementById('evoInstanceName').value= s.evo_instance_name || '';
+    document.getElementById('evoApiKey').value      = s.evo_api_key       || '';
+    document.getElementById('evoDelayMin').value    = s.evo_delay_min     || '2000';
+    document.getElementById('evoDelayMax').value    = s.evo_delay_max     || '5000';
+    document.getElementById('evoUseTyping').checked = s.evo_use_typing !== '0';
+  } catch(e) {
+    console.warn('[WA] Gagal load settings:', e.message);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// RIWAYAT BLAST
+// ════════════════════════════════════════════════════════════════════
+async function loadHistory() {
+  const box = document.getElementById('historyList');
+  try {
+    const rows = await apiFetch('/api/whatsapp/history');
+    if (!rows || rows.length === 0) {
+      box.innerHTML = '<div class="history-empty"><i class="bi bi-inbox" style="font-size:24px;display:block;margin-bottom:6px"></i>Belum ada riwayat blast.</div>';
+      return;
+    }
+    box.innerHTML = rows.map(r => {
+      const cls  = r.status === 'Terkirim' ? 'ts-sent' : r.status === 'Gagal' ? 'ts-fail' : 'ts-partial';
+      const icon = r.status === 'Terkirim' ? '✓' : r.status === 'Gagal' ? '✗' : '⏳';
+      const tgl  = new Date(r.created_at).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      const detail = r.sent_count !== undefined
+        ? `${r.sent_count} terkirim / ${r.failed_count} gagal dari ${r.recipient_count} — ${tgl}`
+        : `${r.recipient_count} penerima — ${tgl}`;
+      return `<div class="blast-item">
+        <div class="blast-info">
+          <strong>${escHtml(r.subject)}</strong>
+          <span>${detail}</span>
+        </div>
+        <span class="t-status ${cls}">${icon} ${r.status}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    box.innerHTML = '<div class="history-empty">Gagal memuat riwayat.</div>';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// TEMPLATE & PREVIEW
+// ════════════════════════════════════════════════════════════════════
+function applyTemplate() {
+  const t = TEMPLATES[document.getElementById('blastTemplate').value];
+  if (t) { document.getElementById('blastMsg').value = t; updatePreview(); }
+}
+
+function updatePreview() {
+  const msg = document.getElementById('blastMsg').value || 'Pesan akan muncul di sini...';
+  document.getElementById('msgPreview').innerHTML = msg
+    .replace(/\*(.*?)\*/g, '<strong>$1</strong>')
+    .replace(/_(.*?)_/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+  const now = new Date();
+  document.getElementById('previewTime').textContent =
+    `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} ✓✓`;
+}
+
+function onTargetChange() {
+  const v = document.getElementById('blastTarget').value;
+  document.getElementById('customNumberWrap').style.display = v === 'custom' ? '' : 'none';
+}
+
+// ════════════════════════════════════════════════════════════════════
+// SEND BLAST
+// ════════════════════════════════════════════════════════════════════
+async function sendBlast() {
+  const msg    = document.getElementById('blastMsg').value.trim();
+  const target = document.getElementById('blastTarget').value;
+  const custom = document.getElementById('customNumbers').value.trim();
+
+  if (!msg) { showToast('Isi pesan terlebih dahulu!', 'error'); return; }
+
+  const btn = document.getElementById('btnSend');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Menambahkan ke antrian...';
+
+  try {
+    const res = await apiFetch('/api/whatsapp/send-blast', {
+      method: 'POST',
+      body: JSON.stringify({ message: msg, target, custom_numbers: custom }),
+    });
+    showToast('🚀 ' + (res.message || 'Blast diantrekan!'), 'success');
+    setTimeout(loadHistory, 6000); // refresh setelah beberapa pesan terkirim
+  } catch(e) {
+    showToast('❌ ' + (e.message || 'Gagal mengirim blast'), 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-whatsapp"></i> Kirim via Evolution API';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// SIMPAN TOGGLE
+// ════════════════════════════════════════════════════════════════════
+async function saveToggles() {
+  try {
+    await apiFetch('/api/whatsapp/settings', {
+      method: 'POST',
+      body: JSON.stringify({
+        auto_h3:      document.getElementById('auto_h3').checked,
+        auto_lunas:   document.getElementById('auto_lunas').checked,
+        auto_suspend: document.getElementById('auto_suspend').checked,
+        auto_baru:    document.getElementById('auto_baru').checked,
+      }),
+    });
+    showToast('Pengaturan notifikasi disimpan', 'success');
+  } catch(e) {
+    showToast('Gagal menyimpan pengaturan', 'error');
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// SIMPAN KONFIGURASI EVOLUTION API
+// ════════════════════════════════════════════════════════════════════
+async function saveApi() {
+  const evo_base_url      = document.getElementById('evoBaseUrl').value.trim();
+  const evo_instance_name = document.getElementById('evoInstanceName').value.trim();
+  const evo_api_key       = document.getElementById('evoApiKey').value.trim();
+  const evo_delay_min     = document.getElementById('evoDelayMin').value;
+  const evo_delay_max     = document.getElementById('evoDelayMax').value;
+  const evo_use_typing    = document.getElementById('evoUseTyping').checked;
+
+  if (!evo_base_url || !evo_instance_name || !evo_api_key) {
+    showToast('Instance URL, Instance Name, dan Apikey wajib diisi!', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btnSaveApi');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Menyimpan...';
+
+  try {
+    await apiFetch('/api/whatsapp/settings', {
+      method: 'POST',
+      body: JSON.stringify({ evo_base_url, evo_instance_name, evo_api_key, evo_delay_min, evo_delay_max, evo_use_typing }),
+    });
+    showToast('✅ Konfigurasi Evolution API disimpan!', 'success');
+  } catch(e) {
+    showToast('Gagal menyimpan: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-save-fill"></i> Simpan';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// TEST KONEKSI EVOLUTION API
+// ════════════════════════════════════════════════════════════════════
+async function testConnection() {
+  const btn = document.getElementById('btnTest');
+  const box = document.getElementById('connStatus');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Mengecek...';
+  box.style.display = 'none';
+
+  try {
+    const r = await apiFetch('/api/whatsapp/test-connection');
+    const st = r.instance?.status || 'unknown';
+    const stColor = st === 'open' ? '#15803d' : st === 'not_found' ? '#b45309' : '#b91c1c';
+    const stIcon  = st === 'open' ? '🟢' : st === 'not_found' ? '🟡' : '🔴';
+    box.style.display = 'block';
+    box.innerHTML = `<div class="conn-ok">
+      <strong style="color:#15803d">✅ Terhubung ke Evolution API</strong><br>
+      Instance: <strong>${escHtml(r.instance?.name || '-')}</strong>
+      &nbsp;|&nbsp; Status: <strong style="color:${stColor}">${stIcon} ${st}</strong>
+      &nbsp;|&nbsp; Total Instance: ${r.total_instances || '-'}
+    </div>`;
+    showToast('✅ Koneksi berhasil!', 'success');
+  } catch(e) {
+    box.style.display = 'block';
+    box.innerHTML = `<div class="conn-fail">
+      <strong style="color:#b91c1c">❌ Koneksi Gagal</strong><br>
+      <span style="color:#7f1d1d;font-size:12px">${escHtml(e.message)}</span>
+    </div>`;
+    showToast('Koneksi gagal: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-plug-fill"></i> Test Koneksi';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════════════
+function toggleKey() {
+  const inp = document.getElementById('evoApiKey');
+  const ico = document.getElementById('keyEyeIcon');
+  if (inp.type === 'password') { inp.type = 'text';     ico.className = 'bi bi-eye-slash'; }
+  else                         { inp.type = 'password'; ico.className = 'bi bi-eye'; }
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// Boot
+init();
+</script>
+</body>
+</html>

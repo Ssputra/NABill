@@ -1,0 +1,1078 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=login.html">
+    <style>
+      body {
+        display: none !important
+      }
+    </style>
+  </noscript>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kasir - RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --font: 'Inter', system-ui, sans-serif;
+      --sidebar-w: 220px;
+      --bg: #f0f4ff;
+      --surface: #fff;
+      --surface-alt: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --radius: 14px;
+      --shadow: 0 4px 24px -8px rgba(15, 23, 42, .15);
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: linear-gradient(180deg, #1e3a8a, #1d4ed8);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .2);
+      border-radius: 4px;
+    }
+
+    .sidebar-brand {
+      padding: 18px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #fff;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .65);
+    }
+
+    .brand-badge {
+      font-size: 9px;
+      background: rgba(245, 158, 11, .15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, .3);
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-weight: 600;
+    }
+
+    .nav-section {
+      padding: 8px 10px 4px;
+    }
+
+    .nav-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255, 255, 255, .4);
+      padding: 4px 6px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .82);
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid transparent;
+      margin-bottom: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, .2);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, .35);
+    }
+
+    .nav-item .ni {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .badge-new {
+      margin-left: auto;
+      background: #ef4444;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px 10px;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 9px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, .35);
+    }
+
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, .06);
+    }
+
+    .topbar-left h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .topbar-left p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tb-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+
+    .tb-btn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+    }
+
+    .content {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .kasir-layout {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media(max-width:900px) {
+      .kasir-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .card-header p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .card-body {
+      padding: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: var(--font);
+      outline: none;
+      width: 100%;
+      transition: border-color .2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--primary);
+    }
+
+    .form-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .btn-bayar {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all .15s;
+      margin-top: 8px;
+    }
+
+    .btn-bayar:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, .4);
+    }
+
+    .summary-boxes {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      margin-bottom: 16px;
+    }
+
+    .sum-box {
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .sum-box .sb-label {
+      font-size: 10px;
+      opacity: .85;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .sum-box .sb-value {
+      font-size: 18px;
+      font-weight: 800;
+      margin-top: 2px;
+    }
+
+    .sb-green {
+      background: linear-gradient(135deg, #064e3b, #10b981);
+    }
+
+    .sb-blue {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    }
+
+    .sb-purple {
+      background: linear-gradient(135deg, #4c1d95, #8b5cf6);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th {
+      background: var(--surface-alt);
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+    }
+
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(241, 245, 249, .7);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .pill-lunas {
+      background: rgba(22, 163, 74, .12);
+      color: #15803d;
+    }
+
+    .pill-pending {
+      background: rgba(220, 38, 38, .12);
+      color: #b91c1c;
+    }
+
+    .btn-del {
+      background: none;
+      border: none;
+      color: #dc2626;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+    }
+
+    .btn-print-row {
+      background: none;
+      border: none;
+      color: #2563eb;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* PRINT RECEIPT */
+    .receipt-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .55);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .receipt-overlay.open {
+      display: flex;
+    }
+
+    .receipt {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      width: 320px;
+      max-width: 90vw;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .3);
+    }
+
+    .receipt-header {
+      text-align: center;
+      border-bottom: 2px dashed #e2e8f0;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .receipt-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .receipt-header p {
+      margin: 4px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 4px 0;
+    }
+
+    .receipt-row.total {
+      font-weight: 700;
+      font-size: 14px;
+      border-top: 2px dashed #e2e8f0;
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
+    .receipt-footer {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .receipt-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .receipt-actions button {
+      flex: 1;
+      padding: 9px;
+      border-radius: 8px;
+      border: none;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+  <script src="../assets/js/darkmode.js"></script>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+      <div>
+        <div class="brand-name">RT/RW Billing</div>
+        <div class="brand-sub">Billing Management</div>
+      </div>
+      <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Utama</div>
+      <a class="nav-item" href="../pages/index.html"><span class="ni"><i
+            class="bi bi-speedometer2"></i></span>Dashboard</a>
+      <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+      <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+      <a class="nav-item active" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+      <a class="nav-item" href="laporan.html"><span class="ni"><i
+            class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+      <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+      <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+      <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+      <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi
+        <span class="badge-new">NEW</span></a>
+      <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Infrastruktur</div>
+      <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare
+        Tunnel</a>
+      <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+      <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+      <a class="nav-item" href="bookkeeping.html"><span class="ni"><i
+            class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik
+        Monitoring</a>
+      <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE
+        Management</a>
+      <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+      <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+      <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen
+        Agen</a>
+      <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+      <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur
+        ODC/ODP</a>
+      <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+      <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat
+        Settings</a>
+      <a class="nav-item" href="payment.html"><span class="ni"><i
+            class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+      <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="Auth.logout()"><i class="bi bi-box-arrow-left"></i> Logout</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Kasir Pembayaran</h1>
+        <p>Catat transaksi pembayaran pelanggan.</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="tb-icon-btn darkmode-btn" id="darkModeBtn" title="Mode Gelap"><i
+            class="bi bi-moon-stars-fill"></i></button>
+        <button class="tb-btn" style="background:#7c3aed;color:#fff;" onclick="window.print()"><i
+            class="bi bi-printer-fill"></i> Cetak Laporan</button>
+        <button class="tb-btn" style="background:#16a34a;color:#fff;" onclick="exportTodayCSV()"><i
+            class="bi bi-file-earmark-excel-fill"></i> Export</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- SUMMARY -->
+      <div class="summary-boxes">
+        <div class="sum-box sb-green">
+          <div class="sb-label">Total Kas Hari Ini</div>
+          <div class="sb-value" id="sumToday">Rp 0</div>
+        </div>
+        <div class="sum-box sb-blue">
+          <div class="sb-label">Transaksi Hari Ini</div>
+          <div class="sb-value" id="sumCount">0</div>
+        </div>
+        <div class="sum-box sb-purple">
+          <div class="sb-label">Total Bulan Ini</div>
+          <div class="sb-value" id="sumMonth">Rp 0</div>
+        </div>
+      </div>
+
+      <div class="kasir-layout">
+        <!-- FORM BAYAR -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Form Pembayaran</h2>
+              <p>Catat pembayaran pelanggan</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Nama Pelanggan *</label>
+              <select id="fName" onchange="autoFill()">
+                <option value="">-- Pilih Pelanggan --</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Paket Internet</label>
+                <input type="text" id="fPaket" readonly placeholder="Otomatis terisi..."
+                  style="background:var(--surface-alt);cursor:not-allowed;color:var(--muted);font-weight:600;">
+              </div>
+              <div class="form-group"><label>Jumlah Bayar (Rp) *</label>
+                <input type="number" id="fAmount" value="200000" placeholder="200000">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Metode Pembayaran</label>
+                <select id="fMethod">
+                  <option>Tunai</option>
+                  <option>Transfer Bank</option>
+                  <option>OVO</option>
+                  <option>GoPay</option>
+                  <option>DANA</option>
+                  <option>Shopeepay</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Periode Bayar</label>
+                <select id="fPeriode">
+                  <!-- Digenerate dinamis oleh JS -->
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Uang Diterima (Rp)</label>
+              <input type="number" id="fCash" placeholder="Kosongkan jika non-tunai" oninput="hitungKembalian()">
+            </div>
+            <div id="kembalianBox"
+              style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#15803d;">
+              Kembalian: <strong id="kembalianVal">Rp 0</strong>
+            </div>
+            <div class="form-group"><label>Catatan</label>
+              <input type="text" id="fNote" placeholder="Opsional...">
+            </div>
+            <button class="btn-bayar" onclick="bayar()"><i class="bi bi-cash-coin"></i> Proses Pembayaran</button>
+          </div>
+        </div>
+
+        <!-- DAFTAR TRANSAKSI HARI INI -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Transaksi Hari Ini</h2>
+              <p id="todayDate">—</p>
+            </div>
+            <button class="tb-btn"
+              style="background:var(--surface-alt);color:var(--muted);font-size:11px;padding:5px 10px;"
+              onclick="clearToday()"><i class="bi bi-trash"></i> Reset</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Paket</th>
+                  <th>Bayar</th>
+                  <th>Metode</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="todayTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALL TRANSACTIONS -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Semua Transaksi</h2>
+            <p>Riwayat lengkap pembayaran</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <select
+              style="padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:11px;outline:none;"
+              id="filterTrxStatus" onchange="renderAll()">
+              <option value="">Semua</option>
+              <option value="Lunas">Lunas</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nama</th>
+                <th>Paket</th>
+                <th>Bayar</th>
+                <th>Metode</th>
+                <th>Periode</th>
+                <th>Status</th>
+                <th>Tanggal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="allTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECEIPT -->
+  <div class="receipt-overlay" id="receiptOverlay">
+    <div class="receipt">
+      <div class="receipt-header">
+        <h3>🌐 RT/RW NET BILLING</h3>
+        <p>Struk Pembayaran Internet</p>
+        <p id="rcDate" style="font-size:10px;color:#94a3b8;margin-top:2px;"></p>
+      </div>
+      <div class="receipt-row"><span>Pelanggan</span><strong id="rcName">—</strong></div>
+      <div class="receipt-row"><span>Paket</span><span id="rcPaket">—</span></div>
+      <div class="receipt-row"><span>Periode</span><span id="rcPeriode">—</span></div>
+      <div class="receipt-row"><span>Metode</span><span id="rcMethod">—</span></div>
+      <div class="receipt-row total"><span>Total Bayar</span><strong id="rcAmount" style="color:#1d4ed8;">—</strong>
+      </div>
+      <div id="rcKembalianRow" class="receipt-row" style="display:none;"><span>Kembalian</span><span
+          id="rcKembalian">—</span></div>
+      <div class="receipt-footer">
+        <p>Terima kasih telah membayar! 🎉</p>
+        <p>Hubungi kami jika ada pertanyaan.</p>
+      </div>
+      <div class="receipt-actions">
+        <button onclick="closeReceipt()" style="background:var(--surface-alt);color:var(--muted);">Tutup</button>
+        <button onclick="printReceipt()" style="background:#1d4ed8;color:#fff;"><i class="bi bi-printer-fill"></i>
+          Cetak</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/api.js"></script>
+  <script>
+    const API = '/api';
+    let allTrx = [], customers = [], lastTrxId = null;
+    const todayISO = new Date().toISOString().slice(0, 10);
+    const todayStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+    document.getElementById('todayDate').textContent = todayStr;
+
+    function authHeaders() {
+      const t = localStorage.getItem('billing_token');
+      return t ? { 'Authorization': `Bearer ${t}`, 'Content-Type': 'application/json' }
+        : { 'Content-Type': 'application/json' };
+    }
+
+    // ===== LOAD CUSTOMERS (for select) =====
+    async function loadCustomers() {
+      try {
+        const res = await fetch(`${API}/customers?limit=9999`, { headers: authHeaders(), credentials: 'include' });
+        const d = await res.json();
+        customers = Array.isArray(d) ? d : (d.data || []);
+        const sel = document.getElementById('fName');
+        sel.innerHTML = '<option value="">-- Pilih Pelanggan --</option>' + customers.map(c => `<option value="${c.name}">${c.name} — Paket ${c.paket}</option>`).join('');
+      } catch (e) { console.error('loadCustomers:', e); }
+    }
+
+    // ===== LOAD TRANSACTIONS =====
+    async function loadTransactions() {
+      try {
+        const res = await fetch(`${API}/transactions?limit=200&sort=desc`, { headers: authHeaders(), credentials: 'include' });
+        const d = await res.json();
+        allTrx = Array.isArray(d) ? d : (d.data || []);
+        updateSummary();
+        renderToday();
+        renderAll();
+      } catch (e) { console.error('loadTransactions:', e); }
+    }
+
+    // ===== SUMMARY =====
+    function updateSummary() {
+      const todayList = allTrx.filter(t => (t.created_at || t.tgl || '').slice(0, 10) === todayISO && t.status === 'Lunas');
+      const monthPfx = todayISO.slice(0, 7); // YYYY-MM
+      const monthList = allTrx.filter(t => (t.created_at || t.tgl || '').startsWith(monthPfx) && t.status === 'Lunas');
+      const sum = arr => arr.reduce((s, t) => s + (t.amount || t.jumlah || 0), 0);
+      document.getElementById('sumToday').textContent = 'Rp ' + sum(todayList).toLocaleString('id-ID');
+      document.getElementById('sumCount').textContent = todayList.length;
+      document.getElementById('sumMonth').textContent = 'Rp ' + sum(monthList).toLocaleString('id-ID');
+    }
+
+    // ===== RENDER TODAY =====
+    function renderToday() {
+      const list = allTrx.filter(t => (t.created_at || t.tgl || '').slice(0, 10) === todayISO);
+      const tb = document.getElementById('todayTbody');
+      if (!list.length) {
+        tb.innerHTML = '<tr><td colspan="6"><div class="empty-state">Belum ada transaksi hari ini</div></td></tr>';
+        return;
+      }
+      tb.innerHTML = list.map(t => `<tr>
+    <td><strong>${t.customer_name || t.name}</strong></td>
+    <td>${t.paket || '—'}</td>
+    <td><strong style="color:#15803d">Rp ${(t.amount || t.jumlah || 0).toLocaleString('id-ID')}</strong></td>
+    <td>${t.method || t.payment_method || '—'}</td>
+    <td><span class="status-pill ${t.status === 'Lunas' ? 'pill-lunas' : 'pill-pending'}">${t.status}</span></td>
+    <td>
+      <button class="btn-print-row" onclick="showReceipt(${t.id})" title="Struk"><i class="bi bi-receipt"></i></button>
+      <button class="btn-del" onclick="delTrx(${t.id})" title="Hapus"><i class="bi bi-trash"></i></button>
+    </td>
+  </tr>`).join('');
+    }
+
+    // ===== RENDER ALL =====
+    function renderAll() {
+      const s = document.getElementById('filterTrxStatus').value;
+      const list = s ? allTrx.filter(t => t.status === s) : allTrx;
+      const tb = document.getElementById('allTbody');
+      if (!list.length) {
+        tb.innerHTML = '<tr><td colspan="9"><div class="empty-state">Tidak ada transaksi</div></td></tr>';
+        return;
+      }
+      tb.innerHTML = list.map((t, i) => `<tr>
+    <td style="color:var(--muted)">${i + 1}</td>
+    <td><strong>${t.customer_name || t.name}</strong></td>
+    <td>${t.paket || '—'}</td>
+    <td><strong style="color:#1d4ed8">Rp ${(t.amount || t.jumlah || 0).toLocaleString('id-ID')}</strong></td>
+    <td>${t.method || t.payment_method || '—'}</td>
+    <td>${t.period || t.periode || '—'}</td>
+    <td><span class="status-pill ${t.status === 'Lunas' ? 'pill-lunas' : 'pill-pending'}">${t.status}</span></td>
+    <td style="color:var(--muted);font-size:11px">${(t.created_at || t.tgl || '').slice(0, 10)}</td>
+    <td>
+      <button class="btn-print-row" onclick="showReceipt(${t.id})" title="Struk"><i class="bi bi-receipt"></i></button>
+      <button class="btn-del" onclick="delTrx(${t.id})" title="Hapus"><i class="bi bi-trash"></i></button>
+    </td>
+  </tr>`).join('');
+    }
+
+    // ===== DELETE =====
+    async function delTrx(id) {
+      if (!confirm('Hapus transaksi ini?')) return;
+      try {
+        await fetch(`${API}/transactions/${id}`, { method: 'DELETE', headers: authHeaders(), credentials: 'include' });
+        loadTransactions();
+      } catch (e) { alert('Gagal hapus: ' + e.message); }
+    }
+
+    // ===== AUTOCOMPLETE =====
+    function autoFill() {
+      const name = document.getElementById('fName').value;
+      const c = customers.find(x => x.name === name);
+      if (c) {
+        // Set text paket
+        document.getElementById('fPaket').value = c.paket || 'Custom';
+
+        // Set tagihan custom (price) di database
+        document.getElementById('fAmount').value = c.price || 0;
+        hitungKembalian();
+      } else {
+        document.getElementById('fPaket').value = '';
+        document.getElementById('fAmount').value = '';
+        hitungKembalian();
+      }
+    }
+    function hitungKembalian() {
+      const cash = parseInt(document.getElementById('fCash').value) || 0;
+      const amount = parseInt(document.getElementById('fAmount').value) || 0;
+      const kb = document.getElementById('kembalianBox');
+      if (cash > 0) {
+        kb.style.display = 'block';
+        const kem = cash - amount;
+        document.getElementById('kembalianVal').textContent = 'Rp ' + (kem >= 0 ? kem.toLocaleString('id-ID') : 'Kurang ' + Math.abs(kem).toLocaleString('id-ID'));
+        kb.style.borderColor = kem >= 0 ? '#bbf7d0' : '#fecaca';
+        kb.style.color = kem >= 0 ? '#15803d' : '#b91c1c';
+      } else { kb.style.display = 'none'; }
+    }
+
+    // ===== BAYAR =====
+    async function bayar() {
+      const name = document.getElementById('fName').value.trim();
+      const amount = parseInt(document.getElementById('fAmount').value) || 0;
+      if (!name || !amount) { alert('Nama dan jumlah bayar wajib diisi!'); return; }
+
+      const paket = document.getElementById('fPaket').value;
+      const method = document.getElementById('fMethod').value;
+      const periode = document.getElementById('fPeriode').value;
+      const note = document.getElementById('fNote').value;
+      const cash = parseInt(document.getElementById('fCash').value) || 0;
+
+      // Find customer id
+      const cust = customers.find(x => x.name.toLowerCase() === name.toLowerCase());
+      const body = {
+        customer_id: cust?.id || null,
+        customer_name: name,
+        paket, amount, method, period: periode,
+        note, status: 'Lunas',
+        cash: cash > 0 ? cash : null
+      };
+
+      const btn = document.querySelector('.btn-bayar');
+      btn.disabled = true; btn.textContent = 'Memproses...';
+
+      try {
+        const res = await fetch(`${API}/transactions`, {
+          method: 'POST', headers: authHeaders(), credentials: 'include', body: JSON.stringify(body)
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Gagal simpan');
+        lastTrxId = json.id || json.data?.id;
+
+        // Reset Form
+        document.getElementById('fName').value = '';
+        ['fNote', 'fCash'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('kembalianBox').style.display = 'none';
+
+        await loadTransactions();
+        showReceipt(lastTrxId, { customer_name: name, paket, amount, method, period: periode, cash });
+      } catch (e) {
+        alert('Error: ' + e.message);
+      } finally { btn.disabled = false; btn.innerHTML = '<i class="bi bi-cash-coin"></i> Proses Pembayaran'; }
+    }
+
+    // ===== RECEIPT =====
+    function showReceipt(id, override) {
+      const t = override || allTrx.find(x => x.id === id);
+      if (!t) return;
+      const d = new Date(t.created_at || t.tgl || Date.now());
+      document.getElementById('rcDate').textContent = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+      document.getElementById('rcName').textContent = t.customer_name || t.name;
+      document.getElementById('rcPaket').textContent = t.paket || '—';
+      document.getElementById('rcPeriode').textContent = t.period || t.periode || '—';
+      document.getElementById('rcMethod').textContent = t.method || t.payment_method || '—';
+      document.getElementById('rcAmount').textContent = 'Rp ' + (t.amount || t.jumlah || 0).toLocaleString('id-ID');
+      const cash = t.cash || 0;
+      const kem = cash - (t.amount || t.jumlah || 0);
+      if (cash > 0 && kem >= 0) {
+        document.getElementById('rcKembalianRow').style.display = 'flex';
+        document.getElementById('rcKembalian').textContent = 'Rp ' + kem.toLocaleString('id-ID');
+      } else { document.getElementById('rcKembalianRow').style.display = 'none'; }
+      document.getElementById('receiptOverlay').classList.add('open');
+    }
+    function closeReceipt() { document.getElementById('receiptOverlay').classList.remove('open'); }
+    function printReceipt() { window.print(); }
+    document.getElementById('receiptOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeReceipt(); });
+
+    // ===== CLEAR TODAY =====
+    async function clearToday() {
+      if (!confirm('Hapus semua transaksi hari ini dari database?')) return;
+      const todayList = allTrx.filter(t => (t.created_at || t.tgl || '').slice(0, 10) === todayISO);
+      for (const t of todayList) {
+        await fetch(`${API}/transactions/${t.id}`, { method: 'DELETE', headers: authHeaders(), credentials: 'include' });
+      }
+      loadTransactions();
+    }
+
+    // ===== EXPORT CSV =====
+    function exportTodayCSV() {
+      const list = allTrx.filter(t => (t.created_at || t.tgl || '').slice(0, 10) === todayISO);
+      const csv = ['No,Nama,Paket,Bayar,Metode,Status,Tanggal',
+        ...list.map((t, i) => `${i + 1},"${t.customer_name || t.name}","${t.paket || ''}",${t.amount || t.jumlah},"${t.method || t.payment_method || ''}","${t.status}","${(t.created_at || t.tgl || '').slice(0, 10)}"`)
+      ].join('\n');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      a.download = 'kasir_' + todayISO + '.csv'; a.click();
+    }
+
+    // ===== INIT & PERIODE ====
+    function generatePeriode() {
+      const sel = document.getElementById('fPeriode');
+      const now = new Date();
+      const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+      let options = '';
+      // Buat 2 bulan ke belakang dan 4 bulan ke depan
+      for (let i = -2; i <= 4; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+        const m = months[d.getMonth()];
+        const y = d.getFullYear();
+        const str = `${m} ${y}`;
+        const selected = (i === 0) ? 'selected' : '';
+        options += `<option value="${str}" ${selected}>${str}</option>`;
+      }
+      sel.innerHTML = options;
+    }
+
+    generatePeriode();
+    loadCustomers();
+    loadTransactions();
+  </script>
+</body>
+
+</html>

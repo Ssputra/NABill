@@ -1,0 +1,462 @@
+﻿<!doctype html>
+<html lang="id">
+<head>
+  <noscript><meta http-equiv="refresh" content="0;url=login.html"><style>body{display:none!important}</style></noscript>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Infrastruktur ODC/ODP — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" crossorigin="anonymous"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --font: 'Inter', system-ui, sans-serif; --sidebar-w: 220px;
+      --bg: #f0f4ff; --surface: #ffffff; --surface-alt: #f1f5f9;
+      --text: #0f172a; --muted: #64748b; --border: #e2e8f0;
+      --primary: #1d4ed8; --primary-dark: #1e3a8a;
+      --sidebar-bg: linear-gradient(180deg,#1e3a8a 0%,#1d4ed8 100%);
+      --radius: 14px; --shadow: 0 4px 24px -8px rgba(15,23,42,.15);
+    }
+    body { margin:0; font-family:var(--font); background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+    .sidebar { width:var(--sidebar-w); min-height:100vh; background:var(--sidebar-bg); display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; scrollbar-width:thin; }
+    .sidebar::-webkit-scrollbar { width:4px; } .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:4px; }
+    .sidebar-brand { padding:18px 16px 12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; border-bottom:1px solid rgba(255,255,255,.12); }
+    .brand-icon { width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; }
+    .brand-name { font-size:13px; font-weight:800; color:#fff; letter-spacing:.04em; text-transform:uppercase; }
+    .brand-sub { font-size:10px; color:rgba(255,255,255,.65); font-weight:500; }
+    .brand-badge { font-size:9px; background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); border-radius:10px; padding:2px 8px; font-weight:600; margin-top:2px; }
+    .nav-section { padding:8px 10px 4px; }
+    .nav-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.4); padding:4px 6px 6px; }
+    .nav-item { display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:10px; font-size:12px; font-weight:600; color:rgba(255,255,255,.82); cursor:pointer; transition:all .15s; border:1px solid transparent; margin-bottom:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .nav-item:hover { background:rgba(255,255,255,.12); color:#fff; } .nav-item.active { background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.35); }
+    .nav-item .ni { width:18px; text-align:center; font-size:14px; flex-shrink:0; }
+    .badge-new { margin-left:auto; background:#ef4444; color:#fff; font-size:8px; font-weight:700; padding:2px 5px; border-radius:6px; }
+    .sidebar-footer { margin-top:auto; padding:12px 10px; }
+    .btn-logout { width:100%; padding:9px; border-radius:12px; border:none; background:rgba(255,255,255,.15); color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .btn-logout:hover { background:rgba(239,68,68,.35); }
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-width:0; }
+    .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+    .topbar-left h1 { margin:0; font-size:17px; font-weight:700; } .topbar-left p { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .topbar-actions { display:flex; align-items:center; gap:8px; }
+    .tb-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+    .tb-btn-add { background:#ef4444; color:#fff; } .tb-btn:hover { opacity:.88; transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.18); }
+    .tb-user { display:flex; flex-direction:column; align-items:flex-end; } .tb-user strong { font-size:12px; } .tb-user span { font-size:10px; color:var(--muted); }
+    .content { padding:20px 24px; display:flex; flex-direction:column; gap:16px; }
+    .stats-row { display:grid; gap:12px; grid-template-columns:repeat(4,1fr); }
+    @media(max-width:1000px){ .stats-row { grid-template-columns:repeat(2,1fr); } }
+    .stat-card { border-radius:var(--radius); padding:14px 16px; color:#fff; display:flex; flex-direction:column; gap:4px; position:relative; overflow:hidden; box-shadow:var(--shadow); }
+    .stat-card::after { content:''; position:absolute; inset:0; background:linear-gradient(140deg,rgba(255,255,255,.1),transparent 60%); pointer-events:none; }
+    .stat-card .stat-icon { position:absolute; right:12px; top:12px; font-size:28px; opacity:.25; }
+    .stat-card .stat-label { font-size:10px; text-transform:uppercase; letter-spacing:.06em; opacity:.85; }
+    .stat-card .stat-value { font-size:22px; font-weight:800; } .stat-card .stat-sub { font-size:10px; opacity:.75; }
+    .sc-blue { background:linear-gradient(135deg,#1e3a8a,#2563eb); } .sc-green { background:linear-gradient(135deg,#064e3b,#10b981); }
+    .sc-orange { background:linear-gradient(135deg,#78350f,#f59e0b); } .sc-red { background:linear-gradient(135deg,#7f1d1d,#ef4444); }
+    .two-col { display:grid; gap:16px; grid-template-columns:1fr 1fr; }
+    @media(max-width:900px){ .two-col { grid-template-columns:1fr; } }
+    .card { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; }
+    .card-header { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .card-header h2 { margin:0; font-size:14px; font-weight:700; } .card-header p { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .chip { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; } .chip-blue { background:rgba(37,99,235,.12); color:#1d4ed8; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:12px; }
+    th { background:var(--surface-alt); padding:9px 12px; text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); border-bottom:1px solid var(--border); white-space:nowrap; }
+    td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; } tr:hover td { background:rgba(241,245,249,.7); }
+    .progress-wrap { background:var(--border); border-radius:99px; height:6px; overflow:hidden; flex:1; }
+    .progress-bar { height:100%; border-radius:99px; }
+    .progress-row { display:flex; align-items:center; gap:8px; font-size:11px; }
+    .act-btn { display:inline-flex; align-items:center; gap:4px; padding:5px 10px; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+    .act-edit { background:rgba(37,99,235,.1); color:#1d4ed8; } .act-del { background:rgba(220,38,38,.1); color:#b91c1c; }
+    .act-edit:hover { background:rgba(37,99,235,.2); } .act-del:hover { background:rgba(220,38,38,.2); }
+    .act-wrap { display:flex; gap:4px; }
+    #mapContainer { height:420px; }
+    .modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,.55); backdrop-filter:blur(4px); z-index:1000; display:none; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--surface); border-radius:18px; padding:28px; min-width:420px; max-width:90vw; max-height:90vh; overflow-y:auto; overflow-x:hidden; box-shadow:0 24px 48px rgba(15,23,42,.25); animation:modalIn .2s ease; }
+    @keyframes modalIn { from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);} }
+    .modal h3 { margin:0 0 20px; font-size:16px; font-weight:700; }
+    .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    .form-group label { font-size:12px; font-weight:600; color:var(--muted); }
+    .form-group input, .form-group select { padding:9px 12px; border:1px solid var(--border); border-radius:10px; font-size:13px; font-family:var(--font); outline:none; }
+    .form-row { display:grid; gap:12px; grid-template-columns:1fr 1fr; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+    .btn-modal { padding:9px 20px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:none; }
+    .btn-modal.primary { background:var(--primary); color:#fff; } .btn-modal.cancel { background:var(--surface-alt); color:var(--muted); }
+    .toast { position:fixed; bottom:24px; right:24px; background:#1e293b; color:#fff; padding:12px 20px; border-radius:12px; font-size:13px; font-weight:600; z-index:999; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; }
+    .toast.show { opacity:1; transform:translateY(0); } .toast.success { background:#15803d; }
+    .tfoot-info { padding:10px 16px; border-top:1px solid var(--border); font-size:11px; color:var(--muted); }
+    /* === Peta di dalam Modal — Hard Reset === */
+    .modal-map-hint {
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 4px;
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+    <div><div class="brand-name">RT/RW Billing</div><div class="brand-sub">Billing Management</div></div>
+    <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Utama</div>
+    <a class="nav-item" href="../pages/index.html"><span class="ni"><i class="bi bi-speedometer2"></i></span>Dashboard</a>
+    <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+    <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+    <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+    <a class="nav-item" href="laporan.html"><span class="ni"><i class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+    <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+    <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+    <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+    <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi <span class="badge-new">NEW</span></a>
+    <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Infrastruktur</div>
+    <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare Tunnel</a>
+    <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+    <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+    <a class="nav-item" href="bookkeeping.html"><span class="ni"><i class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Tools</div>
+    <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik Monitoring</a>
+    <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE Management</a>
+    <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+    <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+    <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen Agen</a>
+    <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+    <a class="nav-item active" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur ODC/ODP</a>
+    <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+    <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat Settings</a>
+    <a class="nav-item" href="payment.html"><span class="ni"><i class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+    <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+  </div>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-left"></i> Logout</button>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Infrastruktur ODC/ODP</h1><p>Manajemen titik distribusi kabel fiber optik.</p></div>
+    <div class="topbar-actions">
+      <button class="tb-btn tb-btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i><span>Tambah ODP</span></button>
+      <div class="tb-user"><strong>RT/RW Billing</strong><span>Admin</span></div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card"><i class="bi bi-diagram-3-fill stat-icon"></i><div class="stat-label">Total ODP</div><div class="stat-value" id="statTotal">0</div><div class="stat-sub">Titik distribusi</div></div>
+      <div class="stat-card"><i class="bi bi-plug-fill stat-icon"></i><div class="stat-label">Kapasitas Total</div><div class="stat-value" id="statKapasitas">0</div><div class="stat-sub">Port tersedia</div></div>
+      <div class="stat-card sc-orange"><i class="bi bi-activity stat-icon"></i><div class="stat-label">Port Terpakai</div><div class="stat-value" id="statTerpakai">0</div><div class="stat-sub">Sudah terhubung</div></div>
+      <div class="stat-card"><i class="bi bi-exclamation-triangle-fill stat-icon"></i><div class="stat-label">ODP Penuh</div><div class="stat-value" id="statPenuh">0</div><div class="stat-sub">Kapasitas habis</div></div>
+    </div>
+
+    <div class="two-col">
+      <!-- TABLE -->
+      <div class="card">
+        <div class="card-header">
+          <div><h2>Daftar ODP</h2><p>Peta jaringan fiber optik</p></div>
+          <span class="chip chip-blue">FIBER</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Kode ODP</th><th>Lokasi</th><th>Kapasitas</th><th>Terpakai</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="odpTableBody"></tbody>
+          </table>
+        </div>
+        <div class="tfoot-info" id="tableFooter"></div>
+      </div>
+
+      <!-- MAP -->
+      <div class="card">
+        <div class="card-header">
+          <div><h2>Peta Lokasi ODP</h2><p>Distribusi titik jaringan fiber</p></div>
+          <span class="chip chip-blue">MAP</span>
+        </div>
+        <div id="mapContainer"></div>
+        <div style="padding:10px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;gap:12px;">
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:4px;"></span>Tersedia</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-right:4px;"></span>Hampir Penuh</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:4px;"></span>Penuh</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle"><i class="bi bi-plus-circle-fill" style="color:var(--primary);margin-right:8px;"></i>Tambah ODP Baru</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Kode ODP *</label><input type="text" id="fKode" placeholder="ODP-RT01-001"></div>
+      <div class="form-group"><label>Kapasitas Port</label>
+        <select id="fKapasitas"><option value="2">2 Port</option><option value="4">4 Port</option><option value="8">8 Port</option><option value="16">16 Port</option><option value="24">24 Port</option><option value="32">32 Port</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label>Lokasi / Alamat</label><input type="text" id="fLokasi" placeholder="Jl. Mawar RT 01 RT/RW 01/01"></div>
+    <!-- Peta Leaflet interaktif: inline style super ketat agar tidak bocor -->
+    <div id="map-odp" style="height:280px;width:100%;overflow:hidden !important;position:relative;z-index:10;border-radius:10px;border:1.5px solid #e2e8f0;background:#f1f5f9;margin-bottom:6px;"></div>
+    <p class="modal-map-hint">📍 Klik di peta untuk mengisi Latitude &amp; Longitude</p>
+    <div class="form-row">
+      <div class="form-group"><label>Latitude</label><input type="text" id="fLat" placeholder="-6.2088"></div>
+      <div class="form-group"><label>Longitude</label><input type="text" id="fLng" placeholder="106.8456"></div>
+    </div>
+    <div class="form-group"><label>Port Terpakai</label><input type="number" id="fTerpakai" value="0" min="0"></div>
+    <div class="modal-actions">
+      <button class="btn-modal cancel" onclick="closeModal()">Batal</button>
+      <button class="btn-modal primary" onclick="saveODP()"><i class="bi bi-save-fill" style="margin-right:6px;"></i>Simpan</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../assets/js/api.js"></script>
+<script>
+let odp = [];
+let map2, editingId = null;
+let mapOdp = null;  // Instance peta di dalam modal
+let mapOdpMarker = null;
+
+async function loadData() {
+  try {
+    const res = await apiFetch('/api/odp');
+    odp = res || [];
+    render();
+  } catch (err) {
+    showToast('Gagal memuat data ODP', 'error');
+  }
+}
+
+function getColor(o) {
+  const pct = o.used_ports/o.total_ports;
+  if(pct>=1) return '#ef4444';
+  if(pct>=0.75) return '#f59e0b';
+  return '#22c55e';
+}
+
+function render() {
+  document.getElementById('statTotal').textContent = odp.length;
+  document.getElementById('statKapasitas').textContent = odp.reduce((a,o)=>a+o.total_ports,0);
+  document.getElementById('statTerpakai').textContent = odp.reduce((a,o)=>a+o.used_ports,0);
+  document.getElementById('statPenuh').textContent = odp.filter(o=>o.used_ports>=o.total_ports).length;
+  document.getElementById('tableFooter').textContent = `${odp.length} ODP/ODC terdaftar`;
+  document.getElementById('odpTableBody').innerHTML = odp.map((o,i)=>{
+    const sisa = o.total_ports - o.used_ports;
+    const pct = o.total_ports > 0 ? Math.round((o.used_ports/o.total_ports)*100) : 0;
+    const barColor = getColor(o);
+    return `<tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td><strong style="font-family:monospace">${o.name}</strong></td>
+      <td style="font-size:11px;color:var(--muted)">${o.location}</td>
+      <td>${o.total_ports} Port</td>
+      <td>
+        <div class="progress-row">
+          <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%;background:${barColor}"></div></div>
+          <span style="font-size:10px;font-weight:700;color:${barColor};min-width:48px">${o.used_ports}/${o.total_ports}</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">Sisa: ${sisa} port</div>
+      </td>
+      <td><div class="act-wrap">
+        <button class="act-btn act-edit" onclick="editODP(${o.id})"><i class="bi bi-pencil-fill"></i></button>
+        <button class="act-btn act-del" onclick="hapusODP(${o.id})"><i class="bi bi-trash-fill"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  updateMap();
+}
+
+let mapMarkers = [];
+function updateMap() {
+  if(!map2) {
+    map2 = L.map('mapContainer').setView([-6.209,106.847],15);
+    // CartoDB Positron — tema clean/grayscale
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap © CARTO',
+      subdomains: 'abcd',
+      maxZoom: 19
+    }).addTo(map2);
+  }
+  
+  mapMarkers.forEach(m=>map2.removeLayer(m));
+  mapMarkers = [];
+  
+  odp.forEach(o=>{
+    if(!o.lat || !o.lng) return;
+    const color=getColor(o);
+    const pct= o.total_ports > 0 ? Math.round((o.used_ports/o.total_ports)*100) : 0;
+    const m = L.circleMarker([parseFloat(o.lat),parseFloat(o.lng)],{radius:12,fillColor:color,fillOpacity:0.85,color:'#fff',weight:2}).addTo(map2)
+      .bindPopup(`<div style="font-family:Inter,sans-serif;font-size:12px"><strong>${o.name}</strong><br>${o.location}<br><b>${o.used_ports}/${o.total_ports} Port</b> (${pct}% terpakai)</div>`);
+    mapMarkers.push(m);
+  });
+}
+
+function openModal(id = null) {
+  editingId = id;
+  let initLat = -6.209, initLng = 106.847;
+
+  // Isi form
+  if (id) {
+    const o = odp.find(x => x.id === id);
+    document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil-fill" style="color:var(--primary);margin-right:8px;"></i>Edit ODP';
+    document.getElementById('fKode').value = o.name;
+    document.getElementById('fKapasitas').value = o.total_ports;
+    document.getElementById('fLokasi').value = o.location;
+    document.getElementById('fLat').value = o.lat || '';
+    document.getElementById('fLng').value = o.lng || '';
+    document.getElementById('fTerpakai').value = o.used_ports;
+    if (o.lat && o.lng) { initLat = parseFloat(o.lat); initLng = parseFloat(o.lng); }
+  } else {
+    document.getElementById('modalTitle').innerHTML = '<i class="bi bi-plus-circle-fill" style="color:var(--primary);margin-right:8px;"></i>Tambah ODP Baru';
+    ['fKode', 'fLokasi', 'fLat', 'fLng'].forEach(fid => document.getElementById(fid).value = '');
+    document.getElementById('fTerpakai').value = 0;
+    document.getElementById('fKapasitas').value = '8';
+  }
+
+  // Tampilkan modal
+  const overlay = document.getElementById('modalOverlay');
+  overlay.classList.add('open');
+
+  // Sembunyikan map utama halaman agar tidak bocor menembus z-index modal
+  // (Leaflet internal z-index bisa mencapai 600-800, lebih tinggi dari z-index overlay lama)
+  const mc = document.getElementById('mapContainer');
+  if (mc) mc.style.visibility = 'hidden';
+
+  // Tangkap event animationend pada .modal — dipanggil TEPAT saat animasi selesai
+  // Ini lebih akurat dari setTimeout karena bergantung pada event nyata, bukan asumsi waktu
+  const modalEl = overlay.querySelector('.modal');
+  const onAnimEnd = () => {
+    modalEl.removeEventListener('animationend', onAnimEnd); // bersihkan listener agar tidak duplikat
+    _initModalMap(initLat, initLng, id);
+  };
+  modalEl.addEventListener('animationend', onAnimEnd);
+
+  // Fallback: jika animationend tidak terpicu (misal animasi dinonaktifkan oleh OS)
+  // setTimeout sebagai jaring pengaman
+  setTimeout(() => {
+    if (mapOdp === null) _initModalMap(initLat, initLng, id);
+  }, 350);
+}
+
+function _initModalMap(lat, lng, editId) {
+  // HARD RESET: hancurkan instance lama sepenuhnya sebelum membuat baru
+  if (mapOdp !== null && mapOdp !== undefined) {
+    try { mapOdp.remove(); } catch(e) {}
+    mapOdp = null;
+    mapOdpMarker = null;
+  }
+
+  // Buat instance baru dari nol di dalam div#map-odp
+  mapOdp = L.map('map-odp', {
+    zoomControl: true,
+    attributionControl: true
+  }).setView([lat, lng], 15);
+
+  // Tile CartoDB Positron — clean/grayscale
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a> © <a href="https://carto.com">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(mapOdp);
+
+  // Wajib: rekalibrasi ukuran setelah DOM final
+  mapOdp.invalidateSize();
+
+  // Jika mode Edit dan ada koordinat, tampilkan marker awal
+  if (editId) {
+    const o = odp.find(x => x.id === editId);
+    if (o && o.lat && o.lng) {
+      mapOdpMarker = L.marker([parseFloat(o.lat), parseFloat(o.lng)], { icon: _odpIcon() }).addTo(mapOdp);
+    }
+  }
+
+  // Event klik: isi input lat/lng DAN pindahkan marker
+  mapOdp.on('click', function(e) {
+    const { lat, lng } = e.latlng;
+    document.getElementById('fLat').value = lat.toFixed(6);
+    document.getElementById('fLng').value = lng.toFixed(6);
+    if (mapOdpMarker) {
+      mapOdpMarker.setLatLng([lat, lng]);
+    } else {
+      mapOdpMarker = L.marker([lat, lng], { icon: _odpIcon() }).addTo(mapOdp);
+    }
+  });
+}
+
+function _odpIcon() {
+  return L.divIcon({
+    html: '<div style="width:14px;height:14px;background:#1d4ed8;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.4)"></div>',
+    className: '', iconSize: [14,14], iconAnchor: [7,7]
+  });
+}
+
+function closeModal() {
+  editingId = null;
+  document.getElementById('modalOverlay').classList.remove('open');
+  // Tampilkan kembali map utama halaman
+  const mc = document.getElementById('mapContainer');
+  if (mc) mc.style.visibility = '';
+  // Biarkan mapOdp tetap — akan di-destroy di pembukaan berikutnya lewat _initModalMap
+}
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+function editODP(id){openModal(id);}
+
+async function hapusODP(id){
+  if(!confirm('Hapus ODP ini?'))return;
+  try {
+    await apiFetch('/api/odp/'+id, {method:'DELETE'});
+    showToast('ODP dihapus','success');
+    loadData();
+  } catch(e) {
+    showToast('Gagal menghapus', 'error');
+  }
+}
+
+async function saveODP(){
+  const name=document.getElementById('fKode').value.trim();
+  if(!name){showToast('Kode ODP wajib!','error');return;}
+  
+  const payload = {
+    name,
+    total_ports: parseInt(document.getElementById('fKapasitas').value),
+    location: document.getElementById('fLokasi').value.trim(),
+    lat: (parseFloat(document.getElementById('fLat').value)||(-6.209+Math.random()*0.01-0.005)).toString(),
+    lng: (parseFloat(document.getElementById('fLng').value)||(106.847+Math.random()*0.01-0.005)).toString(),
+    used_ports: parseInt(document.getElementById('fTerpakai').value)||0,
+    type: name.includes('ODC') ? 'ODC' : 'ODP',
+    status: 'Normal'
+  };
+  
+  try {
+    if (editingId) {
+      await apiFetch('/api/odp/'+editingId, {method:'PUT', body:JSON.stringify(payload)});
+    } else {
+      await apiFetch('/api/odp', {method:'POST', body:JSON.stringify(payload)});
+    }
+    closeModal();
+    showToast(editingId?'ODP diperbarui':'ODP ditambahkan','success');
+    loadData();
+  } catch(e) {
+    showToast('Gagal menyimpan','error');
+  }
+}
+
+function showToast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type==='success'?'success':'error')+' show';setTimeout(()=>t.classList.remove('show'),3000);}
+
+loadData();
+</script>
+</body>
+</html>

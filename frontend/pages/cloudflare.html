@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=login.html">
+    <style>
+      body {
+        display: none !important
+      }
+    </style>
+  </noscript>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cloudflare Tunnel — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    crossorigin="anonymous" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --font: 'Inter', system-ui, sans-serif;
+      --sidebar-w: 220px;
+      --bg: #f0f4ff;
+      --surface: #fff;
+      --surface-alt: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --sidebar-bg: linear-gradient(180deg, #1e3a8a 0%, #1d4ed8 100%);
+      --radius: 14px;
+      --shadow: 0 4px 24px -8px rgba(15, 23, 42, .15);
+      --cf: #f38020;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .2);
+      border-radius: 4px;
+    }
+
+    .sidebar-brand {
+      padding: 18px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #fff;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .65);
+    }
+
+    .brand-badge {
+      font-size: 9px;
+      background: rgba(245, 158, 11, .15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, .3);
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-weight: 600;
+    }
+
+    .nav-section {
+      padding: 8px 10px 4px;
+    }
+
+    .nav-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255, 255, 255, .4);
+      padding: 4px 6px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .82);
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid transparent;
+      margin-bottom: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, .35);
+    }
+
+    .nav-item .ni {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .badge-new {
+      margin-left: auto;
+      background: #ef4444;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px 10px;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 9px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, .35);
+    }
+
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, .06);
+    }
+
+    .topbar-left h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .topbar-left p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tb-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+
+    .tb-btn-cf {
+      background: var(--cf);
+      color: #fff;
+    }
+
+    .tb-btn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+    }
+
+    .tb-user {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .tb-user strong {
+      font-size: 12px;
+    }
+
+    .tb-user span {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .content {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .two-col {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media(max-width:900px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .card-header p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .card-body {
+      padding: 16px 18px;
+    }
+
+    .chip {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .chip-cf {
+      background: rgba(243, 128, 32, .12);
+      color: #b45309;
+    }
+
+    .chip-green {
+      background: rgba(22, 163, 74, .12);
+      color: #15803d;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .status-row:last-child {
+      border-bottom: none;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .sd-online {
+      background: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, .25);
+    }
+
+    .sd-offline {
+      background: #ef4444;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: var(--font);
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--cf);
+    }
+
+    .code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+
+    .code-block span.blue {
+      color: #93c5fd;
+    }
+
+    .code-block span.green {
+      color: #86efac;
+    }
+
+    .code-block span.orange {
+      color: #fcd34d;
+    }
+
+    .tunnel-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tunnel-item:last-child {
+      border-bottom: none;
+    }
+
+    .ti-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      background: rgba(243, 128, 32, .1);
+      color: var(--cf);
+    }
+
+    .ti-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .ti-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .btn-save {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: var(--cf);
+      color: #fff;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #b45309;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .3s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+      <div>
+        <div class="brand-name">RT/RW Billing</div>
+        <div class="brand-sub">Billing Management</div>
+      </div>
+      <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Utama</div>
+      <a class="nav-item" href="../pages/index.html"><span class="ni"><i
+            class="bi bi-speedometer2"></i></span>Dashboard</a>
+      <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+      <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+      <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+      <a class="nav-item" href="laporan.html"><span class="ni"><i
+            class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+      <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+      <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+      <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+      <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi
+        <span class="badge-new">NEW</span></a>
+      <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Infrastruktur</div>
+      <a class="nav-item active" href="cloudflare.html"><span class="ni"><i
+            class="bi bi-cloud-fill"></i></span>Cloudflare Tunnel</a>
+      <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+      <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+      <a class="nav-item" href="bookkeeping.html"><span class="ni"><i
+            class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik
+        Monitoring</a>
+      <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE
+        Management</a>
+      <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+      <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+      <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen
+        Agen</a>
+      <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+      <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur
+        ODC/ODP</a>
+      <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+      <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat
+        Settings</a>
+      <a class="nav-item" href="payment.html"><span class="ni"><i
+            class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+      <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-left"></i>
+        Logout</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Cloudflare Tunnel</h1>
+        <p>Eksposes layanan lokal ke internet via Cloudflare.</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="tb-btn tb-btn-cf" onclick="saveCf()"><i class="bi bi-save-fill"></i><span>Simpan</span></button>
+        <div class="tb-user"><strong>RT/RW Billing</strong><span>Admin</span></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="two-col">
+        <!-- STATUS -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Status Tunnel</h2>
+              <p>Monitoring koneksi aktif</p>
+            </div>
+            <span class="chip chip-green">● AKTIF</span>
+          </div>
+          <div style="padding:0 16px">
+            <div class="status-row"><span><span class="status-dot sd-online"></span>Tunnel Billing</span><code
+                style="font-size:11px;color:var(--muted)">billing.rtrwnet.id</code></div>
+            <div class="status-row"><span><span class="status-dot sd-online"></span>Tunnel API</span><code
+                style="font-size:11px;color:var(--muted)">api.rtrwnet.id</code></div>
+            <div class="status-row"><span><span class="status-dot sd-offline"></span>Tunnel PPPoE</span><code
+                style="font-size:11px;color:var(--muted)">pppoe.rtrwnet.id</code></div>
+          </div>
+        </div>
+
+        <!-- TUNNEL LIST -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Daftar Tunnel</h2>
+              <p>Route aktif saat ini</p>
+            </div><span class="chip chip-cf">Cloudflare</span>
+          </div>
+          <div class="tunnel-item">
+            <div class="ti-icon"><i class="bi bi-globe2"></i></div>
+            <div>
+              <div class="ti-name">billing.rtrwnet.id</div>
+              <div class="ti-sub">→ localhost:80 (HTTP)</div>
+            </div>
+          </div>
+          <div class="tunnel-item">
+            <div class="ti-icon"><i class="bi bi-server"></i></div>
+            <div>
+              <div class="ti-name">api.rtrwnet.id</div>
+              <div class="ti-sub">→ localhost:3000 (API)</div>
+            </div>
+          </div>
+          <div class="tunnel-item">
+            <div class="ti-icon"><i class="bi bi-hdd-network-fill"></i></div>
+            <div>
+              <div class="ti-name">monitor.rtrwnet.id</div>
+              <div class="ti-sub">→ localhost:3001 (Monitor)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KONFIGURASI -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Konfigurasi Cloudflared</h2>
+            <p>Token & domain tunnel</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="display:grid;gap:16px;grid-template-columns:1fr 1fr">
+            <div class="form-group"><label>Account ID Cloudflare</label><input type="text" id="cfAccount"
+                placeholder="abcdef1234567890..." value="a1b2c3d4e5f6789012345"></div>
+            <div class="form-group"><label>Tunnel Token</label><input type="password" id="cfToken"
+                placeholder="Paste token dari dashboard Cloudflare"></div>
+            <div class="form-group"><label>Domain Utama</label><input type="text" id="cfDomain" value="rtrwnet.id"
+                placeholder="domain.com"></div>
+            <div class="form-group"><label>Port Lokal Backend</label><input type="number" id="cfPort" value="3000">
+            </div>
+          </div>
+          <div class="form-group"><label>Command Jalankan Cloudflared</label>
+            <div class="code-block"><span class="blue">cloudflared</span> tunnel --no-autoupdate run <span
+                class="green">--token</span> <span class="orange">&lt;TOKEN_ANDA&gt;</span></div>
+          </div>
+          <button class="btn-save" onclick="saveCf()"><i class="bi bi-save-fill"></i> Simpan Konfigurasi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="../assets/js/api.js"></script>
+  <script>function saveCf() { const t = document.getElementById('toast'); t.textContent = 'Konfigurasi Cloudflare disimpan!'; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }</script>
+</body>
+
+</html>

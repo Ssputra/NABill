@@ -1,0 +1,368 @@
+﻿<!doctype html>
+<html lang="id">
+<head>
+  <noscript><meta http-equiv="refresh" content="0;url=login.html"><style>body{display:none!important}</style></noscript>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>PPPoE Management — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" crossorigin="anonymous"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --font: 'Inter', system-ui, sans-serif;
+      --sidebar-w: 220px;
+      --bg: #f0f4ff; --surface: #ffffff; --surface-alt: #f1f5f9;
+      --text: #0f172a; --muted: #64748b; --border: #e2e8f0;
+      --primary: #1d4ed8; --primary-dark: #1e3a8a;
+      --sidebar-bg: linear-gradient(180deg,#1e3a8a 0%,#1d4ed8 100%);
+      --radius: 14px; --shadow: 0 4px 24px -8px rgba(15,23,42,.15);
+    }
+    body { margin:0; font-family:var(--font); background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+    .sidebar { width:var(--sidebar-w); min-height:100vh; background:var(--sidebar-bg); display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.2) transparent; }
+    .sidebar::-webkit-scrollbar { width:4px; } .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:4px; }
+    .sidebar-brand { padding:18px 16px 12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; border-bottom:1px solid rgba(255,255,255,.12); }
+    .brand-icon { width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; box-shadow:0 4px 14px rgba(0,0,0,.2); }
+    .brand-name { font-size:13px; font-weight:800; color:#fff; letter-spacing:.04em; text-transform:uppercase; }
+    .brand-sub { font-size:10px; color:rgba(255,255,255,.65); font-weight:500; }
+    .brand-badge { font-size:9px; background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); border-radius:10px; padding:2px 8px; font-weight:600; margin-top:2px; }
+    .nav-section { padding:8px 10px 4px; }
+    .nav-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.4); padding:4px 6px 6px; }
+    .nav-item { display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:10px; font-size:12px; font-weight:600; color:rgba(255,255,255,.82); cursor:pointer; transition:all .15s; border:1px solid transparent; margin-bottom:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .nav-item:hover { background:rgba(255,255,255,.12); color:#fff; border-color:rgba(255,255,255,.2); }
+    .nav-item.active { background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.35); box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .nav-item .ni { width:18px; text-align:center; font-size:14px; flex-shrink:0; }
+    .badge-new { margin-left:auto; background:#ef4444; color:#fff; font-size:8px; font-weight:700; padding:2px 5px; border-radius:6px; }
+    .sidebar-footer { margin-top:auto; padding:12px 10px; }
+    .btn-logout { width:100%; padding:9px; border-radius:12px; border:none; background:rgba(255,255,255,.15); color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .15s; }
+    .btn-logout:hover { background:rgba(239,68,68,.35); }
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-width:0; }
+    .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+    .topbar-left h1 { margin:0; font-size:17px; font-weight:700; }
+    .topbar-left p { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .topbar-actions { display:flex; align-items:center; gap:8px; }
+    .tb-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+    .tb-btn-sync { background:#0891b2; color:#fff; } .tb-btn-add { background:#ef4444; color:#fff; }
+    .tb-btn:hover { opacity:.88; transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.18); }
+    .tb-user { display:flex; flex-direction:column; align-items:flex-end; }
+    .tb-user strong { font-size:12px; } .tb-user span { font-size:10px; color:var(--muted); }
+    .content { padding:20px 24px; display:flex; flex-direction:column; gap:16px; }
+    .stats-row { display:grid; gap:12px; grid-template-columns:repeat(4,1fr); }
+    @media(max-width:1000px){ .stats-row { grid-template-columns:repeat(2,1fr); } }
+    .stat-card { border-radius:var(--radius); padding:14px 16px; color:#fff; display:flex; flex-direction:column; gap:4px; position:relative; overflow:hidden; box-shadow:var(--shadow); }
+    .stat-card::after { content:''; position:absolute; inset:0; background:linear-gradient(140deg,rgba(255,255,255,.1),transparent 60%); pointer-events:none; }
+    .stat-card .stat-icon { position:absolute; right:12px; top:12px; font-size:28px; opacity:.25; }
+    .stat-card .stat-label { font-size:10px; text-transform:uppercase; letter-spacing:.06em; opacity:.85; }
+    .stat-card .stat-value { font-size:22px; font-weight:800; }
+    .stat-card .stat-sub { font-size:10px; opacity:.75; }
+    .sc-blue { background:linear-gradient(135deg,#1e3a8a,#2563eb); }
+    .sc-green { background:linear-gradient(135deg,#064e3b,#10b981); }
+    .sc-red { background:linear-gradient(135deg,#7f1d1d,#ef4444); }
+    .sc-purple { background:linear-gradient(135deg,#4c1d95,#8b5cf6); }
+    .card { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; }
+    .card-header { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .card-header h2 { margin:0; font-size:14px; font-weight:700; }
+    .card-header p { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .chip { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:.05em; }
+    .chip-blue { background:rgba(37,99,235,.12); color:#1d4ed8; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:12px; }
+    th { background:var(--surface-alt); padding:9px 12px; text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); border-bottom:1px solid var(--border); white-space:nowrap; }
+    td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:rgba(241,245,249,.7); }
+    .badge { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; }
+    .badge-online { background:rgba(22,163,74,.12); color:#15803d; }
+    .badge-offline { background:rgba(220,38,38,.12); color:#b91c1c; }
+    .badge-disabled { background:rgba(217,119,6,.12); color:#b45309; }
+    .toggle { position:relative; width:36px; height:20px; cursor:pointer; display:inline-block; }
+    .toggle input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; inset:0; background:#cbd5e1; border-radius:20px; transition:.2s; }
+    .toggle-slider::before { content:''; position:absolute; height:14px; width:14px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.2s; }
+    .toggle input:checked + .toggle-slider { background:#16a34a; }
+    .toggle input:checked + .toggle-slider::before { transform:translateX(16px); }
+    .act-btn { display:inline-flex; align-items:center; gap:4px; padding:5px 10px; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+    .act-edit { background:rgba(37,99,235,.1); color:#1d4ed8; } .act-edit:hover { background:rgba(37,99,235,.2); }
+    .act-del { background:rgba(220,38,38,.1); color:#b91c1c; } .act-del:hover { background:rgba(220,38,38,.2); }
+    .act-wrap { display:flex; gap:4px; }
+    .filter-bar { padding:12px 16px; border-bottom:1px solid var(--border); display:flex; gap:8px; flex-wrap:wrap; }
+    .filter-bar input, .filter-bar select { padding:7px 12px; border:1px solid var(--border); border-radius:8px; font-size:12px; font-family:var(--font); outline:none; }
+    .filter-bar input { flex:1; min-width:180px; }
+    .modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,.55); backdrop-filter:blur(4px); z-index:200; display:none; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--surface); border-radius:18px; padding:28px; min-width:420px; max-width:90vw; box-shadow:0 24px 48px rgba(15,23,42,.25); animation:modalIn .2s ease; }
+    @keyframes modalIn { from { opacity:0; transform:scale(.95); } to { opacity:1; transform:scale(1); } }
+    .modal h3 { margin:0 0 20px; font-size:16px; font-weight:700; }
+    .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    .form-group label { font-size:12px; font-weight:600; color:var(--muted); }
+    .form-group input, .form-group select { padding:9px 12px; border:1px solid var(--border); border-radius:10px; font-size:13px; font-family:var(--font); outline:none; }
+    .form-row { display:grid; gap:12px; grid-template-columns:1fr 1fr; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+    .btn-modal { padding:9px 20px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+    .btn-modal.primary { background:var(--primary); color:#fff; } .btn-modal.primary:hover { background:var(--primary-dark); }
+    .btn-modal.cancel { background:var(--surface-alt); color:var(--muted); }
+    .toast { position:fixed; bottom:24px; right:24px; background:#1e293b; color:#fff; padding:12px 20px; border-radius:12px; font-size:13px; font-weight:600; z-index:999; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .toast.success { background:#15803d; } .toast.error { background:#b91c1c; }
+    .tfoot-info { padding:10px 16px; border-top:1px solid var(--border); font-size:11px; color:var(--muted); }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+    <div><div class="brand-name">RT/RW Billing</div><div class="brand-sub">Billing Management</div></div>
+    <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Utama</div>
+    <a class="nav-item" href="../pages/index.html"><span class="ni"><i class="bi bi-speedometer2"></i></span>Dashboard</a>
+    <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+    <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+    <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+    <a class="nav-item" href="laporan.html"><span class="ni"><i class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+    <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+    <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+    <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+    <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi <span class="badge-new">NEW</span></a>
+    <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Infrastruktur</div>
+    <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare Tunnel</a>
+    <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+    <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+    <a class="nav-item" href="bookkeeping.html"><span class="ni"><i class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Tools</div>
+    <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik Monitoring</a>
+    <a class="nav-item active" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE Management</a>
+    <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+    <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+    <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen Agen</a>
+    <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+    <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur ODC/ODP</a>
+    <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+    <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat Settings</a>
+    <a class="nav-item" href="payment.html"><span class="ni"><i class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+    <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+  </div>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-left"></i> Logout</button>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>PPPoE Management</h1>
+      <p>Kelola akun PPPoE & integrasi langsung dengan MikroTik RouterOS API.</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="tb-btn tb-btn-sync" onclick="syncAll()"><i class="bi bi-arrow-repeat"></i><span>Sync MikroTik</span></button>
+      <button class="tb-btn tb-btn-add" onclick="openModal()"><i class="bi bi-plus-lg"></i><span>Tambah Secret</span></button>
+      <div class="tb-user"><strong>RT/RW Billing</strong><span>Admin</span></div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card"><i class="bi bi-person-lines-fill stat-icon"></i><div class="stat-label">Total Secret</div><div class="stat-value" id="statTotal">0</div><div class="stat-sub">Semua akun PPPoE</div></div>
+      <div class="stat-card"><i class="bi bi-check-circle-fill stat-icon"></i><div class="stat-label">Online</div><div class="stat-value" id="statOnline">0</div><div class="stat-sub">Sedang terkoneksi</div></div>
+      <div class="stat-card"><i class="bi bi-x-circle-fill stat-icon"></i><div class="stat-label">Offline</div><div class="stat-value" id="statOffline">0</div><div class="stat-sub">Tidak terkoneksi</div></div>
+      <div class="stat-card"><i class="bi bi-slash-circle-fill stat-icon"></i><div class="stat-label">Disabled</div><div class="stat-value" id="statDisabled">0</div><div class="stat-sub">Dinonaktifkan</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><h2>Daftar PPPoE Secret</h2><p>Toggle untuk enable/disable akun langsung di MikroTik.</p></div>
+        <span class="chip chip-blue" id="syncStatus">● Live</span>
+      </div>
+      <div class="filter-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Cari username / profile / pelanggan...">
+        <select id="filterStatus">
+          <option value="">Semua Status</option>
+          <option value="online">Online</option>
+          <option value="offline">Offline</option>
+          <option value="disabled">Disabled</option>
+        </select>
+        <select id="filterProfile"><option value="">Semua Profile</option></select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Username</th><th>Profile/Paket</th><th>IP Remote</th><th>MAC Address</th><th>Status</th><th>Aktif</th><th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="pppoeTableBody"></tbody>
+        </table>
+      </div>
+      <div class="tfoot-info" id="tableFooter">Memuat data...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle"><i class="bi bi-plus-circle-fill" style="color:var(--primary);margin-right:8px;"></i>Tambah PPPoE Secret</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Username *</label><input type="text" id="fUsername" placeholder="user001"></div>
+      <div class="form-group"><label>Password *</label><input type="password" id="fPassword" placeholder="••••••••"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Profile/Paket *</label>
+        <select id="fProfile"><option>Memuat dari MikroTik...</option></select>
+      </div>
+      <div class="form-group"><label>Keterangan</label><input type="text" id="fComment" placeholder="Nama pelanggan..."></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal cancel" onclick="closeModal()">Batal</button>
+      <button class="btn-modal primary" onclick="saveSecret()"><i class="bi bi-save-fill" style="margin-right:6px;"></i>Simpan</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../assets/js/api.js"></script>
+<script>
+let secrets = [], activeUsers = [], mikrotikProfiles = [], editingId = null;
+
+async function init() {
+  try {
+    const [s, a, p] = await Promise.all([
+      api.pppoeSecrets().catch(()=>({data:[]})), 
+      api.pppoeActive().catch(()=>({data:[]})),
+      api.pppoeProfiles().catch(()=>({data:[]}))
+    ]);
+    
+    secrets = (s.secrets || s.data || []).map((x,i) => ({id:i+1, mikrotikId:x.id||x['.id']||'', username:x.name||x.username||'',profile:x.profile||'',localAddr:x['local-address']||'',remoteAddr:x['remote-address']||'',mac:'',disabled:x.disabled==='true'||x.disabled===true,comment:x.comment||''}));
+    activeUsers = (a.active || a.data || []).map(x => x.name||x.username||'');
+    mikrotikProfiles = (p.profiles || p.data || []).map(x => x.name||'');
+    
+    showToast('Data dimuat dari MikroTik','success');
+  } catch(e) { secrets = []; activeUsers = []; mikrotikProfiles = []; showToast('Gagal memuat data live','error'); }
+  
+  // Update Profile dropdown in Filter & Modal Based on Live MikroTik Profiles
+  const profilesToUse = mikrotikProfiles.length > 0 ? mikrotikProfiles : [...new Set(secrets.map(s=>s.profile))];
+  
+  const selFilter = document.getElementById('filterProfile');
+  selFilter.innerHTML = '<option value="">Semua Profile</option>';
+  profilesToUse.forEach(p => { const o=document.createElement('option'); o.value=p; o.textContent=p; selFilter.appendChild(o); });
+  
+  const selModal = document.getElementById('fProfile');
+  selModal.innerHTML = '';
+  profilesToUse.forEach(p => { const o=document.createElement('option'); o.value=p; o.textContent=p; selModal.appendChild(o); });
+
+  render();
+}
+
+function getStatus(s) { if(s.disabled) return 'disabled'; if(activeUsers.includes(s.username)) return 'online'; return 'offline'; }
+
+function render() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const fs = document.getElementById('filterStatus').value;
+  const fp = document.getElementById('filterProfile').value;
+  const filtered = secrets.filter(s => {
+    const st = getStatus(s);
+    return (s.username.toLowerCase().includes(q)||(s.comment||'').toLowerCase().includes(q)||(s.profile||'').toLowerCase().includes(q))
+      && (!fs||st===fs) && (!fp||s.profile===fp);
+  });
+  const online = secrets.filter(s=>getStatus(s)==='online').length;
+  const offline = secrets.filter(s=>getStatus(s)==='offline').length;
+  const disabled = secrets.filter(s=>getStatus(s)==='disabled').length;
+  document.getElementById('statTotal').textContent = secrets.length;
+  document.getElementById('statOnline').textContent = online;
+  document.getElementById('statOffline').textContent = offline;
+  document.getElementById('statDisabled').textContent = disabled;
+  document.getElementById('tableFooter').textContent = `Menampilkan ${filtered.length} dari ${secrets.length} akun`;
+  document.getElementById('pppoeTableBody').innerHTML = filtered.map((s,i) => {
+    const st = getStatus(s);
+    const bc = st==='online'?'badge-online':st==='disabled'?'badge-disabled':'badge-offline';
+    const bl = st==='online'?'● Online':st==='disabled'?'⊘ Disabled':'○ Offline';
+    return `<tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td><strong>${s.username}</strong><br><span style="font-size:10px;color:var(--muted)">${s.comment||''}</span></td>
+      <td><span style="font-size:11px;background:rgba(37,99,235,.08);color:#1d4ed8;padding:2px 8px;border-radius:6px;font-weight:700">${s.profile}</span></td>
+      <td style="font-size:11px;color:var(--muted);font-family:monospace">${s.remoteAddr||'—'}</td>
+      <td style="font-size:11px;color:var(--muted);font-family:monospace">${s.mac||'—'}</td>
+      <td><span class="badge ${bc}">${bl}</span></td>
+      <td><label class="toggle"><input type="checkbox" ${!s.disabled?'checked':''} onchange="toggleUser('${s.username}',this.checked)"><span class="toggle-slider"></span></label></td>
+      <td><div class="act-wrap"><button class="act-btn act-edit" onclick="editSecret(${s.id})"><i class="bi bi-pencil-fill"></i></button><button class="act-btn act-del" onclick="deleteSecret(${s.id},'${s.username}')"><i class="bi bi-trash-fill"></i></button></div></td>
+    </tr>`;
+  }).join('');
+}
+
+async function toggleUser(username, enable) {
+  try { enable ? await api.pppoeEnable(username) : await api.pppoeDisable(username); } catch(e) {}
+  const s = secrets.find(x=>x.username===username); if(s) s.disabled = !enable;
+  showToast(`${username} ${enable?'diaktifkan':'dinonaktifkan'}`, 'success'); render();
+}
+async function syncAll() { document.getElementById('syncStatus').textContent='↻ Syncing...'; await init(); document.getElementById('syncStatus').textContent='● Live'; showToast('Sync selesai!','success'); }
+function editSecret(id) {
+  const s = secrets.find(x=>x.id===id); if(!s) return;
+  editingId = id;
+  document.getElementById('modalTitle').innerHTML='<i class="bi bi-pencil-fill" style="color:var(--primary);margin-right:8px;"></i>Edit PPPoE Secret';
+  document.getElementById('fUsername').value=s.username;
+  document.getElementById('fPassword').value='';
+  document.getElementById('fProfile').value=s.profile;
+  document.getElementById('fComment').value=s.comment||'';
+  openModal();
+}
+async function deleteSecret(id, username) {
+  if(!confirm(`Hapus "${username}"?`)) return;
+  try {
+    const s = secrets.find(x=>x.id===id);
+    if(s && s.mikrotikId) {
+      await api.pppoeDeleteSecret(s.mikrotikId);
+    }
+    showToast(`${username} dihapus`,'success'); 
+    await init();
+  } catch (e) {
+    showToast(`Gagal menghapus: ${e.message}`, 'error');
+  }
+}
+async function saveSecret() {
+  const username = document.getElementById('fUsername').value.trim();
+  const password = document.getElementById('fPassword').value;
+  const profile = document.getElementById('fProfile').value;
+  if(!username||!profile){showToast('Username dan Profile wajib!','error');return;}
+  if(!editingId&&!password){showToast('Password wajib untuk akun baru!','error');return;}
+  
+  const payload = {
+    username,
+    password,
+    profile,
+    comment: document.getElementById('fComment').value.trim()
+  };
+  
+  try {
+    if(editingId) { 
+      const s = secrets.find(x=>x.id===editingId);
+      if(s && s.mikrotikId) {
+        await api.pppoeUpdateSecret(s.mikrotikId, payload);
+      }
+    } else { 
+      await api.pppoeCreateSecret(payload); 
+    }
+    showToast(editingId?'Secret diperbarui':'Secret ditambahkan','success');
+    closeModal(); 
+    await init();
+  } catch (e) {
+    showToast(`Gagal menyimpan: ${e.message}`, 'error');
+  }
+}
+function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal() { editingId=null; document.getElementById('modalOverlay').classList.remove('open'); }
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+function showToast(msg,type) { const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+(type==='success'?'success':type==='error'?'error':'')+' show'; setTimeout(()=>t.classList.remove('show'),3000); }
+['searchInput','filterStatus','filterProfile'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+document.getElementById('filterStatus').addEventListener('change',render);
+document.getElementById('filterProfile').addEventListener('change',render);
+init();
+</script>
+</body>
+</html>

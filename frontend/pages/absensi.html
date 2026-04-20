@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=login.html">
+    <style>
+      body {
+        display: none !important
+      }
+    </style>
+  </noscript>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Absensi Karyawan — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    crossorigin="anonymous" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --font: 'Inter', system-ui, sans-serif;
+      --sidebar-w: 220px;
+      --bg: #f0f4ff;
+      --surface: #fff;
+      --surface-alt: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --sidebar-bg: linear-gradient(180deg, #1e3a8a 0%, #1d4ed8 100%);
+      --radius: 14px;
+      --shadow: 0 4px 24px -8px rgba(15, 23, 42, .15);
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .2);
+      border-radius: 4px;
+    }
+
+    .sidebar-brand {
+      padding: 18px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #fff;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .65);
+    }
+
+    .brand-badge {
+      font-size: 9px;
+      background: rgba(245, 158, 11, .15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, .3);
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-weight: 600;
+    }
+
+    .nav-section {
+      padding: 8px 10px 4px;
+    }
+
+    .nav-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255, 255, 255, .4);
+      padding: 4px 6px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .82);
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid transparent;
+      margin-bottom: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, .35);
+    }
+
+    .nav-item .ni {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .badge-new {
+      margin-left: auto;
+      background: #ef4444;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px 10px;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 9px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, .35);
+    }
+
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, .06);
+    }
+
+    .topbar-left h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .topbar-left p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tb-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+
+    .tb-btn-masuk {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .tb-btn-keluar {
+      background: #dc2626;
+      color: #fff;
+    }
+
+    .tb-btn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .18);
+    }
+
+    .tb-user {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .tb-user strong {
+      font-size: 12px;
+    }
+
+    .tb-user span {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .content {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stats-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media(max-width:1000px) {
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(255, 255, 255, .1), transparent 60%);
+      pointer-events: none;
+    }
+
+    .stat-card .stat-icon {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      font-size: 28px;
+      opacity: .25;
+    }
+
+    .stat-card .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      opacity: .85;
+    }
+
+    .stat-card .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .stat-card .stat-sub {
+      font-size: 10px;
+      opacity: .75;
+    }
+
+    .sc-blue {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    }
+
+    .sc-green {
+      background: linear-gradient(135deg, #064e3b, #10b981);
+    }
+
+    .sc-orange {
+      background: linear-gradient(135deg, #78350f, #f59e0b);
+    }
+
+    .sc-red {
+      background: linear-gradient(135deg, #7f1d1d, #ef4444);
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .card-header p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .chip {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .chip-blue {
+      background: rgba(37, 99, 235, .12);
+      color: #1d4ed8;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th {
+      background: var(--surface-alt);
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(241, 245, 249, .7);
+    }
+
+    .ab-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .ab-hadir {
+      background: rgba(22, 163, 74, .12);
+      color: #15803d;
+    }
+
+    .ab-late {
+      background: rgba(245, 158, 11, .12);
+      color: #b45309;
+    }
+
+    .ab-absen {
+      background: rgba(220, 38, 38, .12);
+      color: #b91c1c;
+    }
+
+    .ab-izin {
+      background: rgba(37, 99, 235, .12);
+      color: #1d4ed8;
+    }
+
+    .tfoot-info {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .filter-bar {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: var(--font);
+      outline: none;
+    }
+
+    .filter-bar input {
+      flex: 1;
+    }
+
+    .clock-widget {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .big-clock {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .date-txt {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .clock-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .clock-btn {
+      padding: 12px 28px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .clock-btn.masuk {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .clock-btn.keluar {
+      background: #dc2626;
+      color: #fff;
+    }
+
+    .clock-btn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+    }
+  </style>
+  <script src="../assets/js/darkmode.js"></script>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+      <div>
+        <div class="brand-name">RT/RW Billing</div>
+        <div class="brand-sub">Billing Management</div>
+      </div>
+      <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Utama</div>
+      <a class="nav-item" href="../pages/index.html"><span class="ni"><i
+            class="bi bi-speedometer2"></i></span>Dashboard</a>
+      <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+      <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+      <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+      <a class="nav-item" href="laporan.html"><span class="ni"><i
+            class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+      <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+      <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+      <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+      <a class="nav-item active" href="absensi.html"><span class="ni"><i
+            class="bi bi-calendar-check-fill"></i></span>Absensi <span class="badge-new">NEW</span></a>
+      <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Infrastruktur</div>
+      <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare
+        Tunnel</a>
+      <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+      <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+      <a class="nav-item" href="bookkeeping.html"><span class="ni"><i
+            class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik
+        Monitoring</a>
+      <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE
+        Management</a>
+      <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+      <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+      <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen
+        Agen</a>
+      <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+      <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur
+        ODC/ODP</a>
+      <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+      <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat
+        Settings</a>
+      <a class="nav-item" href="payment.html"><span class="ni"><i
+            class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+      <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-left"></i>
+        Logout</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Absensi Karyawan</h1>
+        <p>Rekap kehadiran dan jam kerja karyawan.</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="tb-icon-btn darkmode-btn" id="darkModeBtn" title="Mode Gelap"><i
+            class="bi bi-moon-stars-fill"></i></button>
+        <div class="tb-user"><strong>RT/RW Billing</strong><span>Admin</span></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="stats-row">
+        <div class="stat-card"><i class="bi bi-person-check-fill stat-icon"></i>
+          <div class="stat-label">Hadir Hari Ini</div>
+          <div class="stat-value" id="statHadir">0</div>
+          <div class="stat-sub">Tepat waktu</div>
+        </div>
+        <div class="stat-card sc-orange"><i class="bi bi-clock-history stat-icon"></i>
+          <div class="stat-label">Terlambat</div>
+          <div class="stat-value" id="statLate">0</div>
+          <div class="stat-sub">Setelah jam 08:00</div>
+        </div>
+        <div class="stat-card"><i class="bi bi-person-x-fill stat-icon"></i>
+          <div class="stat-label">Tidak Hadir</div>
+          <div class="stat-value" id="statAbsent">0</div>
+          <div class="stat-sub">Tanpa keterangan</div>
+        </div>
+        <div class="stat-card"><i class="bi bi-person-lines-fill stat-icon"></i>
+          <div class="stat-label">Izin / Sakit</div>
+          <div class="stat-value" id="statIzin">0</div>
+          <div class="stat-sub">Keterangan diterima</div>
+        </div>
+      </div>
+
+      <div style="display: grid; gap: 16px; grid-template-columns: 300px 1fr;">
+        <!-- CLOCK IN/OUT WIDGET -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Absen Sekarang</h2>
+              <p>Klik untuk mencatat kehadiran</p>
+            </div>
+          </div>
+          <div class="clock-widget">
+            <div class="big-clock" id="clockDisplay">--:--:--</div>
+            <div class="date-txt" id="dateDisplay">Loading...</div>
+            <div class="clock-actions">
+              <button class="clock-btn masuk" onclick="absenMasuk()"><i class="bi bi-box-arrow-in-right"></i>
+                Masuk</button>
+              <button class="clock-btn keluar" onclick="absenKeluar()"><i class="bi bi-box-arrow-right"></i>
+                Keluar</button>
+            </div>
+            <div style="margin-top:12px;font-size:11px;color:var(--muted)" id="lastAbsen"></div>
+          </div>
+        </div>
+
+        <!-- ABSENSI TABLE -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Rekap Kehadiran</h2>
+              <p>Riwayat absensi karyawan</p>
+            </div><span class="chip chip-blue">BULAN INI</span>
+          </div>
+          <div class="filter-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Cari nama karyawan...">
+            <select id="filterStatus">
+              <option value="">Semua Status</option>
+              <option value="hadir">Hadir</option>
+              <option value="late">Terlambat</option>
+              <option value="absen">Tidak Hadir</option>
+              <option value="izin">Izin/Sakit</option>
+            </select>
+            <input type="date" id="filterDate">
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Karyawan</th>
+                  <th>Tanggal</th>
+                  <th>Masuk</th>
+                  <th>Keluar</th>
+                  <th>Durasi</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="absensiBody"></tbody>
+            </table>
+          </div>
+          <div class="tfoot-info" id="tableFooter"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/api.js"></script>
+  <script>
+    let absensi = [];
+    const statusMap = { hadir: ['ab-hadir', '✓ Hadir'], late: ['ab-late', '⏰ Terlambat'], absen: ['ab-absen', '✗ Tidak Hadir'], izin: ['ab-izin', '📋 Izin'] };
+
+    async function loadData() {
+      try {
+        const res = await apiFetch('/api/attendance');
+        absensi = res || [];
+        render();
+      } catch (err) {
+        console.error('Gagal memuat absensi', err);
+      }
+    }
+
+    function calcDur(m, k) { if (!m || !k || m === '—' || k === '—') return '—'; try { const [mh, mm] = m.split(':').map(Number); const [kh, km] = k.split(':').map(Number); const d = (kh * 60 + km) - (mh * 60 + mm); return `${Math.floor(d / 60)}j ${d % 60}m`; } catch { return '—'; } }
+
+    function render() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const fs = document.getElementById('filterStatus').value;
+      const fd = document.getElementById('filterDate').value;
+
+      const f = absensi.filter(a => ((a.employee || '').toLowerCase().includes(q)) && (!fs || a.status === fs) && (!fd || a.date === fd));
+      const today = new Date().toISOString().slice(0, 10);
+      const todayAbs = absensi.filter(a => a.date === today);
+
+      document.getElementById('statHadir').textContent = todayAbs.filter(a => a.status === 'hadir').length;
+      document.getElementById('statLate').textContent = todayAbs.filter(a => a.status === 'late').length;
+      document.getElementById('statAbsent').textContent = todayAbs.filter(a => a.status === 'absen').length;
+      document.getElementById('statIzin').textContent = todayAbs.filter(a => a.status === 'izin').length;
+      document.getElementById('tableFooter').textContent = `${f.length} dari ${absensi.length} catatan`;
+
+      document.getElementById('absensiBody').innerHTML = f.map((a, i) => {
+        const [cls, lbl] = statusMap[a.status] || ['ab-hadir', 'Hadir'];
+        return `<tr><td style="color:var(--muted)">${i + 1}</td><td><strong>${a.employee || 'Anonim'}</strong></td><td style="font-size:11px;color:var(--muted)">${a.date}</td><td>${a.clock_in || '—'}</td><td>${a.clock_out || '—'}</td><td style="font-size:11px;color:var(--muted)">${calcDur(a.clock_in, a.clock_out)}</td><td><span class="ab-badge ${cls}">${lbl}</span></td></tr>`;
+      }).join('');
+    }
+
+    async function absenMasuk() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const late = now.getHours() >= 8 && now.getMinutes() > 0;
+      const activeUser = (typeof Auth !== 'undefined' && Auth.user && Auth.user.name) ? Auth.user.name : 'Unknown';
+      const payload = {
+        employee: activeUser,
+        role: (typeof Auth !== 'undefined' && Auth.user && Auth.user.role) ? Auth.user.role : '',
+        date: now.toISOString().slice(0, 10),
+        clock_in: time,
+        status: late ? 'late' : 'hadir'
+      };
+
+      try {
+        await apiFetch('/api/attendance', { method: 'POST', body: JSON.stringify(payload) });
+        document.getElementById('lastAbsen').textContent = `Absen masuk: ${time}`;
+        loadData();
+      } catch (e) {
+        alert('Gagal absen masuk');
+      }
+    }
+
+    async function absenKeluar() {
+      const now = new Date();
+      const today = now.toISOString().slice(0, 10);
+      const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const activeUser = (typeof Auth !== 'undefined' && Auth.user && Auth.user.name) ? Auth.user.name : 'Unknown';
+      const entry = absensi.find(a => a.employee === activeUser && a.date === today && (!a.clock_out || a.clock_out === '—'));
+
+      if (entry) {
+        try {
+          await apiFetch('/api/attendance/' + entry.id, { method: 'PUT', body: JSON.stringify({ clock_out: time }) });
+          document.getElementById('lastAbsen').textContent = `Absen keluar: ${time}`;
+          loadData();
+        } catch (e) {
+          alert('Gagal absen keluar');
+        }
+      } else {
+        alert('Belum ada absen masuk hari ini!');
+      }
+    }
+
+    function updateClock() { const n = new Date(); document.getElementById('clockDisplay').textContent = n.toLocaleTimeString('id-ID'); document.getElementById('dateDisplay').textContent = n.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); }
+    setInterval(updateClock, 1000); updateClock();
+
+    ['searchInput', 'filterStatus', 'filterDate'].forEach(id => document.getElementById(id).addEventListener('input', render));
+    document.getElementById('filterStatus').addEventListener('change', render);
+    document.getElementById('filterDate').value = new Date().toISOString().slice(0, 10);
+
+    loadData();
+  </script>
+</body>
+
+</html>

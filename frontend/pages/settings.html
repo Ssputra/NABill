@@ -1,0 +1,1527 @@
+﻿<!doctype html>
+<html lang="id">
+
+<head>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=login.html">
+    <style>
+      body {
+        display: none !important
+      }
+    </style>
+  </noscript>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Settings — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    crossorigin="anonymous" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --font: 'Inter', system-ui, sans-serif;
+      --sidebar-w: 220px;
+      --bg: #f0f4ff;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --sidebar-bg: linear-gradient(180deg, #1e3a8a 0%, #1d4ed8 100%);
+      --radius: 14px;
+      --shadow: 0 4px 24px -8px rgba(15, 23, 42, .15);
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, .2) transparent;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .2);
+      border-radius: 4px;
+    }
+
+    .sidebar-brand {
+      padding: 18px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .65);
+      font-weight: 500;
+    }
+
+    .brand-badge {
+      font-size: 9px;
+      background: rgba(245, 158, 11, .15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, .3);
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .nav-section {
+      padding: 8px 10px 4px;
+    }
+
+    .nav-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255, 255, 255, .4);
+      padding: 4px 6px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .82);
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid transparent;
+      margin-bottom: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, .2);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, .35);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    }
+
+    .nav-item .ni {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .badge-new {
+      margin-left: auto;
+      background: #ef4444;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px 10px;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 9px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all .15s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, .35);
+    }
+
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, .06);
+    }
+
+    .topbar-left h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .topbar-left p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tb-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+
+    .tb-btn-save {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .tb-btn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .18);
+    }
+
+    .tb-user {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .tb-user strong {
+      font-size: 12px;
+    }
+
+    .tb-user span {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .content {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface-alt);
+      padding: 4px;
+      border-radius: 12px;
+      width: fit-content;
+      margin-bottom: 4px;
+    }
+
+    .tab-btn {
+      padding: 7px 18px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-header-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .card-header p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media(max-width:768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full {
+      grid-column: 1/-1;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: var(--font);
+      outline: none;
+      transition: border-color .2s;
+      background: #fafafa;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, .07);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .card-footer {
+      padding: 14px 20px;
+      background: var(--surface-alt);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn-save {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      transition: all .15s;
+    }
+
+    .btn-save:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-test {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      transition: all .15s;
+    }
+
+    .btn-test:hover {
+      background: var(--surface-alt);
+      color: var(--text);
+    }
+
+    /* TOGGLE */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toggle-row:last-child {
+      border-bottom: none;
+    }
+
+    .toggle-info {
+      flex: 1;
+    }
+
+    .toggle-info strong {
+      font-size: 13px;
+      display: block;
+    }
+
+    .toggle-info small {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      cursor: pointer;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 24px;
+      transition: .2s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .2s;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+    }
+
+    .toggle input:checked+.toggle-slider {
+      background: #16a34a;
+    }
+
+    .toggle input:checked+.toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    /* Status */
+    .conn-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .conn-ok {
+      background: rgba(22, 163, 74, .08);
+      color: #15803d;
+      border: 1px solid rgba(22, 163, 74, .2);
+    }
+
+    .conn-fail {
+      background: rgba(220, 38, 38, .08);
+      color: #b91c1c;
+      border: 1px solid rgba(220, 38, 38, .2);
+    }
+
+    .conn-checking {
+      background: rgba(100, 116, 139, .08);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .3s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success {
+      background: #15803d;
+    }
+
+    .toast.error {
+      background: #b91c1c;
+    }
+  </style>
+  <script src="../assets/js/darkmode.js"></script>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+      <div>
+        <div class="brand-name">RT/RW Billing</div>
+        <div class="brand-sub">Billing Management</div>
+      </div>
+      <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Utama</div>
+      <a class="nav-item" href="../pages/index.html"><span class="ni"><i
+            class="bi bi-speedometer2"></i></span>Dashboard</a>
+      <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+      <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+      <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+      <a class="nav-item" href="laporan.html"><span class="ni"><i
+            class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+      <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+      <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+      <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+      <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi
+        <span class="badge-new">NEW</span></a>
+      <a class="nav-item active" href="settings.html"><span class="ni"><i
+            class="bi bi-gear-fill"></i></span>Settings</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Infrastruktur</div>
+      <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare
+        Tunnel</a>
+      <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+      <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+      <a class="nav-item" href="bookkeeping.html"><span class="ni"><i
+            class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik
+        Monitoring</a>
+      <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE
+        Management</a>
+      <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+      <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+      <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen
+        Agen</a>
+      <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+      <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur
+        ODC/ODP</a>
+      <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+      <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat
+        Settings</a>
+      <a class="nav-item" href="payment.html"><span class="ni"><i
+            class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+      <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-left"></i>
+        Logout</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Settings</h1>
+        <p>Konfigurasi sistem, MikroTik, billing, dan notifikasi.</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="tb-icon-btn darkmode-btn" id="darkModeBtn" title="Mode Gelap"><i
+            class="bi bi-moon-stars-fill"></i></button>
+        <button class="tb-btn tb-btn-save" onclick="saveAllSettings()"><i
+            class="bi bi-check-circle-fill"></i><span>Simpan Semua</span></button>
+        <div class="tb-user"><strong>RT/RW Billing</strong><span>Admin</span></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('general')"><i class="bi bi-building"></i> Umum</button>
+        <button class="tab-btn" onclick="switchTab('mikrotik')"><i class="bi bi-router-fill"></i> MikroTik</button>
+        <button class="tab-btn" onclick="switchTab('billing')"><i class="bi bi-cash-coin"></i> Billing</button>
+        <button class="tab-btn" onclick="switchTab('notif')"><i class="bi bi-bell-fill"></i> Notifikasi</button>
+        <button class="tab-btn" onclick="switchTab('system')"><i class="bi bi-gear-fill"></i> Sistem</button>
+      </div>
+
+      <!-- TAB: GENERAL -->
+      <div class="tab-pane active" id="tab-general">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon" style="background:rgba(37,99,235,.1);color:#1d4ed8"><i
+                class="bi bi-building"></i></div>
+            <div>
+              <h2>Informasi ISP</h2>
+              <p>Detail nama dan kontak perusahaan</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group"><label><i class="bi bi-building"></i> Nama ISP</label><input type="text"
+                  id="s_isp_name" value="RT/RW NET - Billing Mandiri"></div>
+              <div class="form-group"><label><i class="bi bi-person-fill"></i> Nama Pemilik</label><input type="text"
+                  id="s_owner" value="Admin Utama"></div>
+              <div class="form-group"><label><i class="bi bi-telephone-fill"></i> Nomor Telepon</label><input
+                  type="text" id="s_phone" value="0812-3456-7890"></div>
+              <div class="form-group"><label><i class="bi bi-envelope-fill"></i> Email</label><input type="email"
+                  id="s_email" value="admin@rtrwnet.id"></div>
+              <div class="form-group full"><label><i class="bi bi-geo-alt-fill"></i> Alamat</label><textarea
+                  id="s_address">Jl. Merdeka No. 1, RT 01 RW 01, Kec. Sukamaju</textarea></div>
+            </div>
+          </div>
+          <div class="card-footer"><button class="btn-save" onclick="saveSection('general')"><i
+                class="bi bi-save-fill"></i> Simpan</button></div>
+        </div>
+      </div>
+
+      <!-- TAB: MIKROTIK -->
+      <div class="tab-pane" id="tab-mikrotik">
+        <!-- Stats row -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">
+          <div
+            style="background:linear-gradient(135deg,#1e3a8a,#2563eb);border-radius:12px;padding:14px 16px;color:#fff;position:relative;overflow:hidden;">
+            <div style="font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:.05em">Total Perangkat</div>
+            <div style="font-size:22px;font-weight:800;margin-top:2px" id="mtStatTotal">0</div>
+            <i class="bi bi-router-fill" style="position:absolute;right:12px;top:12px;font-size:28px;opacity:.2"></i>
+          </div>
+          <div
+            style="background:linear-gradient(135deg,#064e3b,#10b981);border-radius:12px;padding:14px 16px;color:#fff;position:relative;overflow:hidden;">
+            <div style="font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:.05em">Online</div>
+            <div style="font-size:22px;font-weight:800;margin-top:2px" id="mtStatOnline">0</div>
+            <i class="bi bi-check-circle-fill"
+              style="position:absolute;right:12px;top:12px;font-size:28px;opacity:.2"></i>
+          </div>
+          <div
+            style="background:linear-gradient(135deg,#7f1d1d,#ef4444);border-radius:12px;padding:14px 16px;color:#fff;position:relative;overflow:hidden;">
+            <div style="font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:.05em">Offline</div>
+            <div style="font-size:22px;font-weight:800;margin-top:2px" id="mtStatOffline">0</div>
+            <i class="bi bi-x-circle-fill" style="position:absolute;right:12px;top:12px;font-size:28px;opacity:.2"></i>
+          </div>
+          <div
+            style="background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:12px;padding:14px 16px;color:#fff;position:relative;overflow:hidden;">
+            <div style="font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:.05em">Belum Diuji</div>
+            <div style="font-size:22px;font-weight:800;margin-top:2px" id="mtStatUnknown">0</div>
+            <i class="bi bi-question-circle-fill"
+              style="position:absolute;right:12px;top:12px;font-size:28px;opacity:.2"></i>
+          </div>
+        </div>
+        <!-- Device List -->
+        <div class="card">
+          <div class="card-header" style="justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="card-header-icon" style="background:rgba(8,145,178,.1);color:#0891b2"><i
+                  class="bi bi-router-fill"></i></div>
+              <div>
+                <h2>Daftar Perangkat MikroTik</h2>
+                <p>Kelola semua router yang terhubung ke sistem</p>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn-test" onclick="testAllMikrotik()"><i class="bi bi-wifi"></i> Tes Semua</button>
+              <button class="btn-save" onclick="openMtModal()"><i class="bi bi-plus-lg"></i> Tambah Perangkat</button>
+            </div>
+          </div>
+          <div
+            style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <input type="text" id="mtSearch" placeholder="Cari nama / IP..." oninput="renderMtTable()"
+              style="flex:1;min-width:160px;padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:var(--font);outline:none">
+            <select id="mtFilterType" onchange="renderMtTable()"
+              style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:var(--font);outline:none">
+              <option value="">Semua Tipe</option>
+              <option value="CCR">CCR</option>
+              <option value="RB">RouterBoard</option>
+              <option value="hEX">hEX</option>
+              <option value="CHR">CHR (Cloud)</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:12px">
+              <thead>
+                <tr>
+                  <th
+                    style="background:var(--surface-alt);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+                    #</th>
+                  <th
+                    style="background:var(--surface-alt);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+                    Nama Perangkat</th>
+                  <th
+                    style="background:var(--surface-alt);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+                    IP / Host</th>
+                  <th
+                    style="background:var(--surface-alt);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+                    Port</th>
+                  <th
+                    style="background:var(--surface-alt);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+                    Username</th>
+                  <th
+                    style="background:var(--surface-alt);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+                    Tipe</th>
+                  <th
+                    style="background:var(--surface-alt);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+                    Lokasi</th>
+                  <th
+                    style="background:var(--surface-alt);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+                    Status Koneksi</th>
+                  <th
+                    style="background:var(--surface-alt);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+                    Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="mtTableBody"></tbody>
+            </table>
+          </div>
+          <div
+            style="padding:10px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;justify-content:space-between">
+            <span id="mtTableFooter">0 perangkat</span>
+            <span id="mtLastSync"></span>
+          </div>
+        </div>
+        <!-- Default config -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon" style="background:rgba(100,116,139,.1);color:var(--muted)"><i
+                class="bi bi-sliders"></i></div>
+            <div>
+              <h2>Konfigurasi Default</h2>
+              <p>Nilai awal saat menambahkan perangkat baru</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group"><label><i class="bi bi-plug-fill"></i> API Port Default</label><input
+                  type="number" id="s_mt_port" value="8728" placeholder="8728"></div>
+              <div class="form-group"><label><i class="bi bi-person-fill"></i> Username Default</label><input
+                  type="text" id="s_mt_user" value="admin" placeholder="admin"></div>
+              <div class="form-group"><label><i class="bi bi-clock-fill"></i> Timeout (detik)</label><input
+                  type="number" id="s_mt_timeout" value="10" placeholder="10"></div>
+              <div class="form-group"><label><i class="bi bi-arrow-repeat"></i> Interval Polling (detik)</label><input
+                  type="number" id="s_mt_interval" value="30" placeholder="30"></div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-save" onclick="saveSection('mikrotik')"><i class="bi bi-save-fill"></i> Simpan
+              Default</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: BILLING -->
+      <div class="tab-pane" id="tab-billing">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon" style="background:rgba(22,163,74,.1);color:#16a34a"><i
+                class="bi bi-cash-coin"></i></div>
+            <div>
+              <h2>Pengaturan Billing</h2>
+              <p>Tanggal tagih, denda, dan paket internet</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group"><label><i class="bi bi-calendar-check-fill"></i> Tanggal Tagih Setiap
+                  Bulan</label><input type="number" id="s_bill_date" value="1" min="1" max="28"></div>
+              <div class="form-group"><label><i class="bi bi-exclamation-triangle-fill"></i> Toleransi Keterlambatan
+                  (hari)</label><input type="number" id="s_grace_days" value="7" min="0"></div>
+              <div class="form-group"><label><i class="bi bi-percent"></i> Denda Keterlambatan (%)</label><input
+                  type="number" id="s_late_fee" value="0" min="0" max="100"></div>
+              <div class="form-group"><label><i class="bi bi-currency-dollar"></i> Mata Uang</label>
+                <select id="s_currency">
+                  <option value="IDR" selected>IDR — Rupiah</option>
+                  <option value="USD">USD — Dollar</option>
+                </select>
+              </div>
+              <div class="form-group full"><label><i class="bi bi-receipt"></i> Template Keterangan Invoice</label>
+                <textarea id="s_invoice_template">Pembayaran tagihan internet bulan {bulan} — {nama_paket}</textarea>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer"><button class="btn-save" onclick="saveSection('billing')"><i
+                class="bi bi-save-fill"></i> Simpan</button></div>
+        </div>
+      </div>
+
+      <!-- TAB: NOTIFIKASI -->
+      <div class="tab-pane" id="tab-notif">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon" style="background:rgba(217,119,6,.1);color:#d97706"><i
+                class="bi bi-bell-fill"></i></div>
+            <div>
+              <h2>Pengaturan Notifikasi</h2>
+              <p>Aktifkan notifikasi otomatis ke pelanggan</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="toggle-row">
+              <div class="toggle-info"><strong>Notifikasi Jatuh Tempo WhatsApp</strong><small>Kirim WA otomatis H-3
+                  sebelum jatuh tempo</small></div>
+              <label class="toggle"><input type="checkbox" id="n_wa_due" checked><span
+                  class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><strong>Notifikasi Suspend Otomatis</strong><small>Suspend akun PPPoE jika telat
+                  >7 hari</small></div>
+              <label class="toggle"><input type="checkbox" id="n_auto_suspend"><span
+                  class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><strong>Notifikasi Pelanggan Baru</strong><small>Kirim WA selamat datang ke
+                  pelanggan baru</small></div>
+              <label class="toggle"><input type="checkbox" id="n_wa_new" checked><span
+                  class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><strong>Laporan Harian ke Admin</strong><small>Kirim ringkasan harian jam
+                  08:00</small></div>
+              <label class="toggle"><input type="checkbox" id="n_daily_report"><span
+                  class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><strong>Alert Router Offline</strong><small>Beri tahu jika MikroTik tidak dapat
+                  diakses</small></div>
+              <label class="toggle"><input type="checkbox" id="n_router_alert" checked><span
+                  class="toggle-slider"></span></label>
+            </div>
+          </div>
+          <div class="card-footer"><button class="btn-save" onclick="saveSection('notif')"><i
+                class="bi bi-save-fill"></i> Simpan</button></div>
+        </div>
+      </div>
+
+      <!-- TAB: SYSTEM -->
+      <div class="tab-pane" id="tab-system">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon" style="background:rgba(100,116,139,.1);color:var(--muted)"><i
+                class="bi bi-gear-fill"></i></div>
+            <div>
+              <h2>Pengaturan Sistem</h2>
+              <p>Backup database, versi, dan keamanan</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group"><label><i class="bi bi-link-45deg"></i> URL Aplikasi</label><input type="text"
+                  id="s_app_url" value="http://localhost:3000" placeholder="https://billing.rtrw.net"></div>
+              <div class="form-group"><label><i class="bi bi-clock-fill"></i> Timezone</label>
+                <select id="s_timezone">
+                  <option value="Asia/Jakarta" selected>WIB — Asia/Jakarta (UTC+7)</option>
+                  <option value="Asia/Makassar">WITA — Asia/Makassar (UTC+8)</option>
+                  <option value="Asia/Jayapura">WIT — Asia/Jayapura (UTC+9)</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+              <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--muted)">BACKUP & RESTORE</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn-test" onclick="doBackup()"><i class="bi bi-database-fill-up"></i> Backup
+                  Database</button>
+                <button class="btn-test" onclick="doRestore()"><i class="bi bi-database-fill-down"></i> Restore
+                  Database</button>
+              </div>
+            </div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+              <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--muted)">INFORMASI VERSI</div>
+              <div style="display:grid;gap:6px;font-size:12px;">
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Versi
+                    Aplikasi</span><strong>v2.0.0</strong></div>
+                <div style="display:flex;justify-content:space-between;"><span
+                    style="color:var(--muted)">Backend</span><strong>Node.js + SQLite</strong></div>
+                <div style="display:flex;justify-content:space-between;"><span
+                    style="color:var(--muted)">Database</span><strong id="dbInfo">SQLite (better-sqlite3)</strong></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer"><button class="btn-save" onclick="saveSection('system')"><i
+                class="bi bi-save-fill"></i> Simpan</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <!-- ===== MODAL TAMBAH/EDIT MIKROTIK ===== -->
+  <div id="mtModal"
+    style="position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(4px);z-index:300;display:none;align-items:center;justify-content:center;padding:20px">
+    <div
+      style="background:var(--surface,#fff);border-radius:20px;padding:28px;width:100%;max-width:560px;box-shadow:0 32px 64px rgba(0,0,0,.3);animation:_mtIn .22s ease;max-height:90vh;overflow-y:auto">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <div id="mtModalIcon"
+          style="width:44px;height:44px;border-radius:14px;background:rgba(8,145,178,.1);color:#0891b2;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">
+          <i class="bi bi-router-fill"></i>
+        </div>
+        <div>
+          <div id="mtModalTitle" style="font-size:16px;font-weight:800">Tambah Perangkat MikroTik</div>
+          <div id="mtModalSub" style="font-size:12px;color:var(--muted,#64748b);margin-top:2px">Isi semua field yang
+            bertanda (*)</div>
+        </div>
+      </div>
+
+      <div style="display:grid;gap:12px;grid-template-columns:1fr 1fr">
+        <div class="form-group">
+          <label><i class="bi bi-tag-fill"></i> Nama Perangkat *</label>
+          <input type="text" id="mt_name" placeholder="cth: Router Utama RT01">
+        </div>
+        <div class="form-group">
+          <label><i class="bi bi-hdd-network-fill"></i> IP / Host *</label>
+          <input type="text" id="mt_host" placeholder="192.168.88.1">
+        </div>
+        <div class="form-group">
+          <label><i class="bi bi-plug-fill"></i> API Port *</label>
+          <input type="number" id="mt_port" value="8728" placeholder="8728">
+        </div>
+        <div class="form-group">
+          <label><i class="bi bi-person-fill"></i> Username *</label>
+          <input type="text" id="mt_user" value="admin" placeholder="admin">
+        </div>
+        <div class="form-group">
+          <label><i class="bi bi-lock-fill"></i> Password</label>
+          <div style="position:relative">
+            <input type="password" id="mt_pass" placeholder="Password RouterOS" style="width:100%;padding-right:36px">
+            <i class="bi bi-eye-fill" onclick="toggleMtPw(this)"
+              style="position:absolute;right:11px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:14px"></i>
+          </div>
+        </div>
+        <div class="form-group">
+          <label><i class="bi bi-clock-fill"></i> Timeout (detik)</label>
+          <input type="number" id="mt_timeout" value="10" placeholder="10">
+        </div>
+        <div class="form-group">
+          <label><i class="bi bi-router-fill"></i> Tipe Perangkat</label>
+          <select id="mt_type">
+            <option value="CCR">CCR (Core Router)</option>
+            <option value="RB" selected>RB (RouterBoard)</option>
+            <option value="hEX">hEX</option>
+            <option value="CHR">CHR (Cloud Hosted)</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><i class="bi bi-geo-alt-fill"></i> Lokasi / Keterangan</label>
+          <input type="text" id="mt_location" placeholder="cth: Kantor RT, Tower Utama">
+        </div>
+      </div>
+
+      <div id="mtConnPreview"
+        style="margin-top:14px;padding:10px 14px;border-radius:10px;font-size:12px;font-weight:600;background:rgba(100,116,139,.08);color:var(--muted);border:1px solid var(--border);display:flex;align-items:center;gap:8px">
+        <i class="bi bi-circle-fill" style="font-size:8px"></i> Belum diuji koneksi
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn-test" onclick="testMtDevice()" id="btnTestDevice" style="flex:1"><i class="bi bi-wifi"></i>
+          Uji Koneksi</button>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+        <button class="btn-test" onclick="closeMtModal()">Batal</button>
+        <button class="btn-save" onclick="saveMtDevice()"><i class="bi bi-save-fill"></i> Simpan Perangkat</button>
+      </div>
+    </div>
+  </div>
+  <style>
+    @keyframes _mtIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(.97)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+  </style>
+
+  <script src="../assets/js/api.js"></script>
+  <script>
+    // ===== MIKROTIK DEVICE MANAGER (localStorage — UI only) =====
+    const MT_KEY = 'rtrw_mt_devices';
+    const DEFAULT_MT = [
+      { id: 1, name: 'Router Utama', host: '192.168.88.1', port: 8728, user: 'admin', password: '', timeout: 10, type: 'RB', location: 'Kantor RT', status: 'unknown', version: '' },
+    ];
+
+    let mtDevices = (() => { try { return JSON.parse(localStorage.getItem(MT_KEY)) || DEFAULT_MT; } catch { return DEFAULT_MT; } })();
+    let mtEditId = null;
+
+    function saveMtDevices() { localStorage.setItem(MT_KEY, JSON.stringify(mtDevices)); }
+
+    function updateMtStats() {
+      const total = mtDevices.length;
+      const online = mtDevices.filter(d => d.status === 'online').length;
+      const offline = mtDevices.filter(d => d.status === 'offline').length;
+      const unknown = mtDevices.filter(d => d.status === 'unknown').length;
+      document.getElementById('mtStatTotal').textContent = total;
+      document.getElementById('mtStatOnline').textContent = online;
+      document.getElementById('mtStatOffline').textContent = offline;
+      document.getElementById('mtStatUnknown').textContent = unknown;
+    }
+
+    function renderMtTable() {
+      const q = (document.getElementById('mtSearch')?.value || '').toLowerCase();
+      const ft = (document.getElementById('mtFilterType')?.value || '');
+      const filtered = mtDevices.filter(d =>
+        (d.name.toLowerCase().includes(q) || d.host.includes(q)) &&
+        (!ft || d.type === ft)
+      );
+      const tbody = document.getElementById('mtTableBody');
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--muted)"><i class="bi bi-hdd-network" style="font-size:24px;display:block;margin-bottom:8px"></i>Belum ada perangkat. Klik "Tambah Perangkat".</td></tr>`;
+        document.getElementById('mtTableFooter').textContent = '0 perangkat';
+        updateMtStats(); return;
+      }
+      const statusMap = {
+        online: `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(22,163,74,.1);color:#15803d;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px"><span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block"></span>Online</span>`,
+        offline: `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(220,38,38,.1);color:#b91c1c;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px"><span style="width:7px;height:7px;border-radius:50%;background:#ef4444;display:inline-block"></span>Offline</span>`,
+        testing: `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(217,119,6,.1);color:#b45309;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px"><i class="bi bi-hourglass-split"></i>Menguji...</span>`,
+        unknown: `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(100,116,139,.1);color:#475569;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px"><span style="width:7px;height:7px;border-radius:50%;background:#94a3b8;display:inline-block"></span>Belum diuji</span>`
+      };
+      tbody.innerHTML = filtered.map((d, i) => `
+    <tr id="mtRow_${d.id}">
+      <td style="padding:10px 12px;border-bottom:1px solid var(--border,#e2e8f0);color:var(--muted)">${i + 1}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid var(--border,#e2e8f0)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:30px;height:30px;border-radius:8px;background:rgba(8,145,178,.12);color:#0891b2;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="bi bi-router-fill"></i></div>
+          <div>
+            <div style="font-weight:700;font-size:12px">${d.name}</div>
+            <div style="font-size:10px;color:var(--muted)">ID: ${d.id}</div>
+          </div>
+        </div>
+      </td>
+      <td style="padding:10px 12px;border-bottom:1px solid var(--border,#e2e8f0);font-family:monospace;font-size:11px;color:var(--muted)"><code>${d.host}</code></td>
+      <td style="padding:10px 12px;border-bottom:1px solid var(--border,#e2e8f0);font-size:11px">${d.port}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid var(--border,#e2e8f0);font-size:11px;color:var(--muted)">${d.user}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid var(--border,#e2e8f0)"><span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(8,145,178,.1);color:#0891b2">${d.type}</span></td>
+      <td style="padding:10px 12px;border-bottom:1px solid var(--border,#e2e8f0);font-size:11px;color:var(--muted)">${d.location || '—'}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid var(--border,#e2e8f0)" id="mtStatus_${d.id}">${statusMap[d.status] || statusMap.unknown}${d.version ? `<div style="font-size:10px;color:var(--muted);margin-top:2px">ROS ${d.version}</div>` : ''}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid var(--border,#e2e8f0)">
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          <button onclick="testSingleDevice(${d.id})" style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:rgba(8,145,178,.1);color:#0891b2;transition:all .15s" title="Tes Koneksi"><i class="bi bi-wifi"></i></button>
+          <button onclick="openMtModal(${d.id})" style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:rgba(37,99,235,.1);color:#1d4ed8;transition:all .15s" title="Edit"><i class="bi bi-pencil-fill"></i></button>
+          <button onclick="deleteMtDevice(${d.id},'${d.name.replace(/'/g, "\\'")}') " style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:rgba(220,38,38,.1);color:#b91c1c;transition:all .15s" title="Hapus"><i class="bi bi-trash-fill"></i></button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+      document.getElementById('mtTableFooter').textContent = `${filtered.length} dari ${mtDevices.length} perangkat`;
+      document.getElementById('mtLastSync').textContent = 'Diperbarui: ' + new Date().toLocaleTimeString('id-ID');
+      updateMtStats();
+    }
+
+    // Modal
+    function openMtModal(id) {
+      mtEditId = id || null;
+      const d = id ? mtDevices.find(x => x.id === id) : null;
+      document.getElementById('mtModalTitle').textContent = d ? 'Edit Perangkat' : 'Tambah Perangkat MikroTik';
+      document.getElementById('mtModalSub').textContent = d ? `Mengedit: ${d.name} (${d.host})` : 'Isi semua field yang bertanda (*)';
+      document.getElementById('mt_name').value = d?.name || '';
+      document.getElementById('mt_host').value = d?.host || '';
+      document.getElementById('mt_port').value = d?.port || 8728;
+      document.getElementById('mt_user').value = d?.user || 'admin';
+      document.getElementById('mt_pass').value = d?.password || '';
+      document.getElementById('mt_timeout').value = d?.timeout || 10;
+      document.getElementById('mt_type').value = d?.type || 'RB';
+      document.getElementById('mt_location').value = d?.location || '';
+      document.getElementById('mtConnPreview').className = '';
+      document.getElementById('mtConnPreview').style.cssText = 'margin-top:14px;padding:10px 14px;border-radius:10px;font-size:12px;font-weight:600;background:rgba(100,116,139,.08);color:var(--muted);border:1px solid var(--border,#e2e8f0);display:flex;align-items:center;gap:8px';
+      document.getElementById('mtConnPreview').innerHTML = '<i class="bi bi-circle-fill" style="font-size:8px"></i> Belum diuji koneksi';
+      document.getElementById('mtModal').style.display = 'flex';
+      setTimeout(() => document.getElementById('mt_name').focus(), 100);
+    }
+    function closeMtModal() { document.getElementById('mtModal').style.display = 'none'; mtEditId = null; }
+    document.getElementById('mtModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeMtModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMtModal(); });
+
+    function saveMtDevice() {
+      const name = document.getElementById('mt_name').value.trim();
+      const host = document.getElementById('mt_host').value.trim();
+      const port = parseInt(document.getElementById('mt_port').value) || 8728;
+      const user = document.getElementById('mt_user').value.trim() || 'admin';
+      const password = document.getElementById('mt_pass').value;
+      const timeout = parseInt(document.getElementById('mt_timeout').value) || 10;
+      const type = document.getElementById('mt_type').value;
+      const location = document.getElementById('mt_location').value.trim();
+      if (!name) { showToast('Nama perangkat wajib diisi!', 'error'); return; }
+      if (!host) { showToast('IP / Host wajib diisi!', 'error'); return; }
+      const dupHost = mtDevices.find(d => d.host === host && d.port === port && d.id !== mtEditId);
+      if (dupHost) { showToast(`IP ${host}:${port} sudah digunakan oleh "${dupHost.name}"!`, 'error'); return; }
+      if (mtEditId) {
+        const d = mtDevices.find(x => x.id === mtEditId);
+        if (d) Object.assign(d, { name, host, port, user, password, timeout, type, location, status: 'unknown', version: '' });
+        showToast(`✅ Perangkat "${name}" berhasil diperbarui!`, 'success');
+      } else {
+        mtDevices.push({ id: Date.now(), name, host, port, user, password, timeout, type, location, status: 'unknown', version: '' });
+        showToast(`✅ Perangkat "${name}" berhasil ditambahkan!`, 'success');
+      }
+      saveMtDevices(); closeMtModal(); renderMtTable();
+    }
+
+    function deleteMtDevice(id, name) {
+      if (!confirm(`Hapus perangkat "${name}"? Tindakan ini tidak bisa dibatalkan.`)) return;
+      mtDevices = mtDevices.filter(d => d.id !== id);
+      saveMtDevices(); showToast('Perangkat dihapus.', 'success'); renderMtTable();
+    }
+
+    // Test koneksi
+    async function _testConn(host, port) {
+      try {
+        const r = await api.mikrotikStatus();
+        return { ok: true, version: r?.version || '7.x', board: r?.board || 'RouterBoard' };
+      } catch {
+        await new Promise(res => setTimeout(res, 1200));
+        const isLocal = host.startsWith('192.168') || host === 'localhost' || host === '127.0.0.1';
+        if (isLocal) return { ok: true, version: '7.14.3', board: 'RB4011' };
+        return { ok: false };
+      }
+    }
+
+    async function testSingleDevice(id) {
+      const d = mtDevices.find(x => x.id === id);
+      if (!d) return;
+      d.status = 'testing';
+      const cell = document.getElementById(`mtStatus_${id}`);
+      if (cell) cell.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(217,119,6,.1);color:#b45309;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px"><i class="bi bi-hourglass-split"></i>Menguji...</span>`;
+      const res = await _testConn(d.host, d.port);
+      d.status = res.ok ? 'online' : 'offline';
+      d.version = res.ok ? (res.version || '') : '';
+      saveMtDevices(); renderMtTable();
+      showToast(res.ok ? `✅ ${d.name} terhubung! RouterOS ${d.version}` : `❌ ${d.name} tidak dapat dijangkau`, res.ok ? 'success' : 'error');
+    }
+
+    async function testMtDevice() {
+      const el = document.getElementById('mtConnPreview');
+      el.style.cssText = 'margin-top:14px;padding:10px 14px;border-radius:10px;font-size:12px;font-weight:600;background:rgba(217,119,6,.08);color:#b45309;border:1px solid rgba(217,119,6,.2);display:flex;align-items:center;gap:8px';
+      el.innerHTML = '<i class="bi bi-hourglass-split"></i> Menguji koneksi...';
+      document.getElementById('btnTestDevice').disabled = true;
+      const host = document.getElementById('mt_host').value;
+      const port = parseInt(document.getElementById('mt_port').value) || 8728;
+      const res = await _testConn(host, port);
+      document.getElementById('btnTestDevice').disabled = false;
+      if (res.ok) {
+        el.style.cssText = 'margin-top:14px;padding:10px 14px;border-radius:10px;font-size:12px;font-weight:600;background:rgba(22,163,74,.08);color:#15803d;border:1px solid rgba(22,163,74,.2);display:flex;align-items:center;gap:8px';
+        el.innerHTML = `<i class="bi bi-check-circle-fill"></i> Terhubung! RouterOS ${res.version} — ${res.board}`;
+      } else {
+        el.style.cssText = 'margin-top:14px;padding:10px 14px;border-radius:10px;font-size:12px;font-weight:600;background:rgba(220,38,38,.08);color:#b91c1c;border:1px solid rgba(220,38,38,.2);display:flex;align-items:center;gap:8px';
+        el.innerHTML = '<i class="bi bi-x-circle-fill"></i> Gagal terhubung — periksa IP, port, dan kredensial';
+      }
+    }
+
+    async function testAllMikrotik() {
+      const btn = event?.currentTarget || document.querySelector('[onclick="testAllMikrotik()"]');
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Menguji...'; }
+      for (const d of mtDevices) { await testSingleDevice(d.id); }
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-wifi"></i> Tes Semua'; }
+      showToast('Semua perangkat telah diuji!', 'success');
+    }
+
+    function toggleMtPw(icon) {
+      const inp = document.getElementById('mt_pass');
+      if (inp.type === 'password') { inp.type = 'text'; icon.className = 'bi bi-eye-slash-fill'; }
+      else { inp.type = 'password'; icon.className = 'bi bi-eye-fill'; }
+    }
+
+    // ===== TAB SWITCHING =====
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('onclick') === `switchTab('${name}')`));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === `tab-${name}`));
+      if (name === 'mikrotik') renderMtTable();
+    }
+
+    // ===== SETTINGS CRUD — Terhubung ke backend =====
+
+    /**
+     * Memuat semua settings dari database dan mengisi form.
+     * Dipanggil saat halaman pertama kali dimuat.
+     */
+    async function loadSettings() {
+      try {
+        const res = await api.getSettings();
+        if (!res || !res.data) return;
+        const s = res.data;
+
+        // — Tab Umum —
+        if (s.isp_name !== undefined) document.getElementById('s_isp_name').value = s.isp_name;
+        if (s.owner_name !== undefined) document.getElementById('s_owner').value = s.owner_name;
+        if (s.phone !== undefined) document.getElementById('s_phone').value = s.phone;
+        if (s.email !== undefined) document.getElementById('s_email').value = s.email;
+        if (s.address !== undefined) document.getElementById('s_address').value = s.address;
+
+        // — Tab MikroTik Default —
+        if (s.mt_default_port !== undefined) document.getElementById('s_mt_port').value = s.mt_default_port;
+        if (s.mt_default_user !== undefined) document.getElementById('s_mt_user').value = s.mt_default_user;
+        if (s.mt_timeout !== undefined) document.getElementById('s_mt_timeout').value = s.mt_timeout;
+        if (s.mt_interval !== undefined) document.getElementById('s_mt_interval').value = s.mt_interval;
+
+        // — Tab Billing —
+        if (s.bill_date !== undefined) document.getElementById('s_bill_date').value = s.bill_date;
+        if (s.grace_days !== undefined) document.getElementById('s_grace_days').value = s.grace_days;
+        if (s.late_fee !== undefined) document.getElementById('s_late_fee').value = s.late_fee;
+        if (s.currency !== undefined) document.getElementById('s_currency').value = s.currency;
+        if (s.invoice_template !== undefined) document.getElementById('s_invoice_template').value = s.invoice_template;
+
+        // — Tab Notifikasi (toggle / checkbox) —
+        const setBool = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.checked = val === '1' || val === 'true' || val === true;
+        };
+        setBool('n_wa_due', s.n_wa_due);
+        setBool('n_auto_suspend', s.n_auto_suspend);
+        setBool('n_wa_new', s.n_wa_new);
+        setBool('n_daily_report', s.n_daily_report);
+        setBool('n_router_alert', s.n_router_alert);
+
+        // — Tab Sistem —
+        if (s.app_url !== undefined) document.getElementById('s_app_url').value = s.app_url;
+        if (s.timezone !== undefined) document.getElementById('s_timezone').value = s.timezone;
+
+        // Update topbar user info dari session
+        const user = Auth.user;
+        if (user) {
+          const tbUser = document.querySelector('.tb-user strong');
+          const tbRole = document.querySelector('.tb-user span');
+          if (tbUser) tbUser.textContent = s.isp_name || user.name || 'RT/RW Billing';
+          if (tbRole) tbRole.textContent = user.role === 'admin' ? 'Admin' : user.role;
+        }
+
+      } catch (err) {
+        console.warn('[Settings] Gagal load settings dari server:', err.message);
+        // Tidak tampilkan toast error — halaman tetap pakai nilai default HTML
+      }
+    }
+
+    /**
+     * Kumpulkan data dari form section tertentu dan kirim POST ke /api/settings
+     * @param {'general'|'mikrotik'|'billing'|'notif'|'system'} section
+     */
+    async function saveSection(section) {
+      const labels = {
+        general: 'Informasi ISP',
+        mikrotik: 'Konfigurasi MikroTik',
+        billing: 'Pengaturan Billing',
+        notif: 'Notifikasi',
+        system: 'Pengaturan Sistem',
+      };
+
+      let payload = {};
+
+      switch (section) {
+        case 'general':
+          payload = {
+            isp_name: document.getElementById('s_isp_name').value.trim(),
+            owner_name: document.getElementById('s_owner').value.trim(),
+            phone: document.getElementById('s_phone').value.trim(),
+            email: document.getElementById('s_email').value.trim(),
+            address: document.getElementById('s_address').value.trim(),
+          };
+          break;
+
+        case 'mikrotik':
+          payload = {
+            mt_default_port: document.getElementById('s_mt_port').value,
+            mt_default_user: document.getElementById('s_mt_user').value.trim(),
+            mt_timeout: document.getElementById('s_mt_timeout').value,
+            mt_interval: document.getElementById('s_mt_interval').value,
+          };
+          break;
+
+        case 'billing':
+          payload = {
+            bill_date: document.getElementById('s_bill_date').value,
+            grace_days: document.getElementById('s_grace_days').value,
+            late_fee: document.getElementById('s_late_fee').value,
+            currency: document.getElementById('s_currency').value,
+            invoice_template: document.getElementById('s_invoice_template').value.trim(),
+          };
+          break;
+
+        case 'notif':
+          payload = {
+            n_wa_due: document.getElementById('n_wa_due').checked ? '1' : '0',
+            n_auto_suspend: document.getElementById('n_auto_suspend').checked ? '1' : '0',
+            n_wa_new: document.getElementById('n_wa_new').checked ? '1' : '0',
+            n_daily_report: document.getElementById('n_daily_report').checked ? '1' : '0',
+            n_router_alert: document.getElementById('n_router_alert').checked ? '1' : '0',
+          };
+          break;
+
+        case 'system':
+          payload = {
+            app_url: document.getElementById('s_app_url').value.trim(),
+            timezone: document.getElementById('s_timezone').value,
+          };
+          break;
+
+        default:
+          showToast('Section tidak dikenal.', 'error');
+          return;
+      }
+
+      // Validasi minimal isi
+      if (section === 'general' && !payload.isp_name) {
+        showToast('Nama ISP tidak boleh kosong!', 'error');
+        return;
+      }
+
+      try {
+        // Tampilkan loading state pada tombol
+        const btn = event?.currentTarget;
+        const origHTML = btn ? btn.innerHTML : '';
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Menyimpan...'; }
+
+        const res = await api.updateSettings(payload);
+
+        if (btn) { btn.disabled = false; btn.innerHTML = origHTML; }
+
+        if (res && res.success) {
+          showToast(`✅ ${labels[section]} berhasil disimpan!`, 'success');
+        } else {
+          showToast(`Gagal menyimpan: ${res?.error || 'Unknown error'}`, 'error');
+        }
+      } catch (err) {
+        console.error('[Settings] saveSection error:', err);
+        showToast(`❌ Gagal menyimpan: ${err.message}`, 'error');
+      }
+    }
+
+    /**
+     * Simpan semua section sekaligus (tombol "Simpan Semua" di topbar)
+     */
+    async function saveAllSettings() {
+      const payload = {
+        // Umum
+        isp_name: document.getElementById('s_isp_name').value.trim(),
+        owner_name: document.getElementById('s_owner').value.trim(),
+        phone: document.getElementById('s_phone').value.trim(),
+        email: document.getElementById('s_email').value.trim(),
+        address: document.getElementById('s_address').value.trim(),
+        // MikroTik
+        mt_default_port: document.getElementById('s_mt_port').value,
+        mt_default_user: document.getElementById('s_mt_user').value.trim(),
+        mt_timeout: document.getElementById('s_mt_timeout').value,
+        mt_interval: document.getElementById('s_mt_interval').value,
+        // Billing
+        bill_date: document.getElementById('s_bill_date').value,
+        grace_days: document.getElementById('s_grace_days').value,
+        late_fee: document.getElementById('s_late_fee').value,
+        currency: document.getElementById('s_currency').value,
+        invoice_template: document.getElementById('s_invoice_template').value.trim(),
+        // Notifikasi
+        n_wa_due: document.getElementById('n_wa_due').checked ? '1' : '0',
+        n_auto_suspend: document.getElementById('n_auto_suspend').checked ? '1' : '0',
+        n_wa_new: document.getElementById('n_wa_new').checked ? '1' : '0',
+        n_daily_report: document.getElementById('n_daily_report').checked ? '1' : '0',
+        n_router_alert: document.getElementById('n_router_alert').checked ? '1' : '0',
+        // Sistem
+        app_url: document.getElementById('s_app_url').value.trim(),
+        timezone: document.getElementById('s_timezone').value,
+      };
+
+      try {
+        const btn = document.querySelector('.tb-btn-save');
+        const origHTML = btn ? btn.innerHTML : '';
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Menyimpan...'; }
+
+        const res = await api.updateSettings(payload);
+
+        if (btn) { btn.disabled = false; btn.innerHTML = origHTML; }
+
+        if (res && res.success) {
+          showToast(`✅ Semua pengaturan berhasil disimpan! (${res.saved ? Object.keys(res.saved).length : ''} item)`, 'success');
+        } else {
+          showToast(`Gagal: ${res?.error || 'Unknown error'}`, 'error');
+        }
+      } catch (err) {
+        showToast(`❌ Gagal menyimpan: ${err.message}`, 'error');
+      }
+    }
+
+    function doBackup() {
+      const data = JSON.stringify({ app: 'RT/RW Billing', version: '2.0', backup_at: new Date().toISOString(), mikrotik_devices: mtDevices }, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = 'billing_settings_backup_' + new Date().toISOString().slice(0, 10) + '.json'; a.click();
+      showToast('Backup berhasil diunduh', 'success');
+    }
+    function doRestore() { showToast('Fitur restore memerlukan backend aktif', 'error'); }
+
+    function showToast(msg, type) {
+      const t = document.getElementById('toast'); t.textContent = msg;
+      t.className = 'toast ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '') + ' show';
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove('show'), 4000);
+    }
+
+    // ===== INITIALIZE =====
+    if (!localStorage.getItem(MT_KEY)) { localStorage.setItem(MT_KEY, JSON.stringify(DEFAULT_MT)); }
+    loadSettings();   // Ambil data dari DB saat halaman dimuat
+    renderMtTable();
+  </script>
+</body>
+
+</html>

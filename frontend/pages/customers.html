@@ -1,0 +1,1391 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=login.html">
+    <style>
+      body {
+        display: none !important
+      }
+    </style>
+  </noscript>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Customers — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    crossorigin="anonymous" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --font: 'Inter', system-ui, sans-serif;
+      --sidebar-w: 220px;
+      --bg: #f0f4ff;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --radius: 14px;
+      --shadow: 0 4px 24px -8px rgba(15, 23, 42, .15);
+    }
+
+    /* ===== DARK MODE ===== */
+    [data-theme='dark'] {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-alt: #0f172a;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: rgba(71, 85, 105, 0.5);
+      --shadow: 0 4px 24px -8px rgba(0, 0, 0, .4);
+    }
+
+    [data-theme='dark'] .topbar {
+      background: #1e293b;
+      border-bottom-color: rgba(71, 85, 105, 0.5);
+      box-shadow: 0 2px 16px rgba(0, 0, 0, .3);
+    }
+
+    [data-theme='dark'] .card {
+      background: #1e293b;
+      border-color: rgba(71, 85, 105, 0.5);
+    }
+
+    [data-theme='dark'] th {
+      background: #0f172a;
+      color: #94a3b8;
+      border-bottom-color: rgba(71, 85, 105, 0.5);
+    }
+
+    [data-theme='dark'] td {
+      border-bottom-color: rgba(71, 85, 105, 0.3);
+      color: #e2e8f0;
+    }
+
+    [data-theme='dark'] tr:hover td {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    [data-theme='dark'] .modal {
+      background: #1e293b;
+    }
+
+    [data-theme='dark'] .modal-overlay {
+      background: rgba(0, 0, 0, .7);
+    }
+
+    [data-theme='dark'] .confirm-box {
+      background: #1e293b;
+    }
+
+    [data-theme='dark'] .form-group input,
+    [data-theme='dark'] .form-group select,
+    [data-theme='dark'] .search-input,
+    [data-theme='dark'] .filter-sel {
+      background: #0f172a;
+      border-color: rgba(71, 85, 105, 0.6);
+      color: #e2e8f0;
+    }
+
+    [data-theme='dark'] .btn-modal.cancel {
+      background: #334155;
+      color: #94a3b8;
+    }
+
+    [data-theme='dark'] .pg-btn {
+      background: #1e293b;
+      border-color: rgba(71, 85, 105, 0.5);
+      color: #94a3b8;
+    }
+
+    [data-theme='dark'] .pg-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    [data-theme='dark'] .action-btn {
+      border-color: rgba(71, 85, 105, 0.5);
+      color: #94a3b8;
+    }
+
+    [data-theme='dark'] .action-btn.wa:hover {
+      background: rgba(22, 163, 74, .15);
+      color: #86efac;
+    }
+
+    [data-theme='dark'] .action-btn.edit:hover {
+      background: rgba(37, 99, 235, .15);
+      color: #93c5fd;
+    }
+
+    [data-theme='dark'] .action-btn.del:hover {
+      background: rgba(220, 38, 38, .15);
+      color: #fca5a5;
+    }
+
+    [data-theme='dark'] .pill-aktif {
+      background: rgba(34, 197, 94, 0.15);
+      color: #86efac;
+    }
+
+    [data-theme='dark'] .pill-jatuh {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+    }
+
+    [data-theme='dark'] .pill-suspend {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fcd34d;
+    }
+
+    [data-theme='dark'] .card-toolbar {
+      border-bottom-color: rgba(71, 85, 105, 0.5);
+    }
+
+    [data-theme='dark'] .pagination {
+      border-top-color: rgba(71, 85, 105, 0.5);
+    }
+
+    [data-theme='dark'] .tb-icon-btn {
+      background: #1e293b;
+      border-color: rgba(71, 85, 105, 0.5);
+      color: #94a3b8;
+    }
+
+    [data-theme='dark'] .tb-icon-btn:hover {
+      background: #334155;
+      color: #e2e8f0;
+    }
+
+    body,
+    .card,
+    .topbar,
+    .modal,
+    .confirm-box,
+    th,
+    td,
+    .search-input,
+    .filter-sel,
+    .form-group input,
+    .form-group select,
+    .pg-btn {
+      transition: background-color .3s ease, border-color .3s ease, color .2s ease;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: linear-gradient(180deg, #1e3a8a, #1d4ed8);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, .2) transparent;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .2);
+      border-radius: 4px;
+    }
+
+    .sidebar-brand {
+      padding: 18px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #fff;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .65);
+    }
+
+    .brand-badge {
+      font-size: 9px;
+      background: rgba(245, 158, 11, .15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, .3);
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .nav-section {
+      padding: 8px 10px 4px;
+    }
+
+    .nav-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255, 255, 255, .4);
+      padding: 4px 6px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .82);
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid transparent;
+      margin-bottom: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, .2);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, .35);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    }
+
+    .nav-item .ni {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .badge-new {
+      margin-left: auto;
+      background: #ef4444;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px 10px;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 9px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all .15s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, .35);
+    }
+
+    /* MAIN */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, .06);
+      flex-wrap: wrap;
+    }
+
+    .topbar-left h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .topbar-left p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tb-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+
+    .tb-btn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .18);
+    }
+
+    .tb-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--muted);
+      transition: all .15s;
+    }
+
+    .tb-icon-btn:hover {
+      background: var(--surface-alt);
+      color: var(--text);
+    }
+
+    /* CONTENT */
+    .content {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stats-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media(max-width:900px) {
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(255, 255, 255, .1), transparent 60%);
+      pointer-events: none;
+    }
+
+    .stat-card .stat-icon {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      font-size: 28px;
+      opacity: .25;
+    }
+
+    .stat-card .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      opacity: .85;
+    }
+
+    .stat-card .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .stat-card .stat-sub {
+      font-size: 10px;
+      opacity: .75;
+    }
+
+    .sc-blue {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    }
+
+    .sc-green {
+      background: linear-gradient(135deg, #064e3b, #10b981);
+    }
+
+    .sc-red {
+      background: linear-gradient(135deg, #7f1d1d, #ef4444);
+    }
+
+    .sc-amber {
+      background: linear-gradient(135deg, #78350f, #f59e0b);
+    }
+
+    /* CARD / TABLE */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-toolbar {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: var(--font);
+      outline: none;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .filter-sel {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: var(--font);
+      outline: none;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th {
+      background: var(--surface-alt);
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(241, 245, 249, .7);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .pill-aktif {
+      background: rgba(22, 163, 74, .12);
+      color: #15803d;
+    }
+
+    .pill-jatuh {
+      background: rgba(220, 38, 38, .12);
+      color: #b91c1c;
+    }
+
+    .pill-suspend {
+      background: rgba(217, 119, 6, .12);
+      color: #b45309;
+    }
+
+    .action-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .action-btn.edit {
+      color: #1d4ed8;
+    }
+
+    .action-btn.edit:hover {
+      background: #eff6ff;
+    }
+
+    .action-btn.del {
+      color: #dc2626;
+    }
+
+    .action-btn.del:hover {
+      background: #fef2f2;
+    }
+
+    .action-btn.wa {
+      color: #16a34a;
+    }
+
+    .action-btn.wa:hover {
+      background: #f0fdf4;
+    }
+
+    .pagination {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pg-btns {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .pg-btn {
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all .15s;
+      color: var(--text);
+    }
+
+    .pg-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .55);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 28px;
+      width: 480px;
+      max-width: 92vw;
+      box-shadow: 0 24px 48px rgba(15, 23, 42, .25);
+      animation: mIn .2s ease;
+    }
+
+    @keyframes mIn {
+      from {
+        opacity: 0;
+        transform: scale(.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal h3 {
+      margin: 0 0 16px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: var(--font);
+      outline: none;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, .07);
+    }
+
+    .form-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .btn-modal {
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+
+    .btn-modal.primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-modal.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-modal.cancel {
+      background: var(--surface-alt);
+      color: var(--muted);
+    }
+
+    .btn-modal.cancel:hover {
+      background: var(--border);
+    }
+
+    .confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .55);
+      backdrop-filter: blur(4px);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirm-overlay.open {
+      display: flex;
+    }
+
+    .confirm-box {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 24px;
+      width: 320px;
+      max-width: 90vw;
+      text-align: center;
+      color: var(--text);
+    }
+
+    .confirm-box p {
+      margin: 0 0 16px;
+      font-size: 14px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+      <div>
+        <div class="brand-name">RT/RW Billing</div>
+        <div class="brand-sub">Billing Management</div>
+      </div>
+      <div class="brand-badge" id="brandBadge" style="display:none">✦ v2.0 — Admin</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Utama</div>
+      <a class="nav-item" href="../pages/index.html"><span class="ni"><i
+            class="bi bi-speedometer2"></i></span>Dashboard</a>
+      <a class="nav-item active" href="customers.html"><span class="ni"><i
+            class="bi bi-people-fill"></i></span>Customers</a>
+      <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+      <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+      <a class="nav-item" href="laporan.html"><span class="ni"><i
+            class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+      <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+      <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+      <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+      <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi
+        <span class="badge-new">NEW</span></a>
+      <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Infrastruktur</div>
+      <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare
+        Tunnel</a>
+      <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+      <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+      <a class="nav-item" href="bookkeeping.html"><span class="ni"><i
+            class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik
+        Monitoring</a>
+      <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE
+        Management</a>
+      <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+      <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+      <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen
+        Agen</a>
+      <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+      <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur
+        ODC/ODP</a>
+      <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+      <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat
+        Settings</a>
+      <a class="nav-item" href="payment.html"><span class="ni"><i
+            class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+      <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="Auth.logout()"><i class="bi bi-box-arrow-left"></i> Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Manajemen Pelanggan</h1>
+        <p>Kelola data pelanggan, paket, dan status langganan.</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="tb-btn" style="background:#16a34a;color:#fff;" onclick="exportCSV()"><i
+            class="bi bi-file-earmark-excel-fill"></i> Export CSV</button>
+        <button class="tb-btn" style="background:#1d4ed8;color:#fff;" onclick="openAddModal()"><i
+            class="bi bi-person-plus-fill"></i> Tambah Pelanggan</button>
+        <button class="tb-icon-btn" id="darkModeBtn" title="Mode Gelap"><i class="bi bi-moon-stars-fill"></i></button>
+        <div class="tb-user" id="tbUserInfo" style="display:flex;flex-direction:column;align-items:flex-end;">
+          <strong style="font-size:12px;">RT/RW Billing</strong>
+          <span style="font-size:10px;color:var(--muted)">Loading...</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card">`n <div class="stat-icon-box blue"><i class="bi bi-people-fill"></i></div>
+          <div class="stat-label">Total Pelanggan</div>
+          <div class="stat-value" id="statTotal">—</div>
+          <div class="stat-sub">Semua terdaftar</div>
+        </div>
+        <div class="stat-card">`n <div class="stat-icon-box green"><i class="bi bi-check-circle-fill"></i></div>
+          <div class="stat-label">Aktif</div>
+          <div class="stat-value" id="statAktif">—</div>
+          <div class="stat-sub">Langganan berjalan</div>
+        </div>
+        <div class="stat-card">`n <div class="stat-icon-box red"><i class="bi bi-clock-fill"></i></div>
+          <div class="stat-label">Jatuh Tempo</div>
+          <div class="stat-value" id="statJatuh">—</div>
+          <div class="stat-sub">Perlu ditagih</div>
+        </div>
+        <div class="stat-card">`n <div class="stat-icon-box amber"><i class="bi bi-pause-circle-fill"></i></div>
+          <div class="stat-label">Suspend</div>
+          <div class="stat-value" id="statSuspend">—</div>
+          <div class="stat-sub">Dinonaktifkan</div>
+        </div>
+      </div>
+
+      <!-- TABLE CARD -->
+      <div class="card">
+        <div class="card-toolbar">
+          <input type="text" class="search-input" id="searchInput" placeholder="🔍 Cari nama, alamat, atau nomor HP..."
+            oninput="filterAndRender()">
+          <select class="filter-sel" id="filterStatus" onchange="filterAndRender()">
+            <option value="">Semua Status</option>
+            <option value="Aktif">Aktif</option>
+            <option value="Jatuh Tempo">Jatuh Tempo</option>
+            <option value="Suspend">Suspend</option>
+          </select>
+          <select class="filter-sel" id="filterPaket" onchange="filterAndRender()">
+            <option value="">Semua Paket</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nama</th>
+                <th>No. HP</th>
+                <th>Alamat</th>
+                <th>Paket</th>
+                <th>Tagihan</th>
+                <th>Status</th>
+                <th>Jatuh Tempo</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="custTbody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <span id="pgInfo">—</span>
+          <div class="pg-btns" id="pgBtns"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL TAMBAH/EDIT -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3 id="modalTitle">Tambah Pelanggan</h3>
+      <input type="hidden" id="editId">
+      <div class="form-row">
+        <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="fName" placeholder="Nama pelanggan">
+        </div>
+        <div class="form-group"><label>No. HP</label><input type="text" id="fPhone" placeholder="0812-xxxx"></div>
+      </div>
+      <div class="form-group"><label>Alamat *</label><input type="text" id="fAddress"
+          placeholder="Jl. Mawar No.5 RT 01"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Paket</label>
+          <select id="fPaket">
+            <option value="">-- Memuat Profil --</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Status</label>
+          <select id="fStatus">
+            <option value="Aktif">Aktif</option>
+            <option value="Jatuh Tempo">Jatuh Tempo</option>
+            <option value="Suspend">Suspend</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Jatuh Tempo</label><input type="date" id="fDue"></div>
+        <div class="form-group"><label>Tagihan (Rp)</label><input type="number" id="fTagihan" placeholder="200000">
+        </div>
+      </div>
+      <div class="form-group"><label>Akun PPPoE (Terhubung dari MikroTik)</label><select id="fUsername">
+          <option value="">-- Memuat PPPoE... --</option>
+        </select></div>
+      <div class="modal-actions">
+        <button class="btn-modal cancel" onclick="closeModal()">Batal</button>
+        <button class="btn-modal primary" onclick="savePelanggan()"><i class="bi bi-save-fill"></i> Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM DELETE -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <i class="bi bi-trash3-fill" style="font-size:36px;color:#dc2626;display:block;margin-bottom:12px;"></i>
+      <p>Yakin hapus <strong id="confirmName"></strong>?</p>
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <button class="btn-modal cancel" onclick="closeConfirm()">Batal</button>
+        <button class="btn-modal primary" style="background:#dc2626;" onclick="doDelete()">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/api.js"></script>
+  <script>
+    // ===== CONFIG =====
+    const PAKET_PRICE = { '10 Mbps': 150000, '20 Mbps': 200000, '30 Mbps': 250000, '50 Mbps': 350000, '100 Mbps': 500000 };
+    const API = '/api';
+    let deleteId = null, currentPage = 1, totalPages = 1, totalItems = 0;
+    const perPage = 10;
+    let allCustomers = []; // cache halaman saat ini
+    let mikrotikSecrets = []; // cache data PPPoE dari router
+
+    // ===== UTILITY: token headers =====
+    function authHeaders() {
+      const token = localStorage.getItem('billing_token');
+      return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+        : { 'Content-Type': 'application/json' };
+    }
+
+    // ===== LOAD DATA =====
+    async function loadCustomers() {
+      const q = document.getElementById('searchInput').value.trim();
+      const status = document.getElementById('filterStatus').value;
+      const paket = document.getElementById('filterPaket').value;
+
+      let url = `${API}/customers?page=${currentPage}&limit=${perPage}`;
+      if (q) url += `&search=${encodeURIComponent(q)}`;
+      if (status) url += `&status=${encodeURIComponent(status)}`;
+      if (paket) url += `&paket=${encodeURIComponent(paket)}`;
+
+      const tbody = document.getElementById('custTbody');
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted)"><i class="bi bi-hourglass-split" style="font-size:20px;display:block;margin-bottom:8px"></i>Memuat data...</td></tr>`;
+
+      try {
+        const res = await fetch(url, { headers: authHeaders(), credentials: 'include' });
+        if (res.status === 401) { Auth.logout(); return; }
+        const data = await res.json();
+
+        // Support both { data:[], total:n } and array
+        allCustomers = Array.isArray(data) ? data : (data.data || []);
+        const total = data.total ?? allCustomers.length;
+        totalItems = total;
+        totalPages = Math.ceil(total / perPage) || 1;
+
+        updateStats(data);
+        renderTable(allCustomers);
+        renderPagination(total);
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><i class="bi bi-exclamation-triangle" style="font-size:28px;display:block;margin-bottom:8px;color:#ef4444"></i>Gagal memuat data: ${e.message}</div></td></tr>`;
+      }
+    }
+
+    // ===== LOAD MIKROTIK SECRETS UNTUK DROPDOWN =====
+    async function loadMikrotikSecrets() {
+      try {
+        const res = await api.pppoeSecrets();
+        mikrotikSecrets = res.data || res || [];
+        const sel = document.getElementById('fUsername');
+        sel.innerHTML = '<option value="">-- Tanpa Akun PPPoE --</option>' + (mikrotikSecrets.map(s => `<option value="${s.name}">${s.name} — Profil: ${s.profile}</option>`).join(''));
+      } catch (e) {
+        document.getElementById('fUsername').innerHTML = '<option value="">-- Gagal Memuat MikroTik --</option>';
+      }
+    }
+
+    // ===== LOAD MIKROTIK PROFILES (PAKET) UNTUK DROPDOWN =====
+    async function loadMikrotikProfiles() {
+      try {
+        const res = await api.pppoeProfiles();
+        const profiles = res.data || res || [];
+
+        // Filter out profile isolir agar kasir tidak menambah pelanggan ke isolir secara tidak sengaja
+        const safeProfiles = profiles.filter(p => !p.name.toLowerCase().includes('isolir'));
+
+        // Isi di Modal Tambah/Edit
+        const selModal = document.getElementById('fPaket');
+        selModal.innerHTML = '<option value="">-- Pilih Profil PPPoE --</option>' +
+          safeProfiles.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+
+        // Isi di Filter Atas
+        const selFilter = document.getElementById('filterPaket');
+        selFilter.innerHTML = '<option value="">Semua Paket</option>' +
+          safeProfiles.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+
+      } catch (e) {
+        document.getElementById('fPaket').innerHTML = '<option value="">-- Gagal Memuat MikroTik --</option>';
+      }
+    }
+
+    // ===== STATS (dari data yang sudah diload) =====
+    function updateStats(apiResponse) {
+      // Jika backend kirim totals
+      if (apiResponse && apiResponse.totals) {
+        const t = apiResponse.totals;
+        document.getElementById('statTotal').textContent = t.total ?? allCustomers.length;
+        document.getElementById('statAktif').textContent = t.aktif ?? 0;
+        document.getElementById('statJatuh').textContent = t.jatuh ?? 0;
+        document.getElementById('statSuspend').textContent = t.suspend ?? 0;
+        return;
+      }
+      // Fallback: hitung dari data yang diload
+      document.getElementById('statTotal').textContent = totalItems || allCustomers.length;
+      document.getElementById('statAktif').textContent = allCustomers.filter(c => c.status === 'Aktif').length;
+      document.getElementById('statJatuh').textContent = allCustomers.filter(c => c.status === 'Jatuh Tempo').length;
+      document.getElementById('statSuspend').textContent = allCustomers.filter(c => c.status === 'Suspend').length;
+    }
+
+    // ===== RENDER TABLE =====
+    function renderTable(list) {
+      const start = (currentPage - 1) * perPage;
+      const tb = document.getElementById('custTbody');
+      if (!list.length) {
+        tb.innerHTML = `<tr><td colspan="9"><div class="empty-state"><i class="bi bi-people" style="font-size:28px;display:block;margin-bottom:8px"></i>Tidak ada data pelanggan ditemukan</div></td></tr>`;
+        return;
+      }
+      tb.innerHTML = list.map((c, i) => `<tr>
+    <td style="color:var(--muted)">${start + i + 1}</td>
+    <td><strong>${c.name}</strong>${c.pppoe_username ? `<br><span style="font-size:10px;color:var(--muted)">${c.pppoe_username}</span>` : ''}</td>
+    <td style="font-size:11px">${c.phone || '—'}</td>
+    <td style="color:var(--muted);font-size:11px;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.address || '—'}</td>
+    <td><strong>${c.paket}</strong></td>
+    <td><strong style="color:#1d4ed8">Rp ${(c.price || 0).toLocaleString('id-ID')}</strong></td>
+    <td><span class="status-pill ${c.status === 'Aktif' ? 'pill-aktif' : c.status === 'Suspend' ? 'pill-suspend' : 'pill-jatuh'}">${c.status}</span></td>
+    <td style="color:var(--muted);font-size:11px">${c.due_date ? c.due_date.slice(0, 10) : '—'}</td>
+    <td><div style="display:flex;gap:4px">
+      <button class="action-btn wa"   onclick="whatsapp(${c.id})"      title="WhatsApp"><i class="bi bi-whatsapp"></i></button>
+      ${c.status === 'Aktif'
+          ? `<button class="action-btn del" onclick="toggleIsolir(${c.id}, 'suspend')" title="Isolir Akun"><i class="bi bi-dash-circle-fill"></i></button>`
+          : c.status === 'Suspend' ? `<button class="action-btn wa" style="color:#f59e0b" onclick="toggleIsolir(${c.id}, 'activate')" title="Aktifkan Kembali"><i class="bi bi-play-circle-fill"></i></button>` : ''
+        }
+      <button class="action-btn edit" onclick="openEditModal(${c.id})" title="Edit"><i class="bi bi-pencil-fill"></i></button>
+      <button class="action-btn del"  onclick="confirmDelete(${c.id},'${c.name.replace(/'/g, '')}')" title="Hapus"><i class="bi bi-trash-fill"></i></button>
+    </div></td>
+  </tr>`).join('');
+    }
+
+    // ===== ISOLIR & ACTIVATE =====
+    async function toggleIsolir(id, action) {
+      const c = allCustomers.find(x => x.id === id);
+      const actionText = action === 'suspend' ? 'ISOLIR' : 'AKTIFKAN KEMBALI';
+
+      if (!c.pppoe_username) {
+        if (!confirm(`Pelanggan "${c.name}" BELUM DI-LINK dengan Akun PPPoE MikroTik manapun!\n\nJika Anda melanjutkan, status tagihan web berubah jadi ${actionText}, namun TIDAK ADA EFEK di router MikroTik.\nLanjutkan?`)) return;
+      } else {
+        if (!confirm(`Yakin ingin ${actionText} pelanggan "${c.name}"?\nSistem akan otomatis mengubah profil di MikroTik untuk akun "${c.pppoe_username}".`)) return;
+      }
+
+      try {
+        const fn = action === 'suspend' ? api.suspendCustomer(id) : api.activateCustomer(id);
+        const res = await fn;
+        if (res.error) throw new Error(res.error);
+        alert(res.message || 'Sukses mengubah status!');
+        loadCustomers();
+      } catch (e) {
+        alert('Gagal mengeksekusi MikroTik:\n' + e.message);
+      }
+    }
+
+    function renderPagination(total) {
+      const s = Math.min((currentPage - 1) * perPage + 1, total) || 0;
+      document.getElementById('pgInfo').textContent = `Menampilkan ${s}–${Math.min(currentPage * perPage, total)} dari ${total} pelanggan`;
+      document.getElementById('pgBtns').innerHTML = [...Array(totalPages)].map((_, i) =>
+        `<button class="pg-btn${currentPage === i + 1 ? ' active' : ''}" onclick="gotoPage(${i + 1})">${i + 1}</button>`
+      ).join('');
+    }
+
+    function gotoPage(p) { currentPage = p; loadCustomers(); }
+    function filterAndRender() { currentPage = 1; loadCustomers(); }
+
+    // ===== MODAL =====
+    function openAddModal() {
+      document.getElementById('modalTitle').textContent = 'Tambah Pelanggan';
+      document.getElementById('editId').value = '';
+      ['fName', 'fPhone', 'fAddress', 'fUsername'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('fPaket').value = '';
+      document.getElementById('fStatus').value = 'Aktif';
+      document.getElementById('fTagihan').value = '200000';
+      const d = new Date(); d.setMonth(d.getMonth() + 1);
+      document.getElementById('fDue').value = d.toISOString().slice(0, 10);
+      document.getElementById('modalOverlay').classList.add('open');
+      setTimeout(() => document.getElementById('fName').focus(), 100);
+    }
+
+    function openEditModal(id) {
+      const c = allCustomers.find(x => x.id === id);
+      if (!c) return;
+      document.getElementById('modalTitle').textContent = 'Edit Pelanggan';
+      document.getElementById('editId').value = id;
+      document.getElementById('fName').value = c.name;
+      document.getElementById('fPhone').value = c.phone || '';
+      document.getElementById('fAddress').value = c.address || '';
+      document.getElementById('fPaket').value = c.paket || '';
+      document.getElementById('fStatus').value = c.status;
+      document.getElementById('fDue').value = c.due_date ? c.due_date.slice(0, 10) : '';
+      document.getElementById('fTagihan').value = c.price || 0;
+
+      const selUser = document.getElementById('fUsername');
+      selUser.value = c.pppoe_username || '';
+      // Sengaja tembak event 'change' agar fitur auto-sync profil PPPoE bisa seketika berjalan
+      selUser.dispatchEvent(new Event('change'));
+
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+    // ===== SAVE (Create/Update) =====
+    async function savePelanggan() {
+      const name = document.getElementById('fName').value.trim();
+      const address = document.getElementById('fAddress').value.trim();
+      if (!name || !address) { alert('Nama dan alamat wajib diisi!'); return; }
+
+      const paket = document.getElementById('fPaket').value;
+      const editId = document.getElementById('editId').value;
+
+      const body = {
+        name, phone: document.getElementById('fPhone').value.trim(),
+        address, paket,
+        status: document.getElementById('fStatus').value,
+        due_date: document.getElementById('fDue').value,
+        price: parseInt(document.getElementById('fTagihan').value) || PAKET_PRICE[paket] || 0,
+        pppoe_username: document.getElementById('fUsername').value.trim()
+      };
+
+      const saveBtn = document.querySelector('.btn-modal.primary');
+      saveBtn.disabled = true; saveBtn.textContent = 'Menyimpan...';
+
+      try {
+        const url = editId ? `${API}/customers/${editId}` : `${API}/customers`;
+        const method = editId ? 'PUT' : 'POST';
+        const res = await fetch(url, { method, headers: authHeaders(), credentials: 'include', body: JSON.stringify(body) });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Gagal menyimpan');
+        closeModal();
+        loadCustomers();
+      } catch (e) {
+        alert('Error: ' + e.message);
+      } finally {
+        saveBtn.disabled = false; saveBtn.innerHTML = '<i class="bi bi-save-fill"></i> Simpan';
+      }
+    }
+
+    // ===== DELETE =====
+    function confirmDelete(id, name) {
+      deleteId = id;
+      document.getElementById('confirmName').textContent = name || 'ini';
+      document.getElementById('confirmOverlay').classList.add('open');
+    }
+    function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); deleteId = null; }
+
+    async function doDelete() {
+      if (!deleteId) return;
+      try {
+        const res = await fetch(`${API}/customers/${deleteId}`, { method: 'DELETE', headers: authHeaders(), credentials: 'include' });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Gagal hapus');
+        closeConfirm();
+        loadCustomers();
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    // ===== WHATSAPP =====
+    function whatsapp(id) {
+      const c = allCustomers.find(x => x.id === id);
+      if (!c || !c.phone) { alert('Nomor HP tidak tersedia.'); return; }
+      const phone = c.phone.replace(/\D/g, '').replace(/^0/, '62');
+      const msg = encodeURIComponent(`Halo ${c.name}, tagihan internet Rp ${(c.price || 0).toLocaleString('id-ID')} (${c.paket}). Jatuh tempo: ${c.due_date ? c.due_date.slice(0, 10) : '-'}. Terima kasih.`);
+      window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    }
+
+    // ===== EXPORT CSV =====
+    async function exportCSV() {
+      try {
+        const res = await fetch(`${API}/customers?limit=9999`, { headers: authHeaders(), credentials: 'include' });
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data.data || []);
+        const csv = ['No,Nama,HP,Alamat,Paket,Tagihan,Status,Jatuh Tempo',
+          ...list.map((c, i) => `${i + 1},"${c.name}","${c.phone || ''}","${c.address || ''}","${c.paket}",${c.price},"${c.status}","${c.due_date || ''}"`)
+        ].join('\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+        a.download = 'pelanggan.csv'; a.click();
+      } catch (e) { alert('Export gagal: ' + e.message); }
+    }
+
+    // ===== DARK MODE =====
+    const DM_KEY = 'rtrw_dark_mode';
+    function applyTheme(dark) {
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      const btn = document.getElementById('darkModeBtn');
+      if (btn) btn.innerHTML = dark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-stars-fill"></i>';
+      localStorage.setItem(DM_KEY, dark ? '1' : '0');
+    }
+    applyTheme(localStorage.getItem(DM_KEY) === '1');
+    document.getElementById('darkModeBtn').addEventListener('click', function () {
+      applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+    });
+
+    // ===== EVENTS =====
+    document.getElementById('fUsername').addEventListener('change', function () {
+      const secret = mikrotikSecrets.find(s => s.name === this.value);
+      if (secret && secret.profile && !secret.profile.toLowerCase().includes('isolir')) {
+        document.getElementById('fPaket').value = secret.profile;
+      }
+    });
+
+    document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+    document.getElementById('confirmOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeConfirm(); });
+    document.addEventListener('DOMContentLoaded', () => {
+      loadMikrotikProfiles();
+      loadMikrotikSecrets();
+      loadCustomers();
+    });
+
+    // ===== AUTH USER INFO =====
+    (function initUser() {
+      const user = Auth.user;
+      if (!user) return;
+      const roleLabels = { admin: 'Admin', kasir: 'Kasir', viewer: 'Viewer' };
+      const roleLabel = roleLabels[user.role] || user.role || 'User';
+      document.getElementById('tbUserInfo').innerHTML = `
+    <strong style="font-size:12px">${user.name || user.username}</strong>
+    <span style="font-size:10px;color:var(--muted)">${user.username} — ${roleLabel}</span>`;
+      const badge = document.getElementById('brandBadge');
+      if (badge) badge.textContent = '✦ v2.0 — ' + roleLabel;
+    })();
+
+    // ===== INIT =====
+    // inisialisasi dilakukan pada DOMContentLoaded
+  </script>
+</body>
+
+</html>

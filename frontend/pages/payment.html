@@ -1,0 +1,298 @@
+﻿<!doctype html>
+<html lang="id">
+<head>
+  <noscript><meta http-equiv="refresh" content="0;url=login.html"><style>body{display:none!important}</style></noscript>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Payment Gateway — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" crossorigin="anonymous"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root { --font:'Inter',system-ui,sans-serif; --sidebar-w:220px; --bg:#f0f4ff; --surface:#fff; --surface-alt:#f1f5f9; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --primary:#1d4ed8; --primary-dark:#1e3a8a; --sidebar-bg:linear-gradient(180deg,#1e3a8a 0%,#1d4ed8 100%); --radius:14px; --shadow:0 4px 24px -8px rgba(15,23,42,.15); }
+    body { margin:0; font-family:var(--font); background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+    .sidebar { width:var(--sidebar-w); min-height:100vh; background:var(--sidebar-bg); display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; scrollbar-width:thin; }
+    .sidebar::-webkit-scrollbar { width:4px; } .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:4px; }
+    .sidebar-brand { padding:18px 16px 12px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; border-bottom:1px solid rgba(255,255,255,.12); }
+    .brand-icon { width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff; }
+    .brand-name { font-size:13px; font-weight:800; color:#fff; letter-spacing:.04em; text-transform:uppercase; }
+    .brand-sub { font-size:10px; color:rgba(255,255,255,.65); }
+    .brand-badge { font-size:9px; background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.3); border-radius:10px; padding:2px 8px; font-weight:600; }
+    .nav-section { padding:8px 10px 4px; }
+    .nav-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.4); padding:4px 6px 6px; }
+    .nav-item { display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:10px; font-size:12px; font-weight:600; color:rgba(255,255,255,.82); cursor:pointer; transition:all .15s; border:1px solid transparent; margin-bottom:1px; white-space:nowrap; overflow:hidden; }
+    .nav-item:hover { background:rgba(255,255,255,.12); color:#fff; } .nav-item.active { background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.35); }
+    .nav-item .ni { width:18px; text-align:center; font-size:14px; flex-shrink:0; }
+    .badge-new { margin-left:auto; background:#ef4444; color:#fff; font-size:8px; font-weight:700; padding:2px 5px; border-radius:6px; }
+    .sidebar-footer { margin-top:auto; padding:12px 10px; }
+    .btn-logout { width:100%; padding:9px; border-radius:12px; border:none; background:rgba(255,255,255,.15); color:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .btn-logout:hover { background:rgba(239,68,68,.35); }
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-width:0; }
+    .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:50; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+    .topbar-left h1 { margin:0; font-size:17px; font-weight:700; } .topbar-left p { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .topbar-actions { display:flex; align-items:center; gap:8px; }
+    .tb-user { display:flex; flex-direction:column; align-items:flex-end; } .tb-user strong { font-size:12px; } .tb-user span { font-size:10px; color:var(--muted); }
+    .content { padding:20px 24px; display:flex; flex-direction:column; gap:16px; }
+    .payment-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); }
+    .payment-card { border-radius:var(--radius); border:2px solid var(--border); background:var(--surface); box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:all .2s; }
+    .payment-card:hover,.payment-card.active { border-color:var(--primary); box-shadow:0 0 0 4px rgba(29,78,216,.12); }
+    .payment-card.active { background:rgba(29,78,216,.03); }
+    .payment-header { padding:16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); }
+    .payment-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+    .payment-name { font-size:14px; font-weight:700; }
+    .payment-type { font-size:10px; color:var(--muted); }
+    .payment-body { padding:12px 16px; flex:1; }
+    .payment-body input { width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:8px; font-size:12px; font-family:var(--font); outline:none; box-sizing:border-box; margin-bottom:8px; }
+    .toggle { position:relative; width:40px; height:22px; cursor:pointer; display:inline-block; }
+    .toggle input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; inset:0; background:#cbd5e1; border-radius:24px; transition:.2s; }
+    .toggle-slider::before { content:''; position:absolute; height:16px; width:16px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.2s; }
+    .toggle input:checked + .toggle-slider { background:var(--primary); }
+    .toggle input:checked + .toggle-slider::before { transform:translateX(18px); }
+    .payment-footer { padding:10px 16px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--surface-alt); }
+    .payment-footer span { font-size:11px; color:var(--muted); }
+    .card { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; }
+    .card-header { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .card-header h2 { margin:0; font-size:14px; font-weight:700; } .card-header p { margin:2px 0 0; font-size:11px; color:var(--muted); }
+    .chip { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; } .chip-blue { background:rgba(37,99,235,.12); color:#1d4ed8; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:12px; }
+    th { background:var(--surface-alt); padding:9px 12px; text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); border-bottom:1px solid var(--border); white-space:nowrap; }
+    td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; } tr:hover td { background:rgba(241,245,249,.7); }
+    .t-status { display:inline-flex; align-items:center; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; }
+    .ts-success { background:rgba(22,163,74,.12); color:#15803d; } .ts-pending { background:rgba(245,158,11,.12); color:#b45309; } .ts-fail { background:rgba(220,38,38,.12); color:#b91c1c; }
+    .btn-save { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:none; background:var(--primary); color:#fff; margin:16px; }
+    .toast { position:fixed; bottom:24px; right:24px; background:#15803d; color:#fff; padding:12px 20px; border-radius:12px; font-size:13px; font-weight:600; z-index:999; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; }
+    .toast.show { opacity:1; transform:translateY(0); }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+    <div><div class="brand-name">RT/RW Billing</div><div class="brand-sub">Billing Management</div></div>
+    <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Utama</div>
+    <a class="nav-item" href="../pages/index.html"><span class="ni"><i class="bi bi-speedometer2"></i></span>Dashboard</a>
+    <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+    <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+    <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+    <a class="nav-item" href="laporan.html"><span class="ni"><i class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+    <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+    <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+    <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+    <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi <span class="badge-new">NEW</span></a>
+    <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Infrastruktur</div>
+    <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare Tunnel</a>
+    <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+    <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+    <a class="nav-item" href="bookkeeping.html"><span class="ni"><i class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Tools</div>
+    <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik Monitoring</a>
+    <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE Management</a>
+    <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+    <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+    <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen Agen</a>
+    <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+    <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur ODC/ODP</a>
+    <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+    <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat Settings</a>
+    <a class="nav-item active" href="payment.html"><span class="ni"><i class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+    <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+  </div>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-left"></i> Logout</button>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Payment Gateway</h1><p>Konfigurasi metode pembayaran digital pelanggan.</p></div>
+    <div class="topbar-actions">
+      <div class="tb-user"><strong>RT/RW Billing</strong><span>Admin</span></div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Metode Pembayaran Tersedia</div>
+    <div class="payment-grid">
+      <!-- Bank Transfer -->
+      <div class="payment-card active" onclick="this.classList.toggle('active')">
+        <div class="payment-header">
+          <div class="payment-icon" style="background:rgba(37,99,235,.1);color:#1d4ed8"><i class="bi bi-bank2"></i></div>
+          <div><div class="payment-name">Transfer Bank</div><div class="payment-type">BCA / Mandiri / BNI / BRI</div></div>
+        </div>
+        <div class="payment-body">
+          <input type="text" id="bank_rek" placeholder="Nomor Rekening" onclick="event.stopPropagation()">
+          <input type="text" id="bank_name" placeholder="Nama Pemilik Rek" onclick="event.stopPropagation()">
+        </div>
+        <div class="payment-footer"><span id="lbl_bank_active">Status: Aktif</span><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="bank_active" onchange="document.getElementById('lbl_bank_active').textContent=this.checked?'Status: Aktif':'Status: Nonaktif'"><span class="toggle-slider"></span></label></div>
+      </div>
+      <!-- QRIS -->
+      <div class="payment-card" onclick="this.classList.toggle('active')">
+        <div class="payment-header">
+          <div class="payment-icon" style="background:rgba(220,38,38,.1);color:#dc2626"><i class="bi bi-qr-code-scan"></i></div>
+          <div><div class="payment-name">QRIS</div><div class="payment-type">GoPay / OVO / DANA / ShopeePay</div></div>
+        </div>
+        <div class="payment-body">
+          <input type="text" id="qris_merchant_id" placeholder="Merchant ID QRIS" onclick="event.stopPropagation()">
+          <input type="text" id="qris_merchant_name" placeholder="Nama Merchant" onclick="event.stopPropagation()">
+        </div>
+        <div class="payment-footer"><span id="lbl_qris_active">Status: Nonaktif</span><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="qris_active" onchange="document.getElementById('lbl_qris_active').textContent=this.checked?'Status: Aktif':'Status: Nonaktif'"><span class="toggle-slider"></span></label></div>
+      </div>
+      <!-- Midtrans -->
+      <div class="payment-card" onclick="this.classList.toggle('active')">
+        <div class="payment-header">
+          <div class="payment-icon" style="background:rgba(139,92,246,.1);color:#7c3aed"><i class="bi bi-credit-card-2-front-fill"></i></div>
+          <div><div class="payment-name">Midtrans</div><div class="payment-type">Kartu Kredit / VA</div></div>
+        </div>
+        <div class="payment-body">
+          <input type="password" id="midtrans_server_key" placeholder="Server Key Midtrans" onclick="event.stopPropagation()">
+          <input type="text" id="midtrans_client_id" placeholder="Merchant ID" onclick="event.stopPropagation()">
+        </div>
+        <div class="payment-footer"><span id="lbl_midtrans_active">Status: Nonaktif</span><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="midtrans_active" onchange="document.getElementById('lbl_midtrans_active').textContent=this.checked?'Status: Aktif':'Status: Nonaktif'"><span class="toggle-slider"></span></label></div>
+      </div>
+      <!-- GoPay -->
+      <div class="payment-card" onclick="this.classList.toggle('active')">
+        <div class="payment-header">
+          <div class="payment-icon" style="background:rgba(37,211,102,.1);color:#128c7e"><i class="bi bi-phone-fill"></i></div>
+          <div><div class="payment-name">GoPay</div><div class="payment-type">Dompet Digital Gojek</div></div>
+        </div>
+        <div class="payment-body">
+          <input type="text" id="gopay_phone" placeholder="Nomor HP GoPay" onclick="event.stopPropagation()">
+        </div>
+        <div class="payment-footer"><span id="lbl_gopay_active">Status: Aktif</span><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="gopay_active" onchange="document.getElementById('lbl_gopay_active').textContent=this.checked?'Status: Aktif':'Status: Nonaktif'"><span class="toggle-slider"></span></label></div>
+      </div>
+    </div>
+    <button class="btn-save" onclick="savePayment()"><i class="bi bi-save-fill"></i> Simpan Konfigurasi</button>
+
+    <!-- RIWAYAT TRANSAKSI DIGITAL -->
+    <div class="card">
+      <div class="card-header"><div><h2>Riwayat Transaksi Digital</h2><p>Pembayaran via gateway</p></div><span class="chip chip-blue">7 HARI TERAKHIR</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Waktu</th><th>Pelanggan</th><th>Metode</th><th>Jumlah</th><th>Status</th></tr></thead>
+          <tbody id="historyTableBody">
+            <tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">Memuat riwayat transaksi...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../assets/js/api.js"></script>
+<script>
+function showToast(msg, isErr=false) { 
+  const t=document.getElementById('toast'); 
+  t.textContent=msg; t.style.background=isErr?'#b91c1c':'#15803d'; 
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); 
+}
+
+const rp = v => 'Rp ' + Math.abs(v).toLocaleString('id-ID');
+
+async function loadConfig() {
+  try {
+    const config = await apiFetch('/api/payment/config');
+    if(config) {
+      document.getElementById('bank_rek').value = config.bank_rek || '';
+      document.getElementById('bank_name').value = config.bank_name || '';
+      document.getElementById('bank_active').checked = config.bank_active || false;
+      document.getElementById('bank_active').dispatchEvent(new Event('change'));
+
+      document.getElementById('qris_merchant_id').value = config.qris_merchant_id || '';
+      document.getElementById('qris_merchant_name').value = config.qris_merchant_name || '';
+      document.getElementById('qris_active').checked = config.qris_active || false;
+      document.getElementById('qris_active').dispatchEvent(new Event('change'));
+
+      document.getElementById('midtrans_server_key').value = config.midtrans_server_key || '';
+      document.getElementById('midtrans_client_id').value = config.midtrans_client_id || '';
+      document.getElementById('midtrans_active').checked = config.midtrans_active || false;
+      document.getElementById('midtrans_active').dispatchEvent(new Event('change'));
+
+      document.getElementById('gopay_phone').value = config.gopay_phone || '';
+      document.getElementById('gopay_active').checked = config.gopay_active || false;
+      document.getElementById('gopay_active').dispatchEvent(new Event('change'));
+    }
+  } catch(e) {
+    console.error('Failed to load payment config', e);
+  }
+}
+
+async function savePayment() {
+  const payload = {
+    bank_rek: document.getElementById('bank_rek').value,
+    bank_name: document.getElementById('bank_name').value,
+    bank_active: document.getElementById('bank_active').checked,
+    qris_merchant_id: document.getElementById('qris_merchant_id').value,
+    qris_merchant_name: document.getElementById('qris_merchant_name').value,
+    qris_active: document.getElementById('qris_active').checked,
+    midtrans_server_key: document.getElementById('midtrans_server_key').value,
+    midtrans_client_id: document.getElementById('midtrans_client_id').value,
+    midtrans_active: document.getElementById('midtrans_active').checked,
+    gopay_phone: document.getElementById('gopay_phone').value,
+    gopay_active: document.getElementById('gopay_active').checked
+  };
+
+  try {
+    await apiFetch('/api/payment/config', { method: 'POST', body: JSON.stringify(payload) });
+    showToast('Konfigurasi payment disimpan!');
+  } catch(e) {
+    showToast('Gagal menyimpan konfigurasi', true);
+  }
+}
+
+async function loadHistory() {
+  try {
+    const data = await apiFetch('/api/payment/history');
+    const tbody = document.getElementById('historyTableBody');
+    if(!data || data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">Belum ada transaksi</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map((d, i) => {
+      // Parse timestamp to a neat string e.g. "11 Apr 10:30"
+      const date = new Date(d.created_at);
+      const dStr = date.toLocaleDateString('id-ID', { month: 'short', day: 'numeric' }) + ' ' + 
+                   date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.',':');
+      
+      let statusHtml = '';
+      if(d.status === 'Success') statusHtml = '<span class="t-status ts-success">✓ Sukses</span>';
+      else if(d.status === 'Pending') statusHtml = '<span class="t-status ts-pending">⏳ Pending</span>';
+      else statusHtml = '<span class="t-status ts-fail">✗ Gagal</span>';
+      
+      let amtColor = d.status === 'Failed' ? '#b91c1c' : (d.status === 'Pending' ? '#b45309' : '#15803d');
+
+      return `<tr>
+        <td style="color:var(--muted)">${i+1}</td>
+        <td style="font-size:11px;color:var(--muted)">${dStr}</td>
+        <td>${d.customer_name}</td>
+        <td>${d.method}</td>
+        <td><strong style="color:${amtColor}">${rp(d.amount)}</strong></td>
+        <td>${statusHtml}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    console.error('Failed to load history', e);
+    document.getElementById('historyTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#b91c1c">Gagal memuat riwayat transaksi</td></tr>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadConfig();
+  loadHistory();
+});
+</script>
+</body>
+</html>

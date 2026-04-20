@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=login.html">
+    <style>
+      body {
+        display: none !important
+      }
+    </style>
+  </noscript>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bookkeeping — RT/RW NET Billing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    crossorigin="anonymous" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --font: 'Inter', system-ui, sans-serif;
+      --sidebar-w: 220px;
+      --bg: #f0f4ff;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --sidebar-bg: linear-gradient(180deg, #1e3a8a 0%, #1d4ed8 100%);
+      --radius: 14px;
+      --shadow: 0 4px 24px -8px rgba(15, 23, 42, .15);
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .2);
+      border-radius: 4px;
+    }
+
+    .sidebar-brand {
+      padding: 18px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #fff;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, .65);
+      font-weight: 500;
+    }
+
+    .brand-badge {
+      font-size: 9px;
+      background: rgba(245, 158, 11, .15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, .3);
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .nav-section {
+      padding: 8px 10px 4px;
+    }
+
+    .nav-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255, 255, 255, .4);
+      padding: 4px 6px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .82);
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid transparent;
+      margin-bottom: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, .35);
+    }
+
+    .nav-item .ni {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .badge-new {
+      margin-left: auto;
+      background: #ef4444;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 6px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px 10px;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 9px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all .15s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, .35);
+    }
+
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, .06);
+    }
+
+    .topbar-left h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .topbar-left p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tb-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+
+    .tb-btn-masuk {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .tb-btn-keluar {
+      background: #dc2626;
+      color: #fff;
+    }
+
+    .tb-btn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .18);
+    }
+
+    .tb-user {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .tb-user strong {
+      font-size: 12px;
+    }
+
+    .tb-user span {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .content {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stats-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media(max-width:1000px) {
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(255, 255, 255, .1), transparent 60%);
+      pointer-events: none;
+    }
+
+    .stat-card .stat-icon {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      font-size: 28px;
+      opacity: .25;
+    }
+
+    .stat-card .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      opacity: .85;
+    }
+
+    .stat-card .stat-value {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .stat-card .stat-sub {
+      font-size: 10px;
+      opacity: .75;
+    }
+
+    .sc-blue {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    }
+
+    .sc-green {
+      background: linear-gradient(135deg, #064e3b, #10b981);
+    }
+
+    .sc-red {
+      background: linear-gradient(135deg, #7f1d1d, #ef4444);
+    }
+
+    .sc-purple {
+      background: linear-gradient(135deg, #4c1d95, #8b5cf6);
+    }
+
+    .two-col {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media(max-width:900px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .card-header p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .chip {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .chip-blue {
+      background: rgba(37, 99, 235, .12);
+      color: #1d4ed8;
+    }
+
+    .chip-green {
+      background: rgba(22, 163, 74, .12);
+      color: #15803d;
+    }
+
+    .chip-red {
+      background: rgba(220, 38, 38, .12);
+      color: #b91c1c;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th {
+      background: var(--surface-alt);
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(241, 245, 249, .7);
+    }
+
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .type-in {
+      background: rgba(22, 163, 74, .12);
+      color: #15803d;
+    }
+
+    .type-out {
+      background: rgba(220, 38, 38, .12);
+      color: #b91c1c;
+    }
+
+    .act-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+
+    .act-del {
+      background: rgba(220, 38, 38, .1);
+      color: #b91c1c;
+    }
+
+    .act-del:hover {
+      background: rgba(220, 38, 38, .2);
+    }
+
+    .card-body {
+      padding: 16px 18px;
+    }
+
+    .kas-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .kas-item:last-child {
+      border-bottom: none;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .55);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 28px;
+      min-width: 420px;
+      max-width: 90vw;
+      box-shadow: 0 24px 48px rgba(15, 23, 42, .25);
+      animation: modalIn .2s ease;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal h3 {
+      margin: 0 0 20px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: var(--font);
+      outline: none;
+    }
+
+    .form-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .btn-modal {
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+
+    .btn-modal.primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-modal.cancel {
+      background: var(--surface-alt);
+      color: var(--muted);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .3s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success {
+      background: #15803d;
+    }
+
+    .toast.error {
+      background: #b91c1c;
+    }
+
+    .tfoot-info {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .filter-bar {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: var(--font);
+      outline: none;
+    }
+
+    .filter-bar input {
+      flex: 1;
+      min-width: 160px;
+    }
+  </style>
+  <script src="../assets/js/darkmode.js"></script>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="bi bi-router-fill"></i></div>
+      <div>
+        <div class="brand-name">RT/RW Billing</div>
+        <div class="brand-sub">Billing Management</div>
+      </div>
+      <div class="brand-badge" style="display:none">✦ v2.0 — Admin</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Utama</div>
+      <a class="nav-item" href="../pages/index.html"><span class="ni"><i
+            class="bi bi-speedometer2"></i></span>Dashboard</a>
+      <a class="nav-item" href="customers.html"><span class="ni"><i class="bi bi-people-fill"></i></span>Customers</a>
+      <a class="nav-item" href="cs-portal.html"><span class="ni"><i class="bi bi-headset"></i></span>CS Portal</a>
+      <a class="nav-item" href="kasir.html"><span class="ni"><i class="bi bi-cash-coin"></i></span>Kasir</a>
+      <a class="nav-item" href="laporan.html"><span class="ni"><i
+            class="bi bi-file-earmark-bar-graph-fill"></i></span>Laporan Kasir</a>
+      <a class="nav-item" href="setoran.html"><span class="ni"><i class="bi bi-wallet2"></i></span>Setoran Kasir</a>
+      <a class="nav-item" href="stok.html"><span class="ni"><i class="bi bi-box-seam-fill"></i></span>Stok Barang</a>
+      <a class="nav-item" href="users.html"><span class="ni"><i class="bi bi-person-badge-fill"></i></span>Users</a>
+      <a class="nav-item" href="absensi.html"><span class="ni"><i class="bi bi-calendar-check-fill"></i></span>Absensi
+        <span class="badge-new">NEW</span></a>
+      <a class="nav-item" href="settings.html"><span class="ni"><i class="bi bi-gear-fill"></i></span>Settings</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Infrastruktur</div>
+      <a class="nav-item" href="cloudflare.html"><span class="ni"><i class="bi bi-cloud-fill"></i></span>Cloudflare
+        Tunnel</a>
+      <a class="nav-item" href="acs.html"><span class="ni"><i class="bi bi-cpu-fill"></i></span>ACS</a>
+      <a class="nav-item" href="gacs.html"><span class="ni"><i class="bi bi-hdd-network-fill"></i></span>GACS</a>
+      <a class="nav-item active" href="bookkeeping.html"><span class="ni"><i
+            class="bi bi-journal-bookmark-fill"></i></span>Bookkeeping</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <a class="nav-item" href="mikrotik-monitoring.html"><span class="ni"><i class="bi bi-tools"></i></span>Mikrotik
+        Monitoring</a>
+      <a class="nav-item" href="pppoe.html"><span class="ni"><i class="bi bi-bar-chart-fill"></i></span>PPPoE
+        Management</a>
+      <a class="nav-item" href="hotspot.html"><span class="ni"><i class="bi bi-wifi"></i></span>Hotspot</a>
+      <a class="nav-item" href="reseller.html"><span class="ni"><i class="bi bi-shop-window"></i></span>Reseller</a>
+      <a class="nav-item" href="agen.html"><span class="ni"><i class="bi bi-person-workspace"></i></span>Manajemen
+        Agen</a>
+      <a class="nav-item" href="map.html"><span class="ni"><i class="bi bi-map-fill"></i></span>Customer Map</a>
+      <a class="nav-item" href="odc.html"><span class="ni"><i class="bi bi-diagram-3-fill"></i></span>Infrastruktur
+        ODC/ODP</a>
+      <a class="nav-item" href="whatsapp.html"><span class="ni"><i class="bi bi-whatsapp"></i></span>WhatsApp</a>
+      <a class="nav-item" href="webchat.html"><span class="ni"><i class="bi bi-chat-dots-fill"></i></span>Web Chat
+        Settings</a>
+      <a class="nav-item" href="payment.html"><span class="ni"><i
+            class="bi bi-credit-card-2-front-fill"></i></span>Payment</a>
+      <a class="nav-item" href="changelog.html"><span class="ni"><i class="bi bi-clock-history"></i></span>Changelog</a>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-left"></i>
+        Logout</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Bookkeeping</h1>
+        <p>Pembukuan pemasukan & pengeluaran operasional ISP.</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="tb-btn tb-btn-masuk" onclick="openModal('in')"><i
+            class="bi bi-arrow-up-circle-fill"></i><span>Catat Pemasukan</span></button>
+        <button class="tb-btn tb-btn-keluar" onclick="openModal('out')"><i
+            class="bi bi-arrow-down-circle-fill"></i><span>Catat Pengeluaran</span></button>
+        <button class="tb-icon-btn darkmode-btn" id="darkModeBtn" title="Mode Gelap"></button>
+        <div class="tb-user" id="tbUserInfo"><strong>RT/RW Billing</strong><span id="tbUserRole">Admin</span></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="stats-row">
+        <div class="stat-card"><i class="bi bi-arrow-up-circle-fill stat-icon"></i>
+          <div class="stat-label">Total Pemasukan</div>
+          <div class="stat-value" id="statIn">Rp 0</div>
+          <div class="stat-sub">Bulan ini</div>
+        </div>
+        <div class="stat-card"><i class="bi bi-arrow-down-circle-fill stat-icon"></i>
+          <div class="stat-label">Total Pengeluaran</div>
+          <div class="stat-value" id="statOut">Rp 0</div>
+          <div class="stat-sub">Bulan ini</div>
+        </div>
+        <div class="stat-card"><i class="bi bi-graph-up-arrow stat-icon"></i>
+          <div class="stat-label">Laba Bersih</div>
+          <div class="stat-value" id="statProfit">Rp 0</div>
+          <div class="stat-sub">Pemasukan - Pengeluaran</div>
+        </div>
+        <div class="stat-card"><i class="bi bi-journal-check stat-icon"></i>
+          <div class="stat-label">Total Entri</div>
+          <div class="stat-value" id="statEntri">0</div>
+          <div class="stat-sub">Catatan transaksi</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Grafik Arus Kas</h2>
+              <p>Pemasukan vs Pengeluaran 6 bulan</p>
+            </div>
+            <span class="chip chip-blue">CHART</span>
+          </div>
+          <div style="padding:16px"><canvas id="kasChart" height="200"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Ringkasan Kas</h2>
+              <p id="ringkasanTitle">Rekap bulan ini</p>
+            </div>
+          </div>
+          <div class="card-body" id="ringkasanKas"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Jurnal Transaksi</h2>
+            <p>Semua entri pemasukan & pengeluaran</p>
+          </div>
+          <span class="chip chip-blue">JURNAL</span>
+        </div>
+        <div class="filter-bar">
+          <input type="text" id="searchInput" placeholder="🔍 Cari keterangan / kategori...">
+          <select id="filterType">
+            <option value="">Semua Jenis</option>
+            <option value="in">Pemasukan</option>
+            <option value="out">Pengeluaran</option>
+          </select>
+          <input type="month" id="filterMonth">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tanggal</th>
+                <th>Jenis</th>
+                <th>Kategori</th>
+                <th>Keterangan</th>
+                <th>Jumlah</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="jurnalBody"></tbody>
+          </table>
+        </div>
+        <div class="tfoot-info" id="tableFooter">Memuat data...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3 id="modalTitle"></h3>
+      <input type="hidden" id="fType" value="in">
+      <div class="form-row">
+        <div class="form-group"><label>Tanggal *</label><input type="date" id="fDate"></div>
+        <div class="form-group"><label>Kategori</label>
+          <select id="fKategori">
+            <option>Iuran Internet</option>
+            <option>Instalasi Baru</option>
+            <option>Denda</option>
+            <option>Lain-lain</option>
+            <option>Bandwidth/ISP</option>
+            <option>Listrik</option>
+            <option>Gaji</option>
+            <option>Peralatan</option>
+            <option>Maintenance</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Keterangan *</label><input type="text" id="fKet"
+          placeholder="Deskripsi transaksi..."></div>
+      <div class="form-group"><label>Jumlah (Rp) *</label><input type="number" id="fJumlah" placeholder="0"></div>
+      <div class="modal-actions">
+        <button class="btn-modal cancel" onclick="closeModal()">Batal</button>
+        <button class="btn-modal primary" onclick="saveEntri()"><i class="bi bi-save-fill"
+            style="margin-right:6px;"></i>Simpan</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="../assets/js/api.js"></script>
+  <script>
+    const now = new Date();
+    let jurnal = [];
+    let entryType = 'in';
+    let kasChart = null;
+
+    const rp = v => 'Rp ' + Math.abs(v).toLocaleString('id-ID');
+
+    // ── LOAD SUMMARY (kartu + grafik dari 1 API call) ─────────────
+    async function loadSummary() {
+      try {
+        const s = await apiFetch('/api/ledger/summary');
+        const b = s.bulan_ini;
+
+        // Kartu ringkasan
+        document.getElementById('statIn').textContent = rp(b.pemasukan);
+        document.getElementById('statOut').textContent = rp(b.pengeluaran);
+        const profit = b.laba_bersih;
+        document.getElementById('statProfit').textContent = (profit < 0 ? '-' : '') + rp(profit);
+        document.getElementById('statEntri').textContent = b.total_entri;
+
+        // --- 1. Fungsi Format Angka Dinamis (Y-axis & Tooltip) ---
+        const formatRupiahChart = (value) => {
+          const v = Math.abs(value);
+          if (v < 1000) return 'Rp ' + v;
+          if (v < 1000000) return 'Rp ' + (v / 1000).toFixed(1).replace('.0', '') + ' Rb';
+          return 'Rp ' + (v / 1000000).toFixed(1).replace('.0', '') + ' Jt';
+        };
+
+        // --- 2. Fungsi Generate Array 6 Bulan Terakhir ---
+        const getLast6MonthsLabels = () => {
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+          const labels = [];
+          const d = new Date();
+          for (let i = 5; i >= 0; i--) {
+            let m = d.getMonth() - i;
+            let y = d.getFullYear();
+            if (m < 0) { m += 12; y -= 1; }
+            labels.push(months[m] + ' ' + y);
+          }
+          return labels;
+        };
+
+        // --- 3. DOM Manipulation: Teks Ringkasan Dinamis ---
+        const updateHeaderBulanIni = () => {
+          const namaBulanLengkap = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+          const d = new Date();
+          const pt = document.getElementById('ringkasanTitle');
+          if (pt) pt.textContent = 'Rekap bulan ' + namaBulanLengkap[d.getMonth()] + ' ' + d.getFullYear();
+        };
+        updateHeaderBulanIni();
+
+        // Ganti label dari API dengan label dinamis berdasarkan waktu lokal (opsional: atau gunakan API jika lebih akurat, tapi sesuai request kita inject ini)
+        const dynamicLabels = getLast6MonthsLabels();
+
+        const g = s.grafik_6_bulan;
+        if (kasChart) {
+          kasChart.data.labels = dynamicLabels;
+          kasChart.data.datasets[0].data = g.pemasukan;
+          kasChart.data.datasets[1].data = g.pengeluaran;
+          kasChart.update();
+        } else {
+          kasChart = new Chart(document.getElementById('kasChart'), {
+            type: 'bar',
+            data: {
+              labels: dynamicLabels,
+              datasets: [
+                { label: 'Pemasukan', data: g.pemasukan, backgroundColor: 'rgba(22,163,74,.8)', borderRadius: 6 },
+                { label: 'Pengeluaran', data: g.pengeluaran, backgroundColor: 'rgba(220,38,38,.75)', borderRadius: 6 }
+              ]
+            },
+            options: {
+              responsive: true, maintainAspectRatio: true,
+              plugins: {
+                legend: { labels: { font: { size: 11 }, boxWidth: 12 } },
+                // Menerapkan formatter ke Tooltip (saat dihover)
+                tooltip: {
+                  callbacks: { label: (context) => context.dataset.label + ': ' + formatRupiahChart(context.raw) }
+                }
+              },
+              scales: {
+                // Menerapkan formatter ke Sumbu Y
+                y: { ticks: { callback: formatRupiahChart, font: { size: 10 } }, grid: { color: 'rgba(100,116,139,.12)' } },
+                x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+              }
+            }
+          });
+        }
+
+        // Ringkasan kas (sidebar card)
+        const margin = s.margin;
+        const marginBg = b.pemasukan > 0 ? Math.min(100, Math.round((b.pengeluaran / b.pemasukan) * 100)) : 0;
+        document.getElementById('ringkasanKas').innerHTML = `
+      <div class="kas-item"><span style="color:var(--muted);font-size:12px"><i class="bi bi-arrow-up-circle-fill" style="color:#16a34a;margin-right:6px"></i>Pemasukan</span><strong style="color:#15803d">${rp(b.pemasukan)}</strong></div>
+      <div class="kas-item"><span style="color:var(--muted);font-size:12px"><i class="bi bi-arrow-down-circle-fill" style="color:#dc2626;margin-right:6px"></i>Pengeluaran</span><strong style="color:#b91c1c">${rp(b.pengeluaran)}</strong></div>
+      <div class="kas-item"><span style="color:var(--muted);font-size:12px"><i class="bi bi-graph-up-arrow" style="color:#7c3aed;margin-right:6px"></i>Laba Bersih</span><strong style="color:${profit >= 0 ? '#6d28d9' : '#b91c1c'}">${(profit < 0 ? '-' : '') + rp(profit)}</strong></div>
+      <div style="margin-top:12px;font-size:11px;color:var(--muted)">Margin: ${margin}% dari total pemasukan</div>
+      <div style="background:var(--border);border-radius:99px;height:8px;overflow:hidden;margin-top:8px">
+        <div style="width:${marginBg}%;height:100%;background:linear-gradient(90deg,#16a34a,#dc2626);border-radius:99px"></div>
+      </div>`;
+      } catch (err) {
+        console.error('[Bookkeeping] gagal load summary:', err);
+      }
+    }
+
+    async function loadData() {
+      try {
+        const res = await apiFetch('/api/ledger');
+        jurnal = res || [];
+        renderJurnal();
+      } catch (err) {
+        showToast('Gagal memuat data jurnal', 'error');
+      }
+    }
+
+    function renderJurnal() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const ft = document.getElementById('filterType').value;
+      const fm = document.getElementById('filterMonth').value;
+      const filtered = jurnal.filter(j =>
+        ((j.description || '').toLowerCase().includes(q) || (j.category || '').toLowerCase().includes(q))
+        && (!ft || j.type === ft)
+        && (!fm || (j.date && j.date.startsWith(fm)))
+      );
+      document.getElementById('tableFooter').textContent = `Menampilkan ${filtered.length} dari ${jurnal.length} entri`;
+      document.getElementById('jurnalBody').innerHTML = filtered.map((j, i) => `
+    <tr>
+      <td style="color:var(--muted)">${i + 1}</td>
+      <td style="font-size:11px;color:var(--muted)">${(j.date || '').slice(0, 10)}</td>
+      <td><span class="type-badge ${j.type === 'in' ? 'type-in' : 'type-out'}">${j.type === 'in' ? '↑ Masuk' : '↓ Keluar'}</span></td>
+      <td style="font-size:11px">${j.category || ''}</td>
+      <td>${j.description || ''}</td>
+      <td><strong style="color:${j.type === 'in' ? '#15803d' : '#b91c1c'}">${j.type === 'in' ? '+' : '-'} Rp ${(j.amount || 0).toLocaleString('id-ID')}</strong></td>
+      <td><button class="act-btn act-del" onclick="hapus(${j.id})"><i class="bi bi-trash-fill"></i></button></td>
+    </tr>`).join('');
+    }
+
+    async function hapus(id) {
+      if (!confirm('Hapus entri ini?')) return;
+      try {
+        await apiFetch('/api/ledger/' + id, { method: 'DELETE' });
+        showToast('Entri dihapus', 'success');
+        await Promise.all([loadData(), loadSummary()]);
+      } catch (e) { showToast('Gagal menghapus entri', 'error'); }
+    }
+
+    function openModal(type) {
+      entryType = type;
+      document.getElementById('fType').value = type;
+      document.getElementById('modalTitle').innerHTML = type === 'in'
+        ? '<i class="bi bi-arrow-up-circle-fill" style="color:#16a34a;margin-right:8px;"></i>Catat Pemasukan'
+        : '<i class="bi bi-arrow-down-circle-fill" style="color:#dc2626;margin-right:8px;"></i>Catat Pengeluaran';
+      document.getElementById('fDate').value = new Date().toISOString().slice(0, 10);
+      document.getElementById('fKet').value = ''; document.getElementById('fJumlah').value = '';
+      document.getElementById('fKategori').value = type === 'in' ? 'Iuran Internet' : 'Bandwidth/ISP';
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+    document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+    async function saveEntri() {
+      const ket = document.getElementById('fKet').value.trim();
+      const jumlah = parseInt(document.getElementById('fJumlah').value) || 0;
+      if (!ket || !jumlah) { showToast('Keterangan dan jumlah wajib!', 'error'); return; }
+      try {
+        await apiFetch('/api/ledger', {
+          method: 'POST', body: JSON.stringify({
+            date: document.getElementById('fDate').value,
+            type: entryType,
+            category: document.getElementById('fKategori').value,
+            description: ket,
+            amount: jumlah
+          })
+        });
+        closeModal();
+        showToast('Entri berhasil dicatat!', 'success');
+        await Promise.all([loadData(), loadSummary()]);
+      } catch (e) { showToast('Gagal menyimpan entri', 'error'); }
+    }
+
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '') + ' show';
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ── Update user info dari session ─────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = (typeof Auth !== 'undefined') && Auth.user;
+      if (user) {
+        const el = document.getElementById('tbUserRole');
+        if (el) el.textContent = user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User';
+      }
+    });
+
+    ['searchInput', 'filterType', 'filterMonth'].forEach(id => document.getElementById(id).addEventListener('input', renderJurnal));
+    document.getElementById('filterType').addEventListener('change', renderJurnal);
+    document.getElementById('filterMonth').value = new Date().toISOString().slice(0, 7);
+
+    // Init — load data & summary sekaligus
+    Promise.all([loadData(), loadSummary()]);
+  </script>
+</body>
+
+</html>
