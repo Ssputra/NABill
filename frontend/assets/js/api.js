@@ -461,16 +461,15 @@ function getLoginUrl() {
     setTimeout(async () => {
       if (Auth.isLoggedIn()) {
         try {
-          // avoid apiFetch here if we want silence, but apiFetch handles it nicely
           const res = await fetch(API_BASE + '/api/settings', {
             headers: { 'Authorization': 'Bearer ' + Auth.token }
           });
           if (res.ok) {
-            const data = await res.json();
-            if (data && data.isp_name) {
-              if (data.isp_name !== cachedIsp) {
-                localStorage.setItem('app_isp_name', data.isp_name);
-                document.querySelectorAll('.brand-name').forEach(el => el.textContent = data.isp_name);
+            const json = await res.json();
+            if (json && json.success && json.data && json.data.isp_name) {
+              if (json.data.isp_name !== cachedIsp) {
+                localStorage.setItem('app_isp_name', json.data.isp_name);
+                document.querySelectorAll('.brand-name').forEach(el => el.textContent = json.data.isp_name);
               }
             }
           }
