@@ -452,12 +452,7 @@ function getLoginUrl() {
       }
     });
     
-    // Globally update top-left brand name based on ISP Name (from settings/localStorage)
-    const cachedIsp = localStorage.getItem('app_isp_name');
-    if (cachedIsp) {
-      document.querySelectorAll('.brand-name').forEach(el => el.textContent = cachedIsp);
-    }
-    // Asynchronously fetch fresh settings to keep brand name updated globally
+    // Asynchronously fetch fresh settings directly from backend
     setTimeout(async () => {
       if (Auth.isLoggedIn()) {
         try {
@@ -468,15 +463,14 @@ function getLoginUrl() {
           if (res.ok) {
             const json = await res.json();
             if (json && json.success && json.data && json.data.isp_name) {
-              if (json.data.isp_name !== cachedIsp) {
-                localStorage.setItem('app_isp_name', json.data.isp_name);
-                document.querySelectorAll('.brand-name').forEach(el => el.textContent = json.data.isp_name);
-              }
+               document.querySelectorAll('.brand-name').forEach(el => el.textContent = json.data.isp_name);
             }
           }
-        } catch(e) {}
+        } catch(e) {
+          console.error('[API] Failed to fetch settings from backend:', e);
+        }
       }
-    }, 500);
+    }, 100);
     
     // Force inject NABill brand label globally to bypass rigid layout cache issues
     const brandContainer = document.querySelector('.sidebar-brand > div');

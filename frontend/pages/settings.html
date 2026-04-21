@@ -1442,7 +1442,6 @@
         if (res && res.success) {
           showToast(`✅ ${labels[section]} berhasil disimpan!`, 'success');
           if (payload.isp_name) {
-            localStorage.setItem('app_isp_name', payload.isp_name);
             document.querySelectorAll('.brand-name').forEach(el => el.textContent = payload.isp_name);
           }
         } else {
@@ -1499,7 +1498,6 @@
         if (res && res.success) {
           showToast(`✅ Semua pengaturan berhasil disimpan! (${res.saved ? Object.keys(res.saved).length : ''} item)`, 'success');
           if (payload.isp_name) {
-            localStorage.setItem('app_isp_name', payload.isp_name);
             document.querySelectorAll('.brand-name').forEach(el => el.textContent = payload.isp_name);
           }
         } else {
