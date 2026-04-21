@@ -254,7 +254,7 @@ async function apiRequest(method, path, body = null) {
   const headers = { 'Content-Type': 'application/json' };
   if (Auth.token) headers['Authorization'] = 'Bearer ' + Auth.token;
 
-  const opts = { method, headers };
+  const opts = { method, headers, cache: 'no-store' };
   if (body && method !== 'GET') opts.body = JSON.stringify(body);
 
   const res = await fetch(API_BASE + path, opts);
@@ -462,7 +462,8 @@ function getLoginUrl() {
       if (Auth.isLoggedIn()) {
         try {
           const res = await fetch(API_BASE + '/api/settings', {
-            headers: { 'Authorization': 'Bearer ' + Auth.token }
+            headers: { 'Authorization': 'Bearer ' + Auth.token },
+            cache: 'no-store'
           });
           if (res.ok) {
             const json = await res.json();
