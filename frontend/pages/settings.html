@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="id">
 
 <head>
@@ -1346,7 +1346,7 @@
         if (user) {
           const tbUser = document.querySelector('.tb-user strong');
           const tbRole = document.querySelector('.tb-user span');
-          if (tbUser) tbUser.textContent = s.isp_name || user.name || 'RT/RW Billing';
+          if (tbUser) tbUser.textContent = user.name || 'Admin';
           if (tbRole) tbRole.textContent = user.role === 'admin' ? 'Admin' : user.role;
         }
 

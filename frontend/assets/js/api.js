@@ -452,6 +452,32 @@ function getLoginUrl() {
       }
     });
     
+    // Globally update top-left brand name based on ISP Name (from settings/localStorage)
+    const cachedIsp = localStorage.getItem('app_isp_name');
+    if (cachedIsp) {
+      document.querySelectorAll('.brand-name').forEach(el => el.textContent = cachedIsp);
+    }
+    // Asynchronously fetch fresh settings to keep brand name updated globally
+    setTimeout(async () => {
+      if (Auth.isLoggedIn()) {
+        try {
+          // avoid apiFetch here if we want silence, but apiFetch handles it nicely
+          const res = await fetch(API_BASE + '/api/settings', {
+            headers: { 'Authorization': 'Bearer ' + Auth.token }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.isp_name) {
+              if (data.isp_name !== cachedIsp) {
+                localStorage.setItem('app_isp_name', data.isp_name);
+                document.querySelectorAll('.brand-name').forEach(el => el.textContent = data.isp_name);
+              }
+            }
+          }
+        } catch(e) {}
+      }
+    }, 500);
+    
     // Force inject NABill brand label globally to bypass rigid layout cache issues
     const brandContainer = document.querySelector('.sidebar-brand > div');
     if (brandContainer && !brandContainer.innerHTML.includes('supported by NABill')) {
