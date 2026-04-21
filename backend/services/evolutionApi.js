@@ -22,20 +22,20 @@ function getEvoCfg(key, envKey, fallback = '') {
   try {
     const row = db.prepare("SELECT value FROM settings WHERE key=?").get('evo_' + key);
     if (row && row.value) return row.value;
-  } catch(_) {}
+  } catch (_) { }
   return process.env[envKey] || fallback;
 }
 
 function getConfig() {
   return {
-    baseUrl:      getEvoCfg('base_url',      'EVO_BASE_URL',      ''),
+    baseUrl: getEvoCfg('base_url', 'EVO_BASE_URL', ''),
     instanceName: getEvoCfg('instance_name', 'EVO_INSTANCE_NAME', ''),
-    apiKey:       getEvoCfg('api_key',       'EVO_API_KEY',       ''),
+    apiKey: getEvoCfg('api_key', 'EVO_API_KEY', ''),
     // Delay acak antara dua angka ini (milidetik) — anti-spam/banned
-    delayMin:     parseInt(getEvoCfg('delay_min', 'EVO_DELAY_MIN', '2000')),
-    delayMax:     parseInt(getEvoCfg('delay_max', 'EVO_DELAY_MAX', '5000')),
+    delayMin: parseInt(getEvoCfg('delay_min', 'EVO_DELAY_MIN', '2000')),
+    delayMax: parseInt(getEvoCfg('delay_max', 'EVO_DELAY_MAX', '5000')),
     // Apakah tampilkan efek "sedang mengetik" sebelum kirim
-    useTyping:    getEvoCfg('use_typing',    'EVO_USE_TYPING',    '1') === '1',
+    useTyping: getEvoCfg('use_typing', 'EVO_USE_TYPING', '1') === '1',
   };
 }
 
@@ -66,7 +66,7 @@ function normalizePhone(phone) {
   if (!phone) return null;
   let p = String(phone).replace(/\D/g, '');
   if (!p) return null;
-  if (p.startsWith('0'))  p = '62' + p.slice(1);
+  if (p.startsWith('0')) p = '62' + p.slice(1);
   if (!p.startsWith('62')) p = '62' + p;
   // Evolution API format: "6281234567890@s.whatsapp.net" — atau nomor saja
   // Kita kirim nomor saja, endpoint /message/sendText yang handle
@@ -97,7 +97,7 @@ async function sendSingleMessage(phone, message, cfg) {
       await fetch(`${cfg.baseUrl}/chat/presence/${cfg.instanceName}`, {
         method: 'POST',
         headers: {
-          'apikey':       cfg.apiKey,
+          'apikey': cfg.apiKey,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -107,7 +107,7 @@ async function sendSingleMessage(phone, message, cfg) {
       });
       // Tunggu sebentar agar "mengetik..." terlihat
       await sleep(1200 + Math.floor(Math.random() * 800));
-    } catch(e) {
+    } catch (e) {
       // Typing effect tidak kritis — lanjut kirim meski gagal
       console.warn('[EVO Typing] Warning:', e.message);
     }
@@ -118,7 +118,7 @@ async function sendSingleMessage(phone, message, cfg) {
     const res = await fetch(url, {
       method: 'POST',
       headers: {
-        'apikey':       cfg.apiKey,
+        'apikey': cfg.apiKey,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -233,9 +233,9 @@ async function notifyTagihan(customer) {
     'Terima kasih 🙏\n\n_RT/RW NET Billing_';
 
   const message = interpolate(template, {
-    nama:    customer.name,
+    nama: customer.name,
     tagihan: Number(customer.amount || 0).toLocaleString('id-ID'),
-    tgl:     customer.due_date,
+    tgl: customer.due_date,
   });
 
   return sendSingleMessage(customer.phone, message, cfg);
@@ -254,9 +254,9 @@ async function notifySuspend(customer) {
     '📞 _RT/RW NET Billing_';
 
   const message = interpolate(template, {
-    nama:    customer.name,
+    nama: customer.name,
     tagihan: Number(customer.amount || 0).toLocaleString('id-ID'),
-    tgl:     customer.due_date,
+    tgl: customer.due_date,
   });
 
   return sendSingleMessage(customer.phone, message, cfg);
@@ -274,7 +274,7 @@ async function notifyLunas(customer) {
     'Terima kasih sudah membayar tepat waktu 😊\n_RT/RW NET Billing_';
 
   const message = interpolate(template, {
-    nama:    customer.name,
+    nama: customer.name,
     tagihan: Number(customer.amount || 0).toLocaleString('id-ID'),
   });
 

@@ -59,22 +59,22 @@ function migrate() {
     // Migration: Add mikrotik_profile helper column to remember original profiles during suspend
     try {
       db.prepare('ALTER TABLE customers ADD COLUMN mikrotik_profile TEXT').run();
-    } catch(err) {}
+    } catch (err) { }
 
     // Migration: tambahkan kolom koordinat peta jika belum ada
-    try { db.prepare('ALTER TABLE customers ADD COLUMN latitude REAL').run(); } catch(e) {}
-    try { db.prepare('ALTER TABLE customers ADD COLUMN longitude REAL').run(); } catch(e) {}
+    try { db.prepare('ALTER TABLE customers ADD COLUMN latitude REAL').run(); } catch (e) { }
+    try { db.prepare('ALTER TABLE customers ADD COLUMN longitude REAL').run(); } catch (e) { }
 
     // Migration: Add created_at and updated_at to tickets if missing
-    try { db.prepare('ALTER TABLE tickets ADD COLUMN created_at TEXT NOT NULL DEFAULT (strftime("%Y-%m-%dT%H:%M:%SZ","now"))').run(); } catch(err) {}
-    try { db.prepare('ALTER TABLE tickets ADD COLUMN updated_at TEXT NOT NULL DEFAULT (strftime("%Y-%m-%dT%H:%M:%SZ","now"))').run(); } catch(err) {}
+    try { db.prepare('ALTER TABLE tickets ADD COLUMN created_at TEXT NOT NULL DEFAULT (strftime("%Y-%m-%dT%H:%M:%SZ","now"))').run(); } catch (err) { }
+    try { db.prepare('ALTER TABLE tickets ADD COLUMN updated_at TEXT NOT NULL DEFAULT (strftime("%Y-%m-%dT%H:%M:%SZ","now"))').run(); } catch (err) { }
 
     // Migration: Add missing columns to odp_infrastructures if table existed before schema was updated
-    try { db.prepare('ALTER TABLE odp_infrastructures ADD COLUMN lat TEXT DEFAULT ""').run(); } catch(e) {}
-    try { db.prepare('ALTER TABLE odp_infrastructures ADD COLUMN lng TEXT DEFAULT ""').run(); } catch(e) {}
-    try { db.prepare('ALTER TABLE odp_infrastructures ADD COLUMN status TEXT DEFAULT "Normal"').run(); } catch(e) {}
-    try { db.prepare('ALTER TABLE odp_infrastructures ADD COLUMN updated_at TEXT NOT NULL DEFAULT (strftime("%Y-%m-%dT%H:%M:%SZ","now"))').run(); } catch(e) {}
-    try { db.prepare('ALTER TABLE odp_infrastructures ADD COLUMN created_at TEXT NOT NULL DEFAULT (strftime("%Y-%m-%dT%H:%M:%SZ","now"))').run(); } catch(e) {}
+    try { db.prepare('ALTER TABLE odp_infrastructures ADD COLUMN lat TEXT DEFAULT ""').run(); } catch (e) { }
+    try { db.prepare('ALTER TABLE odp_infrastructures ADD COLUMN lng TEXT DEFAULT ""').run(); } catch (e) { }
+    try { db.prepare('ALTER TABLE odp_infrastructures ADD COLUMN status TEXT DEFAULT "Normal"').run(); } catch (e) { }
+    try { db.prepare('ALTER TABLE odp_infrastructures ADD COLUMN updated_at TEXT NOT NULL DEFAULT (strftime("%Y-%m-%dT%H:%M:%SZ","now"))').run(); } catch (e) { }
+    try { db.prepare('ALTER TABLE odp_infrastructures ADD COLUMN created_at TEXT NOT NULL DEFAULT (strftime("%Y-%m-%dT%H:%M:%SZ","now"))').run(); } catch (e) { }
     // ----- TRANSACTIONS -----
     db.exec(`
       CREATE TABLE IF NOT EXISTS transactions (
@@ -310,32 +310,32 @@ function seedInitialData() {
   // Default settings
   const insertSetting = db.prepare(`INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)`);
   // Tab Umum
-  insertSetting.run('app_name',   'RT/RW NET Billing');
-  insertSetting.run('isp_name',   'RT/RW NET - Billing Mandiri');
+  insertSetting.run('app_name', 'RT/RW NET Billing');
+  insertSetting.run('isp_name', 'RT/RW NET - Billing Mandiri');
   insertSetting.run('owner_name', 'Admin Utama');
-  insertSetting.run('phone',      '0812-3456-7890');
-  insertSetting.run('email',      'admin@rtrwnet.id');
-  insertSetting.run('address',    'Jl. Merdeka No. 1, RT 01 RW 01, Kec. Sukamaju');
+  insertSetting.run('phone', '0812-3456-7890');
+  insertSetting.run('email', 'admin@rtrwnet.id');
+  insertSetting.run('address', 'Jl. Merdeka No. 1, RT 01 RW 01, Kec. Sukamaju');
   // Tab MikroTik
   insertSetting.run('mt_default_port', '8728');
   insertSetting.run('mt_default_user', 'admin');
-  insertSetting.run('mt_timeout',      '10');
-  insertSetting.run('mt_interval',     '30');
+  insertSetting.run('mt_timeout', '10');
+  insertSetting.run('mt_interval', '30');
   // Tab Billing
-  insertSetting.run('bill_date',        '1');
-  insertSetting.run('grace_days',       '7');
-  insertSetting.run('late_fee',         '0');
-  insertSetting.run('currency',         'IDR');
+  insertSetting.run('bill_date', '1');
+  insertSetting.run('grace_days', '7');
+  insertSetting.run('late_fee', '0');
+  insertSetting.run('currency', 'IDR');
   insertSetting.run('invoice_template', 'Pembayaran tagihan internet bulan {bulan} — {nama_paket}');
-  insertSetting.run('monthly_target',   '22000000');
+  insertSetting.run('monthly_target', '22000000');
   // Tab Notifikasi
-  insertSetting.run('n_wa_due',       '1');
+  insertSetting.run('n_wa_due', '1');
   insertSetting.run('n_auto_suspend', '0');
-  insertSetting.run('n_wa_new',       '1');
+  insertSetting.run('n_wa_new', '1');
   insertSetting.run('n_daily_report', '0');
   insertSetting.run('n_router_alert', '1');
   // Tab Sistem
-  insertSetting.run('app_url',  'http://localhost:3000');
+  insertSetting.run('app_url', 'http://localhost:3000');
   insertSetting.run('timezone', 'Asia/Jakarta');
   insertSetting.run('wa_number', '');
 

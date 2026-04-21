@@ -451,6 +451,18 @@ function getLoginUrl() {
         sec.style.display = 'none';
       }
     });
+    
+    // Force inject NABill brand label globally to bypass rigid layout cache issues
+    const brandContainer = document.querySelector('.sidebar-brand > div');
+    if (brandContainer && !brandContainer.innerHTML.includes('supported by NABill')) {
+      const brandLabel = document.createElement('div');
+      brandLabel.className = 'brand-sub';
+      brandLabel.style.fontSize = '8px';
+      brandLabel.style.marginTop = '2px';
+      brandLabel.style.color = 'rgba(255,255,255,0.7)';
+      brandLabel.innerHTML = 'supported by NABill (Net-Access Billing)';
+      brandContainer.appendChild(brandLabel);
+    }
   });
 })();
 

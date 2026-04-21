@@ -63,7 +63,7 @@ app.use('/pages', (req, res, next) => {
 
   try {
     const user = jwt.verify(token, config.jwtSecret);
-    
+
     // Server-Side Role-Based Access Control (RBAC)
     if (user.role === 'kasir') {
       const allowedKasir = ['index.html', 'customers.html', 'cs-portal.html', 'kasir.html', 'laporan.html', 'setoran.html', 'stok.html', 'whatsapp.html', 'payment.html', 'pppoe.html'];
@@ -88,7 +88,7 @@ app.use('/pages', (req, res, next) => {
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, '..')));
-app.use('/pages',  express.static(path.join(__dirname, '..', 'frontend', 'pages')));
+app.use('/pages', express.static(path.join(__dirname, '..', 'frontend', 'pages')));
 app.use('/assets', express.static(path.join(__dirname, '..', 'frontend', 'assets')));
 
 // ============================================================
@@ -120,18 +120,18 @@ app.get('/api/events', authMiddleware, (req, res) => {
 });
 
 
-app.use('/api/auth',         require('./routes/auth')); // Public/Auth logic
+app.use('/api/auth', require('./routes/auth')); // Public/Auth logic
 
 // Kasir & Admin Only
-app.use('/api/customers',    authMiddleware, requireRole('admin', 'kasir', 'teknisi'), require('./routes/customers'));
+app.use('/api/customers', authMiddleware, requireRole('admin', 'kasir', 'teknisi'), require('./routes/customers'));
 app.use('/api/transactions', authMiddleware, requireRole('admin', 'kasir', 'teknisi'), require('./routes/transactions'));
-app.use('/api/reports',      authMiddleware, requireRole('admin', 'kasir', 'teknisi'), require('./routes/reports'));
-app.use('/api/inventory',    authMiddleware, requireRole('admin', 'kasir'), require('./routes/inventory'));
-app.use('/api/deposits',     authMiddleware, requireRole('admin', 'kasir'), require('./routes/deposits'));
-app.use('/api/tickets',      authMiddleware, requireRole('admin', 'kasir', 'teknisi'), require('./routes/tickets'));
-app.use('/api/ledger',       authMiddleware, requireRole('admin', 'kasir'), require('./routes/ledger'));
-app.use('/api/payment',      authMiddleware, requireRole('admin', 'kasir'), require('./routes/payment'));
-app.use('/api/settings',     authMiddleware, requireRole('admin'), require('./routes/settings'));
+app.use('/api/reports', authMiddleware, requireRole('admin', 'kasir', 'teknisi'), require('./routes/reports'));
+app.use('/api/inventory', authMiddleware, requireRole('admin', 'kasir'), require('./routes/inventory'));
+app.use('/api/deposits', authMiddleware, requireRole('admin', 'kasir'), require('./routes/deposits'));
+app.use('/api/tickets', authMiddleware, requireRole('admin', 'kasir', 'teknisi'), require('./routes/tickets'));
+app.use('/api/ledger', authMiddleware, requireRole('admin', 'kasir'), require('./routes/ledger'));
+app.use('/api/payment', authMiddleware, requireRole('admin', 'kasir'), require('./routes/payment'));
+app.use('/api/settings', authMiddleware, requireRole('admin'), require('./routes/settings'));
 
 // Infrastruktur & Mikrotik (Teknisi, Admin & Kasir untuk fitur PPPoE Management)
 app.use('/api/mikrotik', authMiddleware, requireRole('admin', 'teknisi', 'kasir'), (req, res, next) => {
@@ -143,16 +143,16 @@ app.use('/api/mikrotik', authMiddleware, requireRole('admin', 'teknisi', 'kasir'
   next();
 }, require('./routes/mikrotik'));
 
-app.use('/api/odp',          authMiddleware, requireRole('admin', 'teknisi'), require('./routes/odp'));
-app.use('/api/whatsapp',     authMiddleware, requireRole('admin', 'kasir'), require('./routes/whatsapp'));
+app.use('/api/odp', authMiddleware, requireRole('admin', 'teknisi'), require('./routes/odp'));
+app.use('/api/whatsapp', authMiddleware, requireRole('admin', 'kasir'), require('./routes/whatsapp'));
 
 // Admin Only (Users management is already protected in its router, but we can double guard)
-app.use('/api/users',        authMiddleware, requireRole('admin'), require('./routes/users'));
+app.use('/api/users', authMiddleware, requireRole('admin'), require('./routes/users'));
 
 // Resellers/Agents/Attendance - typically admin or kasir based on context, let's allow admin & kasir for now
-app.use('/api/resellers',    authMiddleware, requireRole('admin', 'kasir'), require('./routes/resellers'));
-app.use('/api/agents',       authMiddleware, requireRole('admin', 'kasir'), require('./routes/agents'));
-app.use('/api/attendance',   authMiddleware, require('./routes/attendance')); // Maybe all roles can clock in
+app.use('/api/resellers', authMiddleware, requireRole('admin', 'kasir'), require('./routes/resellers'));
+app.use('/api/agents', authMiddleware, requireRole('admin', 'kasir'), require('./routes/agents'));
+app.use('/api/attendance', authMiddleware, require('./routes/attendance')); // Maybe all roles can clock in
 
 // Health check
 app.get('/api/health', (req, res) => {
