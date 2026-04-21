@@ -456,7 +456,7 @@ function getLoginUrl() {
     setTimeout(async () => {
       if (Auth.isLoggedIn()) {
         try {
-          const res = await fetch(API_BASE + '/api/settings', {
+          const res = await fetch(API_BASE + '/settings', {
             headers: { 'Authorization': 'Bearer ' + Auth.token },
             cache: 'no-store'
           });
